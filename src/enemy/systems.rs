@@ -11,10 +11,14 @@ pub fn spawn_enemies(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     commands.spawn((
+        // Tags
         Name::new("Enemy 1"),
         Enemy,
+        // Properties
         Speed(INITIAL_ENEMY_SPEED),
+        // Physics
         PhysicsBundle::at(200.00, 0.00).with_collider(Collider { radius: ENEMY_SIZE }),
+        // Texture
         MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(ENEMY_SIZE).into()).into(),
             material: materials.add(ColorMaterial::from(Color::RED)),
@@ -23,10 +27,14 @@ pub fn spawn_enemies(
         },
     ));
     commands.spawn((
+        // Tags
         Name::new("Enemy 2"),
         Enemy,
+        // Properties
         Speed(INITIAL_ENEMY_SPEED),
+        // Physics
         PhysicsBundle::at(-200.00, 0.00).with_collider(Collider { radius: ENEMY_SIZE }),
+        // Texture
         MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(ENEMY_SIZE).into()).into(),
             material: materials.add(ColorMaterial::from(Color::RED)),
@@ -35,10 +43,14 @@ pub fn spawn_enemies(
         },
     ));
     commands.spawn((
+        // Tags
         Name::new("Enemy 3"),
         Enemy,
+        // Properties
         Speed(INITIAL_ENEMY_SPEED),
+        // Physics
         PhysicsBundle::at(0.00, 200.00).with_collider(Collider { radius: ENEMY_SIZE }),
+        // Texture
         MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(ENEMY_SIZE).into()).into(),
             material: materials.add(ColorMaterial::from(Color::RED)),
