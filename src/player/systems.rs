@@ -20,17 +20,17 @@ pub fn spawn_player(
         // Physics
         PhysicsBundle::at(0.00, 0.00).with_collider(Collider { radius: PLAYER_SIZE }),
         Floating,
-        // Input
-        InputManagerBundle::<GameAction> {
-            action_state: ActionState::default(),
-            input_map: game_action_input_map.clone(),
-        },
         // Texture
         MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(PLAYER_SIZE).into()).into(),
             material: materials.add(ColorMaterial::from(Color::GREEN)),
             transform: Transform::from_translation(Vec3::new(0.00, 0.00, 2.00)),
             ..default()
+        },
+        // Input
+        InputManagerBundle::<GameAction> {
+            action_state: ActionState::default(),
+            input_map: game_action_input_map.clone(),
         },
     ));
 }
