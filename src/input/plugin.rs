@@ -14,6 +14,6 @@ impl Plugin for InputPlugin {
         PauseMenuAction::setup(app);
 
         app.add_systems(Update, toggle_fullscreen);
-        app.add_systems(Update, pause_on_focus_loss.in_set(GamePlaySystems::Input));
+        app.add_systems(Update, pause_on_losing_focus.in_set(GamePlaySystems::Input));
     }
 }
