@@ -43,6 +43,16 @@ jobs:
           target: wasm32-unknown-unknown
           override: true
 
+      - name: Commit Lint
+        uses: gsactions/commit-message-checker@v1
+        with:
+          pattern: "^(feat|fix|refactor|style|test|docs|ci|chore): "
+          error: "One of the commit messages doesn't conform to the commit style of the project."
+          excludeTitle: "true"
+          excludeDescription: "true"
+          checkAllCommitMessages: "true"
+          accessToken: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Rustfmt
         uses: actions-rs/cargo@v1
         with:
