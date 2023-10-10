@@ -1,0 +1,9 @@
+autofix: false
+
+ignore:
+  - target
+
+rules:
+  end-of-file:
+    enable: true
+    single-new-line: false
