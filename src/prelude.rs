@@ -34,6 +34,7 @@ pub(crate) use {
         input::mouse::MouseMotion,
         prelude::*,
         sprite::MaterialMesh2dBundle,
+        window::WindowFocused,
     },
     bevy_persistent::prelude::*,
     clap::Parser,
