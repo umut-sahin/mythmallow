@@ -12,15 +12,20 @@ pub fn spawn_player(
     game_action_input_map: Res<InputMap<GameAction>>,
 ) {
     commands.spawn((
+        // Tags
         Name::new("Player"),
         Player,
+        // Properties
         Speed(INITIAL_PLAYER_SPEED),
+        // Physics
         PhysicsBundle::at(0.00, 0.00).with_collider(Collider { radius: PLAYER_SIZE }),
         Floating,
+        // Input
         InputManagerBundle::<GameAction> {
             action_state: ActionState::default(),
             input_map: game_action_input_map.clone(),
         },
+        // Texture
         MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(PLAYER_SIZE).into()).into(),
             material: materials.add(ColorMaterial::from(Color::GREEN)),
