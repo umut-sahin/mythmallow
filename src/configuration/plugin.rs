@@ -8,6 +8,7 @@ impl Plugin for ConfigurationPlugin {
         app.register_type::<Args>();
         app.register_type::<KeyBindings>();
 
+        GeneralSettings::initialize(app);
         KeyBindings::initialize(app);
 
         let args = app.world.resource::<Args>();
