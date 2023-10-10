@@ -4,7 +4,7 @@ use crate::{
 };
 
 
-/// Arguments of the application.
+/// Configuration resource for arguments of the application.
 #[derive(Debug, Reflect, Resource)]
 pub struct Args {
     /// Base path for configuration files.
@@ -142,7 +142,7 @@ impl Args {
 }
 
 
-/// Key bindings.
+/// Configuration resource for key bindings of the application.
 #[derive(Debug, Deserialize, Reflect, Resource, Serialize)]
 #[serde(default)]
 pub struct KeyBindings {
