@@ -1,0 +1,8 @@
+[book]
+src = "docs"
+title = "Mythmellow"
+language = "en"
+multilingual = false
+authors = [
+    "Umut Şahin <umutsahin@protonmail.com>",
+]
