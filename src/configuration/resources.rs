@@ -142,6 +142,48 @@ impl Args {
 }
 
 
+/// Configuration resource for general settings of the application.
+#[derive(Debug, Deserialize, Reflect, Resource, Serialize)]
+#[serde(default)]
+pub struct GeneralSettings {
+    pub pause_on_losing_focus: bool,
+}
+
+impl GeneralSettings {
+    /// Initializes the resource in the app.
+    pub fn initialize(app: &mut App) {
+        let args = app.world.resource::<Args>();
+        app.insert_resource(
+            Persistent::<GeneralSettings>::builder()
+                .name("general settings")
+                .format(CONFIGURATION_STORAGE_FORMAT)
+                .path({
+                    #[cfg(feature = "native")]
+                    {
+                        args.configuration_directory.join("general-settings.toml")
+                    }
+                    #[cfg(feature = "wasm")]
+                    {
+                        args.configuration_directory.join("general-settings")
+                    }
+                })
+                .default(GeneralSettings::default())
+                .revertible(true)
+                .build()
+                .unwrap_or_else(|_| {
+                    panic!("fatal: unable to initialize persistent general settings")
+                }),
+        );
+    }
+}
+
+impl Default for GeneralSettings {
+    fn default() -> GeneralSettings {
+        GeneralSettings { pause_on_losing_focus: true }
+    }
+}
+
+
 /// Configuration resource for key bindings of the application.
 #[derive(Debug, Deserialize, Reflect, Resource, Serialize)]
 #[serde(default)]
