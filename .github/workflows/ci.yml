@@ -53,6 +53,10 @@ jobs:
           checkAllCommitMessages: "true"
           accessToken: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Line Lint
+        uses: fernandrone/linelint@0.0.6
+        id: linelint
+
       - name: Rustfmt
         uses: actions-rs/cargo@v1
         with:
