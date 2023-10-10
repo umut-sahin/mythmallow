@@ -37,7 +37,7 @@ pub fn toggle_fullscreen(global_action_state: Res<ActionState<GlobalAction>>) {
 
 
 /// Pauses the game when focus to the application is lost.
-pub fn pause_on_focus_loss(
+pub fn pause_on_losing_focus(
     mut window_focused_reader: EventReader<WindowFocused>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
