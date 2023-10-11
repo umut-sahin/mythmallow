@@ -1,3 +1,1 @@
 # Introduction
-
-Coming soon...
