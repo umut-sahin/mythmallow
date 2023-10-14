@@ -3,6 +3,7 @@ pub use {
     super::plugin::MythmellowPlugin,
     crate::{
         camera::components::*,
+        combat::components::*,
         configuration::resources::*,
         core::{
             sets::*,

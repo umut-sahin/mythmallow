@@ -5,6 +5,12 @@ use crate::prelude::*;
 pub const PLAYER_SIZE: f32 = 20.00;
 
 
+/// Initial damage of the player.
+pub const INITIAL_PLAYER_DAMAGE: f32 = 5.00;
+
+/// Initial health of the player.
+pub const INITIAL_PLAYER_HEALTH: f32 = 10.00;
+
 /// Initial speed of the player.
 pub const INITIAL_PLAYER_SPEED: f32 = 200.00;
 

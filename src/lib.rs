@@ -3,6 +3,7 @@
 #![allow(clippy::type_complexity)]
 
 pub mod camera;
+pub mod combat;
 pub mod configuration;
 pub mod core;
 pub mod enemy;
