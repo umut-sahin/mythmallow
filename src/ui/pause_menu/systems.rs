@@ -160,7 +160,7 @@ pub fn return_to_main_menu_button_interaction(
     if let Ok(mut button) = return_to_main_menu_button_query.get_single_mut() {
         button.on_click(|| {
             next_app_state.set(AppState::MainMenu);
-            next_game_state.set(GameState::Playing);
+            next_game_state.set(GameState::default());
         });
     }
 }
