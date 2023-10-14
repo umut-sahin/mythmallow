@@ -1,4 +1,7 @@
-use crate::prelude::*;
+use crate::{
+    core::systems::*,
+    prelude::*,
+};
 
 /// Plugin for the core logic of the application.
 pub struct CorePlugin;
@@ -14,6 +17,9 @@ impl Plugin for CorePlugin {
         MainMenuSystems::configure(app);
         GamePlaySystems::configure(app);
         PauseMenuSystems::configure(app);
+        GameOverMenuSystems::configure(app);
         MenuSystems::configure(app);
+
+        app.add_systems(OnEnter(AppState::Restart), restart);
     }
 }
