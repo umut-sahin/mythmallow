@@ -14,7 +14,7 @@ pub fn spawn_pause_menu(
     pause_menu_action_input_map: Res<InputMap<PauseMenuAction>>,
 ) {
     let button_style = styles::button();
-    let button_color = WidgetColors::button();
+    let button_colors = WidgetColors::button();
     let button_font = asset_server.load("fonts/FiraSans-Bold.ttf");
     let button_size = BUTTON_FONT_SIZE;
 
@@ -22,7 +22,7 @@ pub fn spawn_pause_menu(
         &mut commands,
         (PauseMenuResumeButton, Widget::default().selected(), WidgetSelected::new()),
         &button_style,
-        button_color,
+        button_colors,
         &button_font,
         button_size,
         "Resume",
@@ -31,7 +31,7 @@ pub fn spawn_pause_menu(
         &mut commands,
         (PauseMenuReturnToMainMenuButton, Widget::default()),
         &button_style,
-        button_color,
+        button_colors,
         &button_font,
         button_size,
         "Return to main menu",
@@ -40,7 +40,7 @@ pub fn spawn_pause_menu(
         &mut commands,
         (PauseMenuQuitToDesktopButton, Widget::default()),
         &button_style,
-        button_color,
+        button_colors,
         &button_font,
         button_size,
         "Quit to desktop",
