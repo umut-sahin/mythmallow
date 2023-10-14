@@ -105,7 +105,7 @@ pub fn pause(
 ) {
     if let Ok(game_action_state) = game_action_state_query.get_single() {
         if game_action_state.just_pressed(GameAction::Pause) {
-            next_game_state.set(GameState::PauseMenu);
+            next_game_state.set(GameState::Paused);
         }
     }
 }

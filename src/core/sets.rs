@@ -47,8 +47,8 @@ impl GamePlaySystems {
                     AppState::MainMenu => false,
                     AppState::Game => {
                         match game_state.get() {
-                            GameState::Play => true,
-                            GameState::PauseMenu => false,
+                            GameState::Playing => true,
+                            GameState::Paused => false,
                         }
                     },
                 }
@@ -90,8 +90,8 @@ impl PauseMenuSystems {
                 AppState::MainMenu => false,
                 AppState::Game => {
                     match game_state.get() {
-                        GameState::Play => false,
-                        GameState::PauseMenu => true,
+                        GameState::Playing => false,
+                        GameState::Paused => true,
                     }
                 },
             }
@@ -119,8 +119,8 @@ impl MenuSystems {
                 AppState::MainMenu => true,
                 AppState::Game => {
                     match game_state.get() {
-                        GameState::Play => false,
-                        GameState::PauseMenu => true,
+                        GameState::Playing => false,
+                        GameState::Paused => true,
                     }
                 },
             }
