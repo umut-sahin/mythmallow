@@ -115,7 +115,7 @@ pub fn navigation(
     };
 
     if pause_menu_action_state.just_pressed(PauseMenuAction::Resume) {
-        next_game_state.set(GameState::Play);
+        next_game_state.set(GameState::Playing);
         return;
     }
 
@@ -142,7 +142,7 @@ pub fn resume_button_interaction(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(mut button) = resume_button_query.get_single_mut() {
-        button.on_click(|| next_game_state.set(GameState::Play));
+        button.on_click(|| next_game_state.set(GameState::Playing));
     }
 }
 
@@ -158,7 +158,7 @@ pub fn return_to_main_menu_button_interaction(
     if let Ok(mut button) = return_to_main_menu_button_query.get_single_mut() {
         button.on_click(|| {
             next_app_state.set(AppState::MainMenu);
-            next_game_state.set(GameState::Play);
+            next_game_state.set(GameState::Playing);
         });
     }
 }

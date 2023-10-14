@@ -13,7 +13,7 @@ impl Plugin for PauseMenuPlugin {
         app.register_type::<PauseMenuReturnToMainMenuButton>();
         app.register_type::<PauseMenuQuitToDesktopButton>();
 
-        app.add_systems(OnEnter(GameState::PauseMenu), spawn_pause_menu);
+        app.add_systems(OnEnter(GameState::Paused), spawn_pause_menu);
         app.add_systems(Update, navigation.in_set(PauseMenuSystems));
         app.add_systems(
             PostUpdate,
@@ -24,6 +24,6 @@ impl Plugin for PauseMenuPlugin {
             )
                 .in_set(PauseMenuSystems),
         );
-        app.add_systems(OnExit(GameState::PauseMenu), despawn_pause_menu);
+        app.add_systems(OnExit(GameState::Paused), despawn_pause_menu);
     }
 }

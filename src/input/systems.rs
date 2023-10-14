@@ -43,7 +43,7 @@ pub fn pause_on_losing_focus(
 ) {
     for event in window_focused_reader.iter() {
         if !event.focused {
-            next_game_state.set(GameState::PauseMenu);
+            next_game_state.set(GameState::Paused);
             break;
         }
     }

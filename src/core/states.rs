@@ -14,6 +14,6 @@ pub enum AppState {
 #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq, Reflect, States)]
 pub enum GameState {
     #[default]
-    Play,
-    PauseMenu,
+    Playing,
+    Paused,
 }
