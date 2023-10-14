@@ -137,6 +137,8 @@ pub fn quit_on_quit_button_click(
     mut app_exit_event_writer: EventWriter<AppExit>,
 ) {
     if let Ok(mut button) = quit_button_query.get_single_mut() {
-        button.on_click(|| app_exit_event_writer.send(AppExit));
+        button.on_click(|| {
+            app_exit_event_writer.send(AppExit);
+        });
     }
 }
