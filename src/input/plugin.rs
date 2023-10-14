@@ -12,6 +12,7 @@ impl Plugin for InputPlugin {
         MainMenuAction::setup(app);
         GameAction::setup(app);
         PauseMenuAction::setup(app);
+        GameOverMenuAction::setup(app);
 
         app.add_systems(Update, toggle_fullscreen);
 

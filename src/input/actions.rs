@@ -121,3 +121,31 @@ impl PauseMenuAction {
         app.insert_resource(input_map);
     }
 }
+
+
+/// Actions that can be performed in the game over menu.
+#[derive(Actionlike, Clone, Copy, Debug, Eq, Hash, PartialEq, Reflect)]
+pub enum GameOverMenuAction {
+    Up,
+    Select,
+    Down,
+}
+
+impl GameOverMenuAction {
+    /// Sets up the app for the action.
+    pub fn setup(app: &mut App) {
+        app.add_plugins(InputManagerPlugin::<GameOverMenuAction>::default());
+
+        let key_bindings = app.world.resource::<Persistent<KeyBindings>>();
+
+        let mut input_map = InputMap::new([(KeyCode::Return, GameOverMenuAction::Select)]);
+        for key_code in key_bindings.up.iter().cloned() {
+            input_map.insert(key_code, GameOverMenuAction::Up);
+        }
+        for key_code in key_bindings.down.iter().cloned() {
+            input_map.insert(key_code, GameOverMenuAction::Down);
+        }
+
+        app.insert_resource(input_map);
+    }
+}

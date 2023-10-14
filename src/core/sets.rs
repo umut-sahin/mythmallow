@@ -12,6 +12,7 @@ impl MainMenuSystems {
             match app_state.get() {
                 AppState::MainMenu => true,
                 AppState::Game => false,
+                AppState::Restart => false,
             }
         }
 
@@ -49,8 +50,11 @@ impl GamePlaySystems {
                         match game_state.get() {
                             GameState::Playing => true,
                             GameState::Paused => false,
+                            GameState::Won => false,
+                            GameState::Lost => false,
                         }
                     },
+                    AppState::Restart => false,
                 }
             }
 
@@ -92,8 +96,43 @@ impl PauseMenuSystems {
                     match game_state.get() {
                         GameState::Playing => false,
                         GameState::Paused => true,
+                        GameState::Won => false,
+                        GameState::Lost => false,
                     }
                 },
+                AppState::Restart => false,
+            }
+        }
+
+        app.configure_set(PreUpdate, PauseMenuSystems.run_if(run_condition));
+        app.configure_set(Update, PauseMenuSystems.run_if(run_condition));
+        app.configure_set(PostUpdate, PauseMenuSystems.run_if(run_condition));
+    }
+}
+
+
+/// Systems to run in the game over menu.
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, SystemSet)]
+pub struct GameOverMenuSystems;
+
+impl GameOverMenuSystems {
+    /// Configure run conditions for the system set.
+    pub fn configure(app: &mut App) {
+        fn run_condition(
+            app_state: Res<State<AppState>>,
+            game_state: Res<State<GameState>>,
+        ) -> bool {
+            match app_state.get() {
+                AppState::MainMenu => false,
+                AppState::Game => {
+                    match game_state.get() {
+                        GameState::Playing => false,
+                        GameState::Paused => false,
+                        GameState::Won => true,
+                        GameState::Lost => true,
+                    }
+                },
+                AppState::Restart => false,
             }
         }
 
@@ -121,8 +160,11 @@ impl MenuSystems {
                     match game_state.get() {
                         GameState::Playing => false,
                         GameState::Paused => true,
+                        GameState::Won => true,
+                        GameState::Lost => true,
                     }
                 },
+                AppState::Restart => false,
             }
         }
 

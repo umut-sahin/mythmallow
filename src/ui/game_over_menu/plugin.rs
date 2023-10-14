@@ -1,0 +1,36 @@
+use crate::{
+    prelude::*,
+    ui::game_over_menu::systems::*,
+};
+
+/// Plugin for managing the game over menu.
+pub struct GameOverMenuPlugin;
+
+impl Plugin for GameOverMenuPlugin {
+    fn build(&self, app: &mut App) {
+        app.register_type::<GameOverMenu>();
+        app.register_type::<GameOverMenuTitle>();
+        app.register_type::<GameOverMenuPlayAgainButton>();
+        app.register_type::<GameOverMenuRetryButton>();
+        app.register_type::<GameOverMenuReturnToMainMenuButton>();
+        app.register_type::<GameOverMenuQuitToDesktopButton>();
+
+        app.add_systems(OnEnter(GameState::Won), spawn_game_over_menu);
+        app.add_systems(OnEnter(GameState::Lost), spawn_game_over_menu);
+
+        app.add_systems(Update, navigation.in_set(GameOverMenuSystems));
+        app.add_systems(
+            PostUpdate,
+            (
+                play_again_button_interaction,
+                retry_button_interaction,
+                return_to_main_menu_button_interaction,
+                quit_to_desktop_button_interaction,
+            )
+                .in_set(GameOverMenuSystems),
+        );
+
+        app.add_systems(OnExit(GameState::Won), despawn_game_over_menu);
+        app.add_systems(OnExit(GameState::Lost), despawn_game_over_menu);
+    }
+}

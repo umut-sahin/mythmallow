@@ -7,6 +7,7 @@ pub enum AppState {
     #[default]
     MainMenu,
     Game,
+    Restart,
 }
 
 
@@ -16,4 +17,6 @@ pub enum GameState {
     #[default]
     Playing,
     Paused,
+    Won,
+    Lost,
 }

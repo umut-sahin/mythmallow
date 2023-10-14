@@ -20,6 +20,7 @@ pub use {
         property::components::*,
         status_effect::components::*,
         ui::{
+            game_over_menu::components::*,
             main_menu::components::*,
             pause_menu::components::*,
             widget::components::*,
