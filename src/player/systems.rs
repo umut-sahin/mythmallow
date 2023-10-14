@@ -16,7 +16,11 @@ pub fn spawn_player(
         Name::new("Player"),
         Player,
         // Properties
+        Damage(INITIAL_PLAYER_DAMAGE),
+        Health(INITIAL_PLAYER_HEALTH),
         Speed(INITIAL_PLAYER_SPEED),
+        // Combat
+        RemainingHealth(INITIAL_PLAYER_HEALTH),
         // Physics
         PhysicsBundle::at(0.00, 0.00).with_collider(Collider { radius: PLAYER_SIZE }),
         Floating,

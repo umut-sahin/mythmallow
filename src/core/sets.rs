@@ -27,6 +27,7 @@ impl MainMenuSystems {
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, SystemSet)]
 pub enum GamePlaySystems {
     Camera,
+    Combat,
     Enemy,
     Input,
     Map,
@@ -58,7 +59,7 @@ impl GamePlaySystems {
                 }
             }
 
-            let all_sets = [Camera, Enemy, Input, Map, Movement, Physics, Player];
+            let all_sets = [Camera, Combat, Enemy, Input, Map, Movement, Physics, Player];
             for set in all_sets {
                 app.configure_set(FixedUpdate, set.run_if(run_condition));
                 app.configure_set(PreUpdate, set.run_if(run_condition));
@@ -67,7 +68,7 @@ impl GamePlaySystems {
             }
         }
         {
-            let after_physics_set = [Camera, Enemy, Input, Map, Movement, Player];
+            let after_physics_set = [Camera, Combat, Enemy, Input, Map, Movement, Player];
             for set in after_physics_set {
                 app.configure_set(FixedUpdate, Physics.before(set));
                 app.configure_set(PreUpdate, Physics.before(set));

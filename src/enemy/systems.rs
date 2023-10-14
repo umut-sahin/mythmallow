@@ -15,7 +15,11 @@ pub fn spawn_enemies(
         Name::new("Enemy 1"),
         Enemy,
         // Properties
+        Damage(INITIAL_ENEMY_DAMAGE),
+        Health(INITIAL_ENEMY_HEALTH),
         Speed(INITIAL_ENEMY_SPEED),
+        // Combat
+        RemainingHealth(INITIAL_ENEMY_HEALTH),
         // Physics
         PhysicsBundle::at(200.00, 0.00).with_collider(Collider { radius: ENEMY_SIZE }),
         // Texture
@@ -31,7 +35,11 @@ pub fn spawn_enemies(
         Name::new("Enemy 2"),
         Enemy,
         // Properties
+        Damage(INITIAL_ENEMY_DAMAGE),
+        Health(INITIAL_ENEMY_HEALTH),
         Speed(INITIAL_ENEMY_SPEED),
+        // Combat
+        RemainingHealth(INITIAL_ENEMY_HEALTH),
         // Physics
         PhysicsBundle::at(-200.00, 0.00).with_collider(Collider { radius: ENEMY_SIZE }),
         // Texture
@@ -47,7 +55,11 @@ pub fn spawn_enemies(
         Name::new("Enemy 3"),
         Enemy,
         // Properties
+        Damage(INITIAL_ENEMY_DAMAGE),
+        Health(INITIAL_ENEMY_HEALTH),
         Speed(INITIAL_ENEMY_SPEED),
+        // Combat
+        RemainingHealth(INITIAL_ENEMY_HEALTH),
         // Physics
         PhysicsBundle::at(0.00, 200.00).with_collider(Collider { radius: ENEMY_SIZE }),
         // Texture

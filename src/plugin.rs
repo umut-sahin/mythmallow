@@ -1,5 +1,6 @@
 use crate::{
     camera::plugin::CameraPlugin,
+    combat::plugin::CombatPlugin,
     configuration::plugin::ConfigurationPlugin,
     core::plugin::CorePlugin,
     enemy::plugin::EnemyPlugin,
@@ -31,5 +32,6 @@ impl Plugin for MythmellowPlugin {
         app.add_plugins(MovementPlugin);
         app.add_plugins(PlayerPlugin);
         app.add_plugins(EnemyPlugin);
+        app.add_plugins(CombatPlugin);
     }
 }
