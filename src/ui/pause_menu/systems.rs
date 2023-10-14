@@ -142,7 +142,9 @@ pub fn resume_button_interaction(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(mut button) = resume_button_query.get_single_mut() {
-        button.on_click(|| next_game_state.set(GameState::Playing));
+        button.on_click(|| {
+            next_game_state.set(GameState::Playing);
+        });
     }
 }
 
@@ -172,6 +174,8 @@ pub fn quit_to_desktop_button_interaction(
     mut app_exit_event_writer: EventWriter<AppExit>,
 ) {
     if let Ok(mut button) = quit_to_desktop_button_query.get_single_mut() {
-        button.on_click(|| app_exit_event_writer.send(AppExit));
+        button.on_click(|| {
+            app_exit_event_writer.send(AppExit);
+        });
     }
 }
