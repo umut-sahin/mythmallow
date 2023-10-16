@@ -15,10 +15,13 @@ impl GameOverMenuSystems {
                 AppState::MainMenu => false,
                 AppState::Game => {
                     match game_state.get() {
+                        GameState::None => false,
+                        GameState::Setup => false,
+                        GameState::Loading => false,
                         GameState::Playing => false,
                         GameState::Paused => false,
-                        GameState::Won => true,
-                        GameState::Lost => true,
+                        GameState::Won => false,
+                        GameState::Over => true,
                     }
                 },
                 AppState::Restart => false,

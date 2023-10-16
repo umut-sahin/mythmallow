@@ -15,8 +15,7 @@ impl Plugin for GameOverMenuPlugin {
         app.register_type::<GameOverMenuReturnToMainMenuButton>();
         app.register_type::<GameOverMenuQuitToDesktopButton>();
 
-        app.add_systems(OnEnter(GameState::Won), spawn_game_over_menu);
-        app.add_systems(OnEnter(GameState::Lost), spawn_game_over_menu);
+        app.add_systems(OnEnter(GameState::Over), spawn_game_over_menu);
 
         app.add_systems(Update, navigation.in_set(GameOverMenuSystems));
         app.add_systems(
@@ -30,7 +29,6 @@ impl Plugin for GameOverMenuPlugin {
                 .in_set(GameOverMenuSystems),
         );
 
-        app.add_systems(OnExit(GameState::Won), despawn_game_over_menu);
-        app.add_systems(OnExit(GameState::Lost), despawn_game_over_menu);
+        app.add_systems(OnExit(GameState::Over), despawn_game_over_menu);
     }
 }

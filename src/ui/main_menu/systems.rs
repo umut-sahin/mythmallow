@@ -126,7 +126,7 @@ pub fn start_game_on_play_button_click(
     if let Ok(mut button) = play_button_query.get_single_mut() {
         button.on_click(|| {
             next_app_state.set(AppState::Game);
-            next_game_state.set(GameState::Playing);
+            next_game_state.set(GameState::Setup);
         });
     }
 }

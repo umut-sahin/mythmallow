@@ -6,6 +6,7 @@ pub use {
         combat::components::*,
         configuration::resources::*,
         core::{
+            resources::*,
             sets::*,
             states::*,
         },
