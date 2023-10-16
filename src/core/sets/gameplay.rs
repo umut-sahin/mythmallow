@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 /// Systems to run in the game.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, SystemSet)]
-pub enum GamePlaySystems {
+pub enum GameplaySystems {
     Camera,
     Combat,
     Enemy,
@@ -13,10 +13,10 @@ pub enum GamePlaySystems {
     Player,
 }
 
-impl GamePlaySystems {
+impl GameplaySystems {
     /// Configure run conditions for the system set.
     pub fn configure(app: &mut App) {
-        use GamePlaySystems::*;
+        use GameplaySystems::*;
         {
             fn run_condition(
                 app_state: Res<State<AppState>>,

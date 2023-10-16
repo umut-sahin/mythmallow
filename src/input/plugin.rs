@@ -18,7 +18,7 @@ impl Plugin for InputPlugin {
 
         let general_settings = app.world.resource::<Persistent<GeneralSettings>>();
         if general_settings.pause_on_losing_focus {
-            app.add_systems(Update, pause_on_losing_focus.in_set(GamePlaySystems::Input));
+            app.add_systems(Update, pause_on_losing_focus.in_set(GameplaySystems::Input));
         }
     }
 }
