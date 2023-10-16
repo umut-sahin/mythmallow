@@ -15,7 +15,7 @@ impl Plugin for CorePlugin {
         app.add_state::<GameState>();
 
         MainMenuSystems::configure(app);
-        GamePlaySystems::configure(app);
+        GameplaySystems::configure(app);
         PauseMenuSystems::configure(app);
         GameOverMenuSystems::configure(app);
         MenuSystems::configure(app);

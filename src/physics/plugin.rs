@@ -25,13 +25,13 @@ impl Plugin for PhysicsPlugin {
             FixedUpdate,
             (collect_collisions, run_substeps, confine_entities, update_transforms)
                 .chain()
-                .in_set(GamePlaySystems::Physics),
+                .in_set(GameplaySystems::Physics),
         );
 
         app.add_schedule(SubstepSchedule, Schedule::default());
         app.add_systems(
             SubstepSchedule,
-            (apply_velocity, resolve_collisions).chain().in_set(GamePlaySystems::Physics),
+            (apply_velocity, resolve_collisions).chain().in_set(GameplaySystems::Physics),
         );
     }
 }

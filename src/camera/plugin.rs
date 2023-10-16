@@ -16,6 +16,6 @@ impl Plugin for CameraPlugin {
         app.insert_resource(ClearColor(BACKGROUND_COLOR));
 
         app.add_systems(Startup, setup);
-        app.add_systems(PostUpdate, follow_player.in_set(GamePlaySystems::Camera));
+        app.add_systems(PostUpdate, follow_player.in_set(GameplaySystems::Camera));
     }
 }
