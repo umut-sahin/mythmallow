@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 /// Systems to run in the game.
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, SystemSet)]
+#[derive(Clone, Copy, Debug, EnumIter, Eq, Hash, PartialEq, SystemSet)]
 pub enum GameplaySystems {
     Camera,
     Combat,
@@ -16,41 +16,42 @@ pub enum GameplaySystems {
 impl GameplaySystems {
     /// Configure run conditions for the system set.
     pub fn configure(app: &mut App) {
-        use GameplaySystems::*;
-        {
-            fn run_condition(
-                app_state: Res<State<AppState>>,
-                game_state: Res<State<GameState>>,
-            ) -> bool {
-                match app_state.get() {
-                    AppState::MainMenu => false,
-                    AppState::Game => {
-                        match game_state.get() {
-                            GameState::Playing => true,
-                            GameState::Paused => false,
-                            GameState::Won => false,
-                            GameState::Lost => false,
-                        }
-                    },
-                    AppState::Restart => false,
-                }
-            }
-
-            let all_sets = [Camera, Combat, Enemy, Input, Map, Movement, Physics, Player];
-            for set in all_sets {
-                app.configure_set(FixedUpdate, set.run_if(run_condition));
-                app.configure_set(PreUpdate, set.run_if(run_condition));
-                app.configure_set(Update, set.run_if(run_condition));
-                app.configure_set(PostUpdate, set.run_if(run_condition));
+        fn run_condition(
+            app_state: Res<State<AppState>>,
+            game_state: Res<State<GameState>>,
+        ) -> bool {
+            match app_state.get() {
+                AppState::MainMenu => false,
+                AppState::Game => {
+                    match game_state.get() {
+                        GameState::Playing => true,
+                        GameState::Paused => false,
+                        GameState::Won => false,
+                        GameState::Lost => false,
+                    }
+                },
+                AppState::Restart => false,
             }
         }
+
+        for set in GameplaySystems::iter() {
+            app.configure_set(FixedUpdate, set.run_if(run_condition));
+            app.configure_set(PreUpdate, set.run_if(run_condition));
+            app.configure_set(Update, set.run_if(run_condition));
+            app.configure_set(PostUpdate, set.run_if(run_condition));
+        }
+
         {
-            let after_physics_set = [Camera, Combat, Enemy, Input, Map, Movement, Player];
+            let physics = GameplaySystems::Physics;
+
+            let mut after_physics_set = GameplaySystems::iter().collect::<HashSet<_>>();
+            after_physics_set.remove(&physics);
+
             for set in after_physics_set {
-                app.configure_set(FixedUpdate, Physics.before(set));
-                app.configure_set(PreUpdate, Physics.before(set));
-                app.configure_set(Update, Physics.before(set));
-                app.configure_set(PostUpdate, Physics.before(set));
+                app.configure_set(FixedUpdate, physics.before(set));
+                app.configure_set(PreUpdate, physics.before(set));
+                app.configure_set(Update, physics.before(set));
+                app.configure_set(PostUpdate, physics.before(set));
             }
         }
     }
