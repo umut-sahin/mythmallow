@@ -36,6 +36,7 @@ pub(crate) use {
         input::mouse::MouseMotion,
         prelude::*,
         sprite::MaterialMesh2dBundle,
+        utils::HashSet,
         window::WindowFocused,
     },
     bevy_persistent::prelude::*,
@@ -62,6 +63,8 @@ pub(crate) use {
         path::PathBuf,
         time::Duration,
     },
+    strum::IntoEnumIterator as _,
+    strum_macros::EnumIter,
 };
 
 #[cfg(feature = "native")]
