@@ -137,9 +137,9 @@ impl GameOverMenuSystems {
             }
         }
 
-        app.configure_set(PreUpdate, PauseMenuSystems.run_if(run_condition));
-        app.configure_set(Update, PauseMenuSystems.run_if(run_condition));
-        app.configure_set(PostUpdate, PauseMenuSystems.run_if(run_condition));
+        app.configure_set(PreUpdate, GameOverMenuSystems.run_if(run_condition));
+        app.configure_set(Update, GameOverMenuSystems.run_if(run_condition));
+        app.configure_set(PostUpdate, GameOverMenuSystems.run_if(run_condition));
     }
 }
 
