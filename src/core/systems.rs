@@ -7,5 +7,15 @@ pub fn restart(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     next_app_state.set(AppState::Game);
+    next_game_state.set(GameState::Setup);
+}
+
+/// Starts loading of the game.
+pub fn start_loading(mut next_game_state: ResMut<NextState<GameState>>) {
+    next_game_state.set(GameState::Loading);
+}
+
+/// Starts the game.
+pub fn start_playing(mut next_game_state: ResMut<NextState<GameState>>) {
     next_game_state.set(GameState::Playing);
 }

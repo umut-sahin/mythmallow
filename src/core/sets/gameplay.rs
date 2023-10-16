@@ -24,10 +24,13 @@ impl GameplaySystems {
                 AppState::MainMenu => false,
                 AppState::Game => {
                     match game_state.get() {
+                        GameState::None => false,
+                        GameState::Setup => false,
+                        GameState::Loading => false,
                         GameState::Playing => true,
                         GameState::Paused => false,
                         GameState::Won => false,
-                        GameState::Lost => false,
+                        GameState::Over => false,
                     }
                 },
                 AppState::Restart => false,

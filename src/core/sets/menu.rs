@@ -15,10 +15,13 @@ impl MenuSystems {
                 AppState::MainMenu => true,
                 AppState::Game => {
                     match game_state.get() {
+                        GameState::None => false,
+                        GameState::Setup => false,
+                        GameState::Loading => false,
                         GameState::Playing => false,
                         GameState::Paused => true,
-                        GameState::Won => true,
-                        GameState::Lost => true,
+                        GameState::Won => false,
+                        GameState::Over => true,
                     }
                 },
                 AppState::Restart => false,

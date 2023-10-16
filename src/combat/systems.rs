@@ -38,6 +38,7 @@ pub fn damage_player_on_contact_with_enemies(
 
 /// Checks if the player is dead and despawns the player if it is.
 pub fn player_death(
+    mut commands: Commands,
     player_query: Query<&RemainingHealth, With<Player>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
@@ -46,6 +47,7 @@ pub fn player_death(
         Err(_) => return,
     };
     if remaining_health.0 <= 0.00 {
-        next_game_state.set(GameState::Lost);
+        commands.insert_resource(GameResult::Lost);
+        next_game_state.set(GameState::Over);
     }
 }

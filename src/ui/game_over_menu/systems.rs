@@ -12,7 +12,7 @@ pub fn spawn_game_over_menu(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     game_over_menu_action_input_map: Res<InputMap<GameOverMenuAction>>,
-    game_state: Res<State<GameState>>,
+    game_result: Res<GameResult>,
 ) {
     let button_style = styles::button();
     let button_colors = WidgetColors::button();
@@ -21,8 +21,8 @@ pub fn spawn_game_over_menu(
 
     let mut widgets = Vec::with_capacity(3);
 
-    let title_text = match game_state.get() {
-        GameState::Won => {
+    let title_text = match *game_result {
+        GameResult::Won => {
             let play_again_button = Widget::button(
                 &mut commands,
                 (GameOverMenuPlayAgainButton, Widget::default().selected(), WidgetSelected::new()),
@@ -36,7 +36,7 @@ pub fn spawn_game_over_menu(
 
             "You won!"
         },
-        GameState::Lost => {
+        GameResult::Lost => {
             let retry_button = Widget::button(
                 &mut commands,
                 (GameOverMenuRetryButton, Widget::default().selected(), WidgetSelected::new()),
@@ -50,8 +50,6 @@ pub fn spawn_game_over_menu(
 
             "You lost!"
         },
-
-        _ => unreachable!(),
     };
 
     let return_to_main_menu_button = Widget::button(
@@ -134,6 +132,7 @@ pub fn despawn_game_over_menu(
     mut commands: Commands,
     game_over_menu_query: Query<Entity, With<GameOverMenu>>,
 ) {
+    commands.remove_resource::<GameResult>();
     if let Ok(entity) = game_over_menu_query.get_single() {
         commands.entity(entity).despawn_recursive();
     }
@@ -181,10 +180,12 @@ pub fn play_again_button_interaction(
         (Changed<Widget>, With<GameOverMenuPlayAgainButton>),
     >,
     mut next_app_state: ResMut<NextState<AppState>>,
+    mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(mut button) = play_again_button_query.get_single_mut() {
         button.on_click(|| {
             next_app_state.set(AppState::Restart);
+            next_game_state.set(GameState::None);
         });
     }
 }
@@ -193,10 +194,12 @@ pub fn play_again_button_interaction(
 pub fn retry_button_interaction(
     mut retry_button_query: Query<&mut Widget, (Changed<Widget>, With<GameOverMenuRetryButton>)>,
     mut next_app_state: ResMut<NextState<AppState>>,
+    mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(mut button) = retry_button_query.get_single_mut() {
         button.on_click(|| {
             next_app_state.set(AppState::Restart);
+            next_game_state.set(GameState::None);
         });
     }
 }
@@ -213,7 +216,7 @@ pub fn return_to_main_menu_button_interaction(
     if let Ok(mut button) = return_to_main_menu_button_query.get_single_mut() {
         button.on_click(|| {
             next_app_state.set(AppState::MainMenu);
-            next_game_state.set(GameState::default());
+            next_game_state.set(GameState::None);
         });
     }
 }
