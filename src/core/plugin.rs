@@ -8,6 +8,18 @@ pub struct CorePlugin;
 
 impl Plugin for CorePlugin {
     fn build(&self, app: &mut App) {
+        let args = app.world.resource::<Args>();
+
+        let seed = {
+            let seed = match args.seed {
+                Some(seed) => seed,
+                None => ChaCha8Rng::from_entropy().gen::<u64>(),
+            };
+            log::info!("seeding {}", seed);
+            ChaCha8Rng::seed_from_u64(seed).gen::<[u8; 32]>()
+        };
+        app.add_plugins(EntropyPlugin::<ChaCha8Rng>::with_seed(seed));
+
         app.register_type::<AppState>();
         app.register_type::<GameState>();
         app.register_type::<GameResult>();

@@ -90,6 +90,14 @@ Sets the data directory.
 - In wasm:
   - defaults to `session/configuration` which means browsers session storage will be used
 
+#### \-\-seed \<SEED>
+
+Sets the seed for random number generation in the game.
+
+If not set manually, a random seed will be used.
+
+**Warning:** This flag is only for debugging purposes. Same seed can result in a different game, in different versions of the game.
+
 #### \-\-game
 
 Starts the application in the game, skipping menus.
