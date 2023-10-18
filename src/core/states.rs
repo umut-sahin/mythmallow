@@ -6,8 +6,8 @@ use crate::prelude::*;
 pub enum AppState {
     #[default]
     MainMenu,
+    GameModeSelectionScreen,
     Game,
-    Restart,
 }
 
 
@@ -22,4 +22,5 @@ pub enum GameState {
     Paused,
     Won,
     Over,
+    Restart,
 }

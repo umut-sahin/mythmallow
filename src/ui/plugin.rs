@@ -1,6 +1,7 @@
 use crate::{
     prelude::*,
     ui::{
+        game_mode_selection_screen::plugin::GameModeSelectionScreenPlugin,
         game_over_menu::plugin::GameOverMenuPlugin,
         main_menu::plugin::MainMenuPlugin,
         pause_menu::plugin::PauseMenuPlugin,
@@ -15,6 +16,7 @@ impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(WidgetPlugin);
         app.add_plugins(MainMenuPlugin);
+        app.add_plugins(GameModeSelectionScreenPlugin);
         app.add_plugins(PauseMenuPlugin);
         app.add_plugins(GameOverMenuPlugin);
     }

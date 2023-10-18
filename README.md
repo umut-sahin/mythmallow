@@ -102,6 +102,15 @@ If not set manually, a random seed will be used.
 
 Starts the application in the game, skipping menus.
 
+#### \-\-mode \<MODE>
+
+Sets the game mode when starting the application in the game.
+
+Available modes:
+- Survival
+
+If not set manually, a random game mode will be selected.
+
 ## Documentation
 
 ### API Documentation

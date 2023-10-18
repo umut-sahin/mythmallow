@@ -11,13 +11,14 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Player>();
 
-        app.add_systems(OnEnter(AppState::Game), spawn_player);
+        app.add_systems(OnEnter(GameState::Setup), spawn_player.in_set(SetupSystems::Player));
 
         app.add_systems(PreUpdate, cooldown::<Dashing>.in_set(GameplaySystems::Player));
         app.add_systems(Update, (movement, dash).in_set(GameplaySystems::Player));
         app.add_systems(PostUpdate, pause.in_set(GameplaySystems::Player));
 
         app.add_systems(OnEnter(GameState::Over), despawn_player);
+        app.add_systems(OnEnter(GameState::Restart), despawn_player.in_set(RestartSystems::Player));
         app.add_systems(OnExit(AppState::Game), despawn_player);
     }
 }

@@ -9,6 +9,7 @@ pub mod core;
 pub mod enemy;
 pub mod input;
 pub mod map;
+pub mod mode;
 pub mod movement;
 pub mod physics;
 pub mod player;

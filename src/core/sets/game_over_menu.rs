@@ -13,6 +13,7 @@ impl GameOverMenuSystems {
         ) -> bool {
             match app_state.get() {
                 AppState::MainMenu => false,
+                AppState::GameModeSelectionScreen => false,
                 AppState::Game => {
                     match game_state.get() {
                         GameState::None => false,
@@ -22,9 +23,9 @@ impl GameOverMenuSystems {
                         GameState::Paused => false,
                         GameState::Won => false,
                         GameState::Over => true,
+                        GameState::Restart => false,
                     }
                 },
-                AppState::Restart => false,
             }
         }
 

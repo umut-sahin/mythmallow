@@ -121,12 +121,10 @@ pub fn navigation(
 pub fn start_game_on_play_button_click(
     mut play_button_query: Query<&mut Widget, (Changed<Widget>, With<MainMenuPlayButton>)>,
     mut next_app_state: ResMut<NextState<AppState>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(mut button) = play_button_query.get_single_mut() {
         button.on_click(|| {
-            next_app_state.set(AppState::Game);
-            next_game_state.set(GameState::Setup);
+            next_app_state.set(AppState::GameModeSelectionScreen);
         });
     }
 }

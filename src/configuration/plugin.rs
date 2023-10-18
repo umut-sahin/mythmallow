@@ -13,8 +13,7 @@ impl Plugin for ConfigurationPlugin {
 
         let args = app.world.resource::<Args>();
         if args.start_in_game {
-            app.world.insert_resource(NextState(Some(AppState::Game)));
-            app.world.insert_resource(NextState(Some(GameState::Setup)));
+            app.world.insert_resource(NextState(Some(AppState::GameModeSelectionScreen)));
         }
     }
 }
