@@ -6,6 +6,7 @@ use crate::{
     enemy::plugin::EnemyPlugin,
     input::plugin::InputPlugin,
     map::plugin::MapPlugin,
+    mode::plugin::ModePlugin,
     movement::plugin::MovementPlugin,
     physics::plugin::PhysicsPlugin,
     player::plugin::PlayerPlugin,
@@ -26,6 +27,7 @@ impl Plugin for MythmellowPlugin {
         app.add_plugins(CameraPlugin);
         app.add_plugins(UiPlugin);
         app.add_plugins(PhysicsPlugin);
+        app.add_plugins(ModePlugin);
         app.add_plugins(MapPlugin);
         app.add_plugins(PropertyPlugin);
         app.add_plugins(StatusEffectPlugin);

@@ -15,6 +15,8 @@ pub struct Args {
     pub seed: Option<u64>,
     /// Flag to start the application in the game.
     pub start_in_game: bool,
+    /// Game mode to pick when starting in game.
+    pub start_in_game_mode: Option<String>,
 }
 
 impl Args {
@@ -47,11 +49,13 @@ impl Args {
             pub seed: Option<u64>,
             #[arg(long)]
             pub game: bool,
+            #[arg(long)]
+            pub mode: Option<String>,
         }
 
         impl Default for ArgsParser {
             fn default() -> ArgsParser {
-                ArgsParser { configuration: None, data: None, seed: None, game: false }
+                ArgsParser { configuration: None, data: None, seed: None, game: false, mode: None }
             }
         }
 
@@ -99,8 +103,15 @@ impl Args {
 
                 let seed = self.seed;
                 let start_in_game = self.game;
+                let start_in_game_mode = self.mode;
 
-                Args { configuration_directory, data_directory, seed, start_in_game }
+                Args {
+                    configuration_directory,
+                    data_directory,
+                    seed,
+                    start_in_game,
+                    start_in_game_mode,
+                }
             }
         }
 

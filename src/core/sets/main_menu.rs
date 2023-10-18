@@ -10,8 +10,8 @@ impl MainMenuSystems {
         fn run_condition(app_state: Res<State<AppState>>) -> bool {
             match app_state.get() {
                 AppState::MainMenu => true,
+                AppState::GameModeSelectionScreen => false,
                 AppState::Game => false,
-                AppState::Restart => false,
             }
         }
 

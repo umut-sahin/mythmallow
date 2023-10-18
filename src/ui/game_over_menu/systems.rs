@@ -179,13 +179,11 @@ pub fn play_again_button_interaction(
         &mut Widget,
         (Changed<Widget>, With<GameOverMenuPlayAgainButton>),
     >,
-    mut next_app_state: ResMut<NextState<AppState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(mut button) = play_again_button_query.get_single_mut() {
         button.on_click(|| {
-            next_app_state.set(AppState::Restart);
-            next_game_state.set(GameState::None);
+            next_game_state.set(GameState::Restart);
         });
     }
 }
@@ -193,13 +191,11 @@ pub fn play_again_button_interaction(
 /// Restarts the game if retry button is clicked.
 pub fn retry_button_interaction(
     mut retry_button_query: Query<&mut Widget, (Changed<Widget>, With<GameOverMenuRetryButton>)>,
-    mut next_app_state: ResMut<NextState<AppState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(mut button) = retry_button_query.get_single_mut() {
         button.on_click(|| {
-            next_app_state.set(AppState::Restart);
-            next_game_state.set(GameState::None);
+            next_game_state.set(GameState::Restart);
         });
     }
 }
