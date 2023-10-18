@@ -1,5 +1,8 @@
 use crate::{
-    mode::systems::*,
+    mode::{
+        survival::plugin::SurvivalGameModePlugin,
+        systems::*,
+    },
     prelude::*,
 };
 
@@ -9,6 +12,8 @@ pub struct ModePlugin;
 impl Plugin for ModePlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<GameModeIndex>();
+
+        app.add_plugins(SurvivalGameModePlugin);
 
         app.add_systems(
             PostUpdate,
