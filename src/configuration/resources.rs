@@ -11,6 +11,8 @@ pub struct Args {
     pub configuration_directory: PathBuf,
     /// Base path for data files.
     pub data_directory: PathBuf,
+    /// Seed for random number generation.
+    pub seed: Option<u64>,
     /// Flag to start the application in the game.
     pub start_in_game: bool,
 }
@@ -42,12 +44,14 @@ impl Args {
             #[arg(long)]
             pub data: Option<PathBuf>,
             #[arg(long)]
+            pub seed: Option<u64>,
+            #[arg(long)]
             pub game: bool,
         }
 
         impl Default for ArgsParser {
             fn default() -> ArgsParser {
-                ArgsParser { configuration: None, data: None, game: false }
+                ArgsParser { configuration: None, data: None, seed: None, game: false }
             }
         }
 
@@ -93,9 +97,10 @@ impl Args {
                         }
                     });
 
+                let seed = self.seed;
                 let start_in_game = self.game;
 
-                Args { configuration_directory, data_directory, start_in_game }
+                Args { configuration_directory, data_directory, seed, start_in_game }
             }
         }
 

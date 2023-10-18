@@ -15,9 +15,12 @@ authors = [
 bevy = { version = "0.11", features = ["serialize"] }
 bevy-persistent = { version = "0.3" }
 bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls.git", branch = "main", optional = true }
+bevy_prng = { version = "0.1", features = ["rand_chacha"] }
+bevy_rand = { version = "0.3" }
 clap = { version = "4.3", features = ["derive"] }
 dirs = { version = "5.0" }
 leafwing-input-manager = { version = "0.10" }
+rand = { version = "0.8" }
 serde = { version = "1.0", features = ["derive"] }
 smallvec = { version = "1.11", features = ["serde"] }
 strum = { version = "0.25" }
