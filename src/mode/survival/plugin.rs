@@ -34,6 +34,10 @@ impl Plugin for SurvivalGameModePlugin {
             OnEnter(GameState::Loading),
             load.in_set(LoadingSystems::GameMode).run_if(in_survival_mode),
         );
+        app.add_systems(
+            OnEnter(GameState::Loading),
+            spawn_map.in_set(LoadingSystems::Map).run_if(in_survival_mode),
+        );
         app.add_systems(Update, tick.in_set(GameplaySystems::GameMode).run_if(in_survival_mode));
         app.add_systems(OnEnter(GameState::Won), win.run_if(in_survival_mode));
     }

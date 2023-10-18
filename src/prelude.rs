@@ -12,7 +12,10 @@ pub use {
         },
         enemy::components::*,
         input::actions::*,
-        map::components::*,
+        map::{
+            components::*,
+            resources::*,
+        },
         mode::{
             interfaces::*,
             registry::*,
