@@ -1,5 +1,4 @@
 use crate::{
-    map::constants::MAP_BOUND,
     physics::{
         constants::*,
         schedules::*,
@@ -62,21 +61,26 @@ pub fn run_substeps(world: &mut World) {
 }
 
 /// Confines entities to the map area.
-pub fn confine_entities(mut query: Query<(&mut Position, &Collider)>) {
-    for (mut position, collider) in &mut query {
-        let bottom_left = position.0 - collider.radius;
-        let top_right = position.0 + collider.radius;
+pub fn confine_entities(
+    map_bounds: Option<Res<MapBounds>>,
+    mut query: Query<(&mut Position, &Collider)>,
+) {
+    if let Some(map_bounds) = map_bounds {
+        for (mut position, collider) in &mut query {
+            let bottom_left = position.0 - collider.radius;
+            let top_right = position.0 + collider.radius;
 
-        if top_right.x > MAP_BOUND {
-            position.x = MAP_BOUND - collider.radius;
-        } else if bottom_left.x < -MAP_BOUND {
-            position.x = -(MAP_BOUND - collider.radius);
-        }
+            if top_right.x > map_bounds.x_max {
+                position.x = map_bounds.x_max - collider.radius;
+            } else if bottom_left.x < map_bounds.x_min {
+                position.x = map_bounds.x_min + collider.radius;
+            }
 
-        if top_right.y > MAP_BOUND {
-            position.y = MAP_BOUND - collider.radius;
-        } else if bottom_left.y < -MAP_BOUND {
-            position.y = -(MAP_BOUND - collider.radius);
+            if top_right.y > map_bounds.y_max {
+                position.y = map_bounds.y_max - collider.radius;
+            } else if bottom_left.y < map_bounds.y_min {
+                position.y = map_bounds.y_min + collider.radius;
+            }
         }
     }
 }
