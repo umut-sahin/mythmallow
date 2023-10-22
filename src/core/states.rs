@@ -24,3 +24,12 @@ pub enum GameState {
     Over,
     Restart,
 }
+
+
+/// State of the diagnostics overlay.
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq, Reflect, States)]
+pub enum DiagnosticsOverlayState {
+    #[default]
+    Disabled,
+    Enabled,
+}

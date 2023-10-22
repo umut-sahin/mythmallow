@@ -5,6 +5,7 @@ use crate::prelude::*;
 #[derive(Actionlike, Clone, Copy, Debug, Eq, Hash, PartialEq, Reflect)]
 pub enum GlobalAction {
     ToggleFullscreen,
+    ToggleDiagnosticsOverlay,
 }
 
 impl GlobalAction {
@@ -12,7 +13,10 @@ impl GlobalAction {
     pub fn setup(app: &mut App) {
         app.add_plugins(InputManagerPlugin::<GlobalAction>::default());
 
-        let input_map = InputMap::new([(KeyCode::F11, GlobalAction::ToggleFullscreen)]);
+        let input_map = InputMap::new([
+            (KeyCode::F11, GlobalAction::ToggleFullscreen),
+            (KeyCode::F10, GlobalAction::ToggleDiagnosticsOverlay),
+        ]);
 
         app.insert_resource(input_map);
         app.insert_resource(ActionState::<GlobalAction>::default());

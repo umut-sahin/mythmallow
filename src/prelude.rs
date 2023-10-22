@@ -30,6 +30,7 @@ pub use {
         property::components::*,
         status_effect::components::*,
         ui::{
+            diagnostics_overlay::components::*,
             game_mode_selection_screen::components::*,
             game_over_menu::components::*,
             main_menu::components::*,
@@ -42,6 +43,10 @@ pub use {
 pub(crate) use {
     bevy::{
         app::AppExit,
+        diagnostic::{
+            DiagnosticsStore,
+            FrameTimeDiagnosticsPlugin,
+        },
         ecs::schedule::ScheduleLabel,
         input::mouse::MouseMotion,
         log,
