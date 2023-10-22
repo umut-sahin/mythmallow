@@ -1,8 +1,8 @@
 use crate::prelude::*;
 
 
-/// Sets up the main camera.
-pub fn setup(mut commands: Commands) {
+/// Spawns the main camera of the game.
+pub fn spawn_camera(mut commands: Commands) {
     commands.spawn((Name::new("Main Camera"), MainCamera, Camera2dBundle::default()));
 }
 
