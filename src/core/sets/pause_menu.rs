@@ -17,7 +17,7 @@ impl PauseMenuSystems {
                 AppState::Game => {
                     match game_state.get() {
                         GameState::None => false,
-                        GameState::Setup => false,
+                        GameState::Initialization => false,
                         GameState::Loading => false,
                         GameState::Playing => false,
                         GameState::Paused => true,

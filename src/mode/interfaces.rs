@@ -5,6 +5,6 @@ use crate::prelude::*;
 pub trait Mode: Send + Sync + 'static {
     fn name(&self) -> &'static str;
     fn description(&self) -> &'static str;
-    fn setup(&self, world: &mut World);
-    fn cleanup(&self, world: &mut World);
+    fn initialize(&self, world: &mut World);
+    fn deinitialize(&self, world: &mut World);
 }

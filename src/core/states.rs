@@ -16,7 +16,7 @@ pub enum AppState {
 pub enum GameState {
     #[default]
     None,
-    Setup,
+    Initialization,
     Loading,
     Playing,
     Paused,

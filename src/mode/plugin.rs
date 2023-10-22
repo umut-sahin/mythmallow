@@ -22,12 +22,15 @@ impl Plugin for ModePlugin {
                 .run_if(|game_mode_index: Option<Res<GameModeIndex>>| game_mode_index.is_some()),
         );
 
-        app.add_systems(OnEnter(GameState::Setup), setup_game_mode.in_set(SetupSystems::First));
+        app.add_systems(
+            OnEnter(GameState::Initialization),
+            initialize_game_mode.in_set(InitializationSystems::First),
+        );
         app.add_systems(
             OnEnter(GameState::Restart),
             restart_game_mode.in_set(RestartSystems::Last),
         );
-        app.add_systems(OnExit(AppState::Game), cleanup_game_mode);
+        app.add_systems(OnExit(AppState::Game), deinitialize_game_mode);
 
         let args = app.world.resource::<Args>();
         if args.start_in_game {

@@ -32,27 +32,28 @@ pub fn game_mode_selected(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     next_app_state.set(AppState::Game);
-    next_game_state.set(GameState::Setup);
+    next_game_state.set(GameState::Initialization);
 }
 
-/// Sets up the selected game mode.
-pub fn setup_game_mode(world: &mut World) {
+
+/// Initializes the selected game mode.
+pub fn initialize_game_mode(world: &mut World) {
     let game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
     let selection = world.resource::<GameModeIndex>().0;
-    game_mode_registry[selection].setup(world);
+    game_mode_registry[selection].initialize(world);
 }
 
 /// Restarts up the selected game mode.
 pub fn restart_game_mode(world: &mut World) {
     let game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
     let selection = world.resource::<GameModeIndex>().0;
-    game_mode_registry[selection].cleanup(world);
+    game_mode_registry[selection].deinitialize(world);
 }
 
-/// Cleans up the selected game mode.
-pub fn cleanup_game_mode(world: &mut World) {
+/// Deinitializes the selected game mode.
+pub fn deinitialize_game_mode(world: &mut World) {
     let game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
     let selection = world.resource::<GameModeIndex>().0;
-    game_mode_registry[selection].cleanup(world);
+    game_mode_registry[selection].deinitialize(world);
     world.remove_resource::<GameModeIndex>();
 }

@@ -27,7 +27,7 @@ impl GameplaySystems {
                 AppState::Game => {
                     match game_state.get() {
                         GameState::None => false,
-                        GameState::Setup => false,
+                        GameState::Initialization => false,
                         GameState::Loading => false,
                         GameState::Playing => true,
                         GameState::Paused => false,
