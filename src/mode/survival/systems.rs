@@ -7,8 +7,8 @@ use {
 };
 
 
-/// Sets up the game mode.
-pub fn setup(mut commands: Commands) {
+/// Initializes the game.
+pub fn initialize(mut commands: Commands) {
     commands.insert_resource(CurrentWave(1));
 }
 

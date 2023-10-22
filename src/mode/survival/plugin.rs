@@ -27,8 +27,8 @@ impl Plugin for SurvivalGameModePlugin {
             |survival_mode: Option<Res<GameMode<Survival>>>| survival_mode.is_some();
 
         app.add_systems(
-            OnEnter(GameState::Setup),
-            setup.in_set(SetupSystems::GameMode).run_if(in_survival_mode),
+            OnEnter(GameState::Initialization),
+            initialize.in_set(InitializationSystems::GameMode).run_if(in_survival_mode),
         );
         app.add_systems(
             OnEnter(GameState::Loading),

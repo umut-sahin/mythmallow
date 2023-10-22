@@ -29,7 +29,7 @@ impl Plugin for CorePlugin {
 
         MainMenuSystems::configure(app);
         GameModeSelectionScreenSystems::configure(app);
-        SetupSystems::configure(app);
+        InitializationSystems::configure(app);
         LoadingSystems::configure(app);
         GameplaySystems::configure(app);
         PauseMenuSystems::configure(app);
@@ -37,7 +37,10 @@ impl Plugin for CorePlugin {
         RestartSystems::configure(app);
         MenuSystems::configure(app);
 
-        app.add_systems(OnEnter(GameState::Setup), start_loading.in_set(SetupSystems::Done));
+        app.add_systems(
+            OnEnter(GameState::Initialization),
+            start_loading.in_set(InitializationSystems::Done),
+        );
         app.add_systems(OnEnter(GameState::Loading), start_playing.in_set(LoadingSystems::Done));
         app.add_systems(OnEnter(GameState::Restart), restart.in_set(RestartSystems::Done));
     }

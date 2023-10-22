@@ -12,5 +12,5 @@ pub fn start_playing(mut next_game_state: ResMut<NextState<GameState>>) {
 
 /// Starts the game again.
 pub fn restart(mut next_game_state: ResMut<NextState<GameState>>) {
-    next_game_state.set(GameState::Setup);
+    next_game_state.set(GameState::Initialization);
 }

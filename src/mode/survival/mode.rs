@@ -14,11 +14,11 @@ impl Mode for Survival {
         todo!();
     }
 
-    fn setup(&self, world: &mut World) {
+    fn initialize(&self, world: &mut World) {
         world.init_resource::<GameMode<Survival>>();
     }
 
-    fn cleanup(&self, world: &mut World) {
+    fn deinitialize(&self, world: &mut World) {
         world.remove_resource::<GameMode<Survival>>();
     }
 }

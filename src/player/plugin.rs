@@ -11,7 +11,10 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Player>();
 
-        app.add_systems(OnEnter(GameState::Setup), spawn_player.in_set(SetupSystems::Player));
+        app.add_systems(
+            OnEnter(GameState::Initialization),
+            spawn_player.in_set(InitializationSystems::Player),
+        );
 
         app.add_systems(PreUpdate, cooldown::<Dashing>.in_set(GameplaySystems::Player));
         app.add_systems(Update, (movement, dash).in_set(GameplaySystems::Player));
