@@ -35,6 +35,20 @@ pub fn toggle_fullscreen(global_action_state: Res<ActionState<GlobalAction>>) {
     }
 }
 
+/// Toggles diagnostics overlay depending on state.
+pub fn toggle_diagnostics_overlay(
+    global_action_state: Res<ActionState<GlobalAction>>,
+    mut next_diagnostics_overlay_state: ResMut<NextState<DiagnosticsOverlayState>>,
+    diagnostics_overlay_state: Res<State<DiagnosticsOverlayState>>,
+) {
+    if global_action_state.just_pressed(GlobalAction::ToggleDiagnosticsOverlay) {
+        next_diagnostics_overlay_state.set(match diagnostics_overlay_state.get() {
+            DiagnosticsOverlayState::Enabled => DiagnosticsOverlayState::Disabled,
+            DiagnosticsOverlayState::Disabled => DiagnosticsOverlayState::Enabled,
+        });
+    }
+}
+
 
 /// Pauses the game when focus to the application is lost.
 pub fn pause_on_losing_focus(

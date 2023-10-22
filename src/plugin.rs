@@ -21,8 +21,8 @@ pub struct MythmellowPlugin;
 
 impl Plugin for MythmellowPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(CorePlugin);
         app.add_plugins(ConfigurationPlugin);
+        app.add_plugins(CorePlugin);
         app.add_plugins(InputPlugin);
         app.add_plugins(CameraPlugin);
         app.add_plugins(UiPlugin);

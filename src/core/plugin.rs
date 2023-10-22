@@ -23,9 +23,16 @@ impl Plugin for CorePlugin {
         app.register_type::<AppState>();
         app.register_type::<GameState>();
         app.register_type::<GameResult>();
+        app.register_type::<DiagnosticsOverlayState>();
 
         app.add_state::<AppState>();
         app.add_state::<GameState>();
+        app.add_state::<DiagnosticsOverlayState>();
+
+        let general_settings = app.world.resource::<Persistent<GeneralSettings>>();
+        if general_settings.show_diagnostics_overlay {
+            app.world.insert_resource(NextState(Some(DiagnosticsOverlayState::Enabled)));
+        }
 
         MainMenuSystems::configure(app);
         GameModeSelectionScreenSystems::configure(app);

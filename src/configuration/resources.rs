@@ -163,6 +163,7 @@ impl Args {
 #[serde(default)]
 pub struct GeneralSettings {
     pub pause_on_losing_focus: bool,
+    pub show_diagnostics_overlay: bool,
 }
 
 impl GeneralSettings {
@@ -195,7 +196,7 @@ impl GeneralSettings {
 
 impl Default for GeneralSettings {
     fn default() -> GeneralSettings {
-        GeneralSettings { pause_on_losing_focus: true }
+        GeneralSettings { pause_on_losing_focus: true, show_diagnostics_overlay: false }
     }
 }
 
