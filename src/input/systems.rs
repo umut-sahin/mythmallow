@@ -35,6 +35,21 @@ pub fn toggle_fullscreen(global_action_state: Res<ActionState<GlobalAction>>) {
     }
 }
 
+// Toggles FPS depending on current fps state
+pub fn view_fps(
+    global_action_state: Res<ActionState<GlobalAction>>,
+    mut next_stat_state: ResMut<NextState<DiagnosticsState>>,
+    stat_state: Res<State<DiagnosticsState>>,
+) {
+    if global_action_state.just_pressed(GlobalAction::FPSViewer) {
+        if *(stat_state.get()) == DiagnosticsState::FPS {
+            next_stat_state.set(DiagnosticsState::NoFPS);
+        } else {
+            next_stat_state.set(DiagnosticsState::FPS);
+        }
+    }
+}
+
 
 /// Pauses the game when focus to the application is lost.
 pub fn pause_on_losing_focus(

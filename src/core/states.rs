@@ -24,3 +24,11 @@ pub enum GameState {
     Over,
     Restart,
 }
+
+// Diagnostics states (very early, if we want to track others, we should configure)
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq, Reflect, States)]
+pub enum DiagnosticsState {
+    #[default]
+    NoFPS,
+    FPS,
+}

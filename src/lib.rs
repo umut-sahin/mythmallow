@@ -6,6 +6,8 @@ pub mod camera;
 pub mod combat;
 pub mod configuration;
 pub mod core;
+
+pub mod diagnostics;
 pub mod enemy;
 pub mod input;
 pub mod map;

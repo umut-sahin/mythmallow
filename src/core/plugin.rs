@@ -23,9 +23,11 @@ impl Plugin for CorePlugin {
         app.register_type::<AppState>();
         app.register_type::<GameState>();
         app.register_type::<GameResult>();
+        app.register_type::<DiagnosticsState>();
 
         app.add_state::<AppState>();
         app.add_state::<GameState>();
+        app.add_state::<DiagnosticsState>();
 
         MainMenuSystems::configure(app);
         GameModeSelectionScreenSystems::configure(app);

@@ -15,6 +15,7 @@ impl Plugin for InputPlugin {
         GameOverMenuAction::setup(app);
 
         app.add_systems(Update, toggle_fullscreen);
+        app.add_systems(Update, view_fps);
 
         let general_settings = app.world.resource::<Persistent<GeneralSettings>>();
         if general_settings.pause_on_losing_focus {
