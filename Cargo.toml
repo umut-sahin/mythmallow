@@ -9,6 +9,7 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 authors = [
     "Umut Şahin <umutsahin@protonmail.com>",
+    "Emre Baba <emrebaba0@protonmail.com>",
 ]
 
 [dependencies]
