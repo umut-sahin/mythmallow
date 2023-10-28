@@ -18,6 +18,7 @@ bevy-persistent = { version = "0.3" }
 bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls.git", branch = "main", optional = true }
 bevy_prng = { version = "0.1", features = ["rand_chacha"] }
 bevy_rand = { version = "0.3" }
+bevy_xpbd_2d = { git = "https://github.com/Jondolf/bevy_xpbd", branch = "main"}
 clap = { version = "4.3", features = ["derive"] }
 dirs = { version = "5.0" }
 leafwing-input-manager = { version = "0.10" }

@@ -3,7 +3,6 @@ use crate::{
     prelude::*,
 };
 
-
 /// Spawns the player.
 pub fn spawn_player(
     mut commands: Commands,
@@ -11,32 +10,39 @@ pub fn spawn_player(
     mut materials: ResMut<Assets<ColorMaterial>>,
     game_action_input_map: Res<InputMap<GameAction>>,
 ) {
-    commands.spawn((
-        // Tags
-        Name::new("Player"),
-        Player,
-        // Properties
-        Damage(INITIAL_PLAYER_DAMAGE),
-        Health(INITIAL_PLAYER_HEALTH),
-        Speed(INITIAL_PLAYER_SPEED),
-        // Combat
-        RemainingHealth(INITIAL_PLAYER_HEALTH),
-        // Physics
-        PhysicsBundle::at(0.00, 0.00).with_collider(Collider { radius: PLAYER_SIZE }),
-        Floating,
-        // Texture
-        MaterialMesh2dBundle {
-            mesh: meshes.add(shape::Circle::new(PLAYER_SIZE).into()).into(),
-            material: materials.add(ColorMaterial::from(Color::GREEN)),
-            transform: Transform::from_translation(Vec3::new(0.00, 0.00, 2.00)),
-            ..default()
-        },
-        // Input
-        InputManagerBundle::<GameAction> {
-            action_state: ActionState::default(),
-            input_map: game_action_input_map.clone(),
-        },
-    ));
+    commands
+        .spawn((
+            // Tags
+            Name::new("Player"),
+            Player,
+            // Properties
+            Damage(INITIAL_PLAYER_DAMAGE),
+            Health(INITIAL_PLAYER_HEALTH),
+            Speed(INITIAL_PLAYER_SPEED),
+            // Combat
+            RemainingHealth(INITIAL_PLAYER_HEALTH),
+            // Physics
+            RigidBody::Dynamic,
+            Position(Vector::new(0.0, 0.0)),
+            Collider::ball(PLAYER_SIZE),
+            LinearVelocity(Vector::new(0.0, 0.0)),
+            CollisionLayers::new([Layer::Player], [Layer::Player]),
+            // Texture
+            MaterialMesh2dBundle {
+                mesh: meshes.add(shape::Circle::new(PLAYER_SIZE).into()).into(),
+                material: materials.add(ColorMaterial::from(Color::GREEN)),
+                transform: Transform::from_translation(Vec3::new(0.00, 0.00, 2.00)),
+                ..default()
+            },
+            // Input
+            InputManagerBundle::<GameAction> {
+                action_state: ActionState::default(),
+                input_map: game_action_input_map.clone(),
+            },
+        ))
+        .with_children(|child_builder| {
+            child_builder.spawn((Collider::ball(PLAYER_SIZE), PlayerHitbox, Sensor));
+        });
 }
 
 /// Despawns the player.
@@ -50,7 +56,7 @@ pub fn despawn_player(mut commands: Commands, player_query: Query<Entity, With<P
 /// Moves the player.
 pub fn movement(
     mut player_query: Query<
-        (&ActionState<GameAction>, &Speed, &mut Velocity),
+        (&ActionState<GameAction>, &Speed, &mut LinearVelocity),
         (With<Player>, Without<Dashing>),
     >,
 ) {
@@ -81,7 +87,7 @@ pub fn movement(
 pub fn dash(
     mut commands: Commands,
     player_query: Query<
-        (Entity, &ActionState<GameAction>, &Velocity),
+        (Entity, &ActionState<GameAction>, &LinearVelocity),
         (With<Player>, Without<Cooldown<Dashing>>),
     >,
 ) {
@@ -103,7 +109,7 @@ pub fn dash(
 
 
 /// Opens pause menu on pause action.
-pub fn pause(
+pub fn pause_the_game(
     game_action_state_query: Query<&ActionState<GameAction>, With<Player>>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
