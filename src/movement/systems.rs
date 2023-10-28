@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 
 /// Increases the velocity of the object that just started to dash.
-pub fn start_dashing(mut query: Query<&mut Velocity, Added<Dashing>>) {
+pub fn start_dashing(mut query: Query<&mut LinearVelocity, Added<Dashing>>) {
     for mut velocity in &mut query {
         velocity.0 *= 3.00;
     }
@@ -12,7 +12,7 @@ pub fn start_dashing(mut query: Query<&mut Velocity, Added<Dashing>>) {
 pub fn keep_dashing(
     mut commands: Commands,
     time: Res<Time>,
-    mut dashing_entities_query: Query<(Entity, &mut Dashing, &mut Velocity)>,
+    mut dashing_entities_query: Query<(Entity, &mut Dashing, &mut LinearVelocity)>,
 ) {
     for (entity, mut dashing, mut velocity) in &mut dashing_entities_query {
         dashing.timer.tick(time.delta());

@@ -22,10 +22,7 @@ pub use {
             resources::*,
         },
         movement::components::*,
-        physics::{
-            components::*,
-            resources::*,
-        },
+        physics::layers::*,
         player::components::*,
         property::components::*,
         status_effect::components::*,
@@ -47,7 +44,6 @@ pub(crate) use {
             DiagnosticsStore,
             FrameTimeDiagnosticsPlugin,
         },
-        ecs::schedule::ScheduleLabel,
         input::mouse::MouseMotion,
         log,
         prelude::*,
@@ -58,6 +54,11 @@ pub(crate) use {
     bevy_persistent::prelude::*,
     bevy_prng::ChaCha8Rng,
     bevy_rand::prelude::*,
+    bevy_xpbd_2d::{
+        math::*,
+        plugins::PhysicsPlugins as XpbdPlugin,
+        prelude::*,
+    },
     clap::Parser,
     leafwing_input_manager::{
         action_state::ActionData,

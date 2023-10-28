@@ -65,6 +65,27 @@ pub fn spawn_map(mut commands: Commands) {
             ));
         }
     });
+
+    commands.spawn((
+        RigidBody::Static,
+        Position(Vector::Y * (MAP_BOUND + 25.0)),
+        Collider::cuboid(MAP_BOUND * 2.0, 50.0),
+    ));
+    commands.spawn((
+        RigidBody::Static,
+        Position(Vector::NEG_Y * (MAP_BOUND + 25.0)),
+        Collider::cuboid(MAP_BOUND * 2.0, 50.0),
+    ));
+    commands.spawn((
+        RigidBody::Static,
+        Position(Vector::X * (MAP_BOUND + 25.0)),
+        Collider::cuboid(50.0, MAP_BOUND * 2.0),
+    ));
+    commands.spawn((
+        RigidBody::Static,
+        Position(Vector::NEG_X * (MAP_BOUND + 25.0)),
+        Collider::cuboid(50.0, MAP_BOUND * 2.0),
+    ));
 }
 
 /// Ticks wave timer and wins the current wave when wave timer is finished.

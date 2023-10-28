@@ -18,6 +18,7 @@ impl Plugin for CorePlugin {
             log::info!("seeding {}", seed);
             ChaCha8Rng::seed_from_u64(seed).gen::<[u8; 32]>()
         };
+
         app.add_plugins(EntropyPlugin::<ChaCha8Rng>::with_seed(seed));
 
         app.register_type::<AppState>();

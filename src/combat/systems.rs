@@ -4,33 +4,40 @@ use crate::prelude::*;
 /// Damages the player for every enemy it's touching.
 pub fn damage_player_on_contact_with_enemies(
     mut commands: Commands,
-    mut player_query: Query<(Entity, &mut RemainingHealth), With<Player>>,
+    mut player_query: Query<&mut RemainingHealth, With<Player>>,
+    mut player_hitbox_query: Query<Entity, With<PlayerHitbox>>,
     enemy_query: Query<&Damage, (Without<Player>, With<Enemy>, Without<Cooldown<Attack>>)>,
-    collisions: Res<Collisions>,
+    mut collision_event_reader: EventReader<Collision>,
 ) {
-    let (player_entity, mut player_remaining_health) = match player_query.get_single_mut() {
+    let mut player_remaining_health = match player_query.get_single_mut() {
         Ok(query_result) => query_result,
         Err(_) => return,
     };
 
-    for collision in &collisions.0 {
-        if collision.is_overlapping
-            && (collision.entities.0 == player_entity || collision.entities.1 == player_entity)
-        {
-            let enemy_entity = if collision.entities.0 == player_entity {
-                collision.entities.1
+    let player_sensor_entity = match player_hitbox_query.get_single_mut() {
+        Ok(query_result) => query_result,
+        Err(_) => return,
+    };
+
+    for Collision(contact) in collision_event_reader.iter() {
+        if contact.entity1 == player_sensor_entity || contact.entity2 == player_sensor_entity {
+            let enemy_entity = if contact.entity1 == player_sensor_entity {
+                contact.entity2
             } else {
-                collision.entities.0
+                contact.entity1
             };
+
             let enemy_damage = match enemy_query.get(enemy_entity) {
                 Ok(query_result) => query_result,
                 Err(_) => continue,
             };
 
             player_remaining_health.0 -= enemy_damage.0;
+
             commands
                 .entity(enemy_entity)
                 .insert(Cooldown::<Attack>::new(Timer::from_seconds(1.00, TimerMode::Once)));
+            break;
         }
     }
 }

@@ -21,7 +21,10 @@ pub fn spawn_enemies(
         // Combat
         RemainingHealth(INITIAL_ENEMY_HEALTH),
         // Physics
-        PhysicsBundle::at(200.00, 0.00).with_collider(Collider { radius: ENEMY_SIZE }),
+        RigidBody::Dynamic,
+        Position(Vector::new(200.0, 0.0)),
+        Collider::ball(ENEMY_SIZE),
+        CollisionLayers::new([Layer::Enemy], [Layer::Enemy]),
         // Texture
         MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(ENEMY_SIZE).into()).into(),
@@ -41,7 +44,10 @@ pub fn spawn_enemies(
         // Combat
         RemainingHealth(INITIAL_ENEMY_HEALTH),
         // Physics
-        PhysicsBundle::at(-200.00, 0.00).with_collider(Collider { radius: ENEMY_SIZE }),
+        RigidBody::Dynamic,
+        Position(Vector::new(-200.0, 0.0)),
+        Collider::ball(ENEMY_SIZE),
+        CollisionLayers::new([Layer::Enemy], [Layer::Enemy]),
         // Texture
         MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(ENEMY_SIZE).into()).into(),
@@ -61,7 +67,10 @@ pub fn spawn_enemies(
         // Combat
         RemainingHealth(INITIAL_ENEMY_HEALTH),
         // Physics
-        PhysicsBundle::at(0.00, 200.00).with_collider(Collider { radius: ENEMY_SIZE }),
+        RigidBody::Dynamic,
+        Position(Vector::new(0.0, 200.0)),
+        Collider::ball(ENEMY_SIZE),
+        CollisionLayers::new([Layer::Enemy], [Layer::Enemy]),
         // Texture
         MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(ENEMY_SIZE).into()).into(),
@@ -79,10 +88,9 @@ pub fn despawn_enemies(mut commands: Commands, enemy_query: Query<Entity, With<E
     }
 }
 
-
 /// Makes the enemies follow the player.
 pub fn follow_player(
-    mut enemy_query: Query<(&Position, &Speed, &mut Velocity), With<Enemy>>,
+    mut enemy_query: Query<(&Position, &Speed, &mut LinearVelocity), With<Enemy>>,
     player_query: Query<&Position, (With<Player>, Without<Enemy>)>,
 ) {
     if let Ok(player_position) = player_query.get_single() {
