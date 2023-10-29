@@ -1,0 +1,41 @@
+[package]
+name = "mythmallow-game"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+bevy = { version = "0.12", features = ["serialize"] }
+bevy-persistent = { version = "0.4" }
+bevy_editor_pls = { version = "0.6", optional = true }
+bevy_prng = { version = "0.2", features = ["rand_chacha"] }
+bevy_rand = { version = "0.4" }
+bevy_xpbd_2d = { version = "0.3" }
+clap = { version = "4.3", features = ["derive"] }
+dirs = { version = "5.0" }
+leafwing-input-manager = { version = "0.11" }
+rand = { version = "0.8" }
+serde = { version = "1.0", features = ["derive"] }
+smallvec = { version = "1.11", features = ["serde"] }
+smol_str = { version = "0.2" }
+strum = { version = "0.25" }
+strum_macros = { version = "0.25" }
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+bevy-persistent-windows = { version = "0.4" }
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+instant = { version = "0.1" }
+web-sys = { version = "0.3" }
+
+[features]
+# base
+default = []
+development = ["bevy_editor_pls"]
+# native
+native = ["bevy-persistent/toml"]
+native-development = ["native", "development", "bevy/dynamic_linking"]
+native-release = ["native"]
+# wasm
+wasm = ["bevy-persistent/json"]
+wasm-development = ["wasm", "development"]
+wasm-release = ["wasm"]

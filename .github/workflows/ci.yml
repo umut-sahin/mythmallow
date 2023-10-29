@@ -67,13 +67,13 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --all --features native -- --deny warnings
+          args: --all -- --deny warnings
 
       - name: Clippy (wasm)
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --all --features wasm --target wasm32-unknown-unknown -- --deny warnings
+          args: --all --target wasm32-unknown-unknown --no-default-features --features wasm-development -- --deny warnings
 
   build-native:
     strategy:
@@ -119,7 +119,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --all --features native
+          args: --all
 
   build-wasm:
     name: Build (wasm)
@@ -154,7 +154,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --all --features wasm --target wasm32-unknown-unknown
+          args: --all --target wasm32-unknown-unknown --no-default-features --features wasm-development
 
   publish:
     if: startsWith(github.ref, 'refs/tags/v')
@@ -177,6 +177,9 @@ jobs:
           override: true
 
       - name: Publish
-        run: cargo publish --features native --token ${REGISTRY_TOKEN}
+        uses: actions-rs/cargo@v1
+        with:
+          command: publish
+          args: --token ${REGISTRY_TOKEN}
         env:
           REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}

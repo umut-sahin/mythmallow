@@ -1,20 +1,19 @@
 #![doc = include_str!("../README.md")]
-#![allow(clippy::derivable_impls)]
-#![allow(clippy::type_complexity)]
-
-pub mod camera;
-pub mod combat;
-pub mod configuration;
-pub mod core;
-pub mod enemy;
-pub mod input;
-pub mod map;
-pub mod mode;
-pub mod movement;
-pub mod physics;
-pub mod player;
-pub mod plugin;
-pub mod prelude;
-pub mod property;
-pub mod status_effect;
-pub mod ui;
+pub use mythmallow_game::*;
+pub mod content {
+    pub mod modes {
+        pub mod survival {
+            pub use mythmallow_mode_survival::*;
+        }
+    }
+    pub mod items {
+        pub mod greek {
+            pub use mythmallow_items_greek::*;
+        }
+    }
+    pub mod players {
+        pub mod greek {
+            pub use mythmallow_players_greek::*;
+        }
+    }
+}
