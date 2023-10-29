@@ -27,7 +27,7 @@ impl Args {
     /// Arguments are parsed from the command line arguments.
     ///
     /// ```shell
-    /// mythmellow --game --data custom/path/to/data
+    /// mythmallow --game --data custom/path/to/data
     /// ```
     ///
     /// # WebAssembly
@@ -35,7 +35,7 @@ impl Args {
     /// Arguments are parsed from the URL.
     ///
     /// ```shell
-    /// https://mythmellow.io/play?game&data=session/custom/path/to/data
+    /// https://mythmallow.io/play?game&data=session/custom/path/to/data
     /// ```
     pub fn parse() -> Args {
         #[derive(Parser)]
@@ -69,7 +69,7 @@ impl Args {
                         #[cfg(feature = "native")]
                         {
                             dirs::config_dir()
-                                .map(|platform_config_dir| platform_config_dir.join("mythmellow"))
+                                .map(|platform_config_dir| platform_config_dir.join("mythmallow"))
                                 .unwrap_or_else(|| {
                                     panic!(
                                         "fatal: unable to determine the configuration directory",
@@ -90,7 +90,7 @@ impl Args {
                         #[cfg(feature = "native")]
                         {
                             dirs::data_dir()
-                                .map(|platform_data_dir| platform_data_dir.join("mythmellow"))
+                                .map(|platform_data_dir| platform_data_dir.join("mythmallow"))
                                 .unwrap_or_else(|| {
                                     panic!("fatal: unable to determine the data directory");
                                 })
@@ -129,7 +129,7 @@ impl Args {
                 ArgsParser::default().canonicalize()
             } else {
                 ArgsParser::try_parse_from(
-                    std::iter::once("mythmellow".to_owned()).chain(
+                    std::iter::once("mythmallow".to_owned()).chain(
                         query
                             .trim_start_matches('?')
                             .split('&')

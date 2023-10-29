@@ -1,6 +1,6 @@
 #[doc(inline)]
 pub use {
-    super::plugin::MythmellowPlugin,
+    super::plugin::MythmallowPlugin,
     crate::{
         camera::components::*,
         combat::components::*,

@@ -1,9 +1,9 @@
 [package]
-name = "mythmellow"
+name = "mythmallow"
 description = "A top-down arena shooter roguelite in which you're a mythical marshmallow god fighting against peasant munchies such as chocolates, jellies, or candies!"
 categories = ["games"]
 keywords = ["arena-shooter", "game", "mythical", "roguelite", "top-down"]
-repository = "https://github.com/umut-sahin/mythmellow/"
+repository = "https://github.com/umut-sahin/mythmallow/"
 version = "0.0.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"

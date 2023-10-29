@@ -1,14 +1,14 @@
-# Mythmellow
+# Mythmallow
 
 A top-down arena shooter roguelite in which you're a mythical marshmallow god fighting against peasant munchies such as chocolates, jellies, or candies!
 
 ## Goal
 
-Mythmellow is created after playing excessive amount of [Brotato](https://store.steampowered.com/app/1942280/Brotato/) as a Rust developer. The purpose is to learn how to develop a game from start to end with [Bevy](https://bevyengine.org/) using the best practices, and share it with the community as an example.
+Mythmallow is created after playing excessive amount of [Brotato](https://store.steampowered.com/app/1942280/Brotato/) as a Rust developer. The purpose is to learn how to develop a game from start to end with [Bevy](https://bevyengine.org/) using the best practices, and share it with the community as an example.
 
 ## Installation
 
-Mythmellow is free and open source! It'll be released on Steam and Epic Games Store in the future for those who want to donate or want to have the convenience of having the game on a gaming platform.
+Mythmallow is free and open source! It'll be released on Steam and Epic Games Store in the future for those who want to donate or want to have the convenience of having the game on a gaming platform.
 
 At the time being, the only way to play is to build the game yourself. The game is still in its infancy, so the release process is non-existent.
 
@@ -133,11 +133,11 @@ mdbook serve --open
 
 ## License
 
-[Mythmellow](https://github.com/umut-sahin/mythmellow/) is free, open source and permissively licensed!
+[Mythmallow](https://github.com/umut-sahin/mythmallow/) is free, open source and permissively licensed!
 
 All code in this repository is dual-licensed under either:
 
-- MIT License ([LICENSE-MIT](https://github.com/umut-sahin/mythmellow/blob/main/LICENSE-MIT) or <https://opensource.org/licenses/MIT>)
-- Apache License, Version 2.0 ([LICENSE-APACHE]((https://github.com/umut-sahin/mythmellow/blob/main/LICENSE-APACHE)) or <https://www.apache.org/licenses/LICENSE-2.0>)
+- MIT License ([LICENSE-MIT](https://github.com/umut-sahin/mythmallow/blob/main/LICENSE-MIT) or <https://opensource.org/licenses/MIT>)
+- Apache License, Version 2.0 ([LICENSE-APACHE]((https://github.com/umut-sahin/mythmallow/blob/main/LICENSE-APACHE)) or <https://www.apache.org/licenses/LICENSE-2.0>)
 
 This means you can select the license you prefer!
