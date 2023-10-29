@@ -1,6 +1,6 @@
 [package]
 name = "mythmallow"
-description = "A top-down arena shooter roguelite in which you're a mythical marshmallow god fighting against peasant munchies such as chocolates, jellies, or candies!"
+description = "A top-down arena shooter roguelite in which you're a mythical marshmallow fighting against peasant munchies such as chocolates, jellies, or candies!"
 categories = ["games"]
 keywords = ["arena-shooter", "game", "mythical", "roguelite", "top-down"]
 repository = "https://github.com/umut-sahin/mythmallow/"
@@ -13,34 +13,35 @@ authors = [
 ]
 
 [dependencies]
-bevy = { version = "0.11", features = ["serialize"] }
-bevy-persistent = { version = "0.3" }
-bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls.git", branch = "main", optional = true }
-bevy_prng = { version = "0.1", features = ["rand_chacha"] }
-bevy_rand = { version = "0.3" }
-bevy_xpbd_2d = { git = "https://github.com/Jondolf/bevy_xpbd", branch = "main"}
-clap = { version = "4.3", features = ["derive"] }
-dirs = { version = "5.0" }
-leafwing-input-manager = { version = "0.10" }
-rand = { version = "0.8" }
-serde = { version = "1.0", features = ["derive"] }
-smallvec = { version = "1.11", features = ["serde"] }
-strum = { version = "0.25" }
-strum_macros = { version = "0.25" }
-
-[target.'cfg(not(target_family = "wasm"))'.dependencies]
-bevy-persistent-windows = { version = "0.3" }
+mythmallow-game = { path = "game" }
+mythmallow-items-greek = { path = "items/greek" }
+mythmallow-mode-survival = { path = "modes/survival" }
+mythmallow-players-greek = { path = "players/greek" }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 console_error_panic_hook = { version = "0.1" }
-instant = { version = "0.1" }
-web-sys = { version = "0.3" }
 
 [features]
-default = []
-development = ["bevy_editor_pls"]
-native = ["bevy-persistent/toml"]
-wasm = ["bevy-persistent/json"]
+# base
+default = ["native-development"]
+development = ["mythmallow-game/development"]
+# native
+native = ["mythmallow-game/native"]
+native-development = ["native", "development", "mythmallow-game/native-development"]
+native-release = ["native", "mythmallow-game/native-release"]
+# wasm
+wasm = ["mythmallow-game/wasm"]
+wasm-development = ["wasm", "development", "mythmallow-game/wasm-development"]
+wasm-release = ["wasm", "mythmallow-game/wasm-release"]
+
+[workspace]
+resolver = "2"
+members = [
+    "game",
+    "items/greek",
+    "modes/survival",
+    "players/greek",
+]
 
 [profile.dev]
 opt-level = 1
@@ -50,6 +51,3 @@ opt-level = 3
 
 [profile.release]
 lto = "fat"
-
-[package.metadata.docs.rs]
-features = ["native"]

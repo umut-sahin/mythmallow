@@ -1,16 +1,16 @@
 # Mythmallow
 
-A top-down arena shooter roguelite in which you're a mythical marshmallow god fighting against peasant munchies such as chocolates, jellies, or candies!
+A top-down arena shooter roguelite in which you're a mythical marshmallow fighting against peasant munchies such as chocolates, jellies, or candies!
 
 ## Goal
 
-Mythmallow is created after playing excessive amount of [Brotato](https://store.steampowered.com/app/1942280/Brotato/) as a Rust developer. The purpose is to learn how to develop a game from start to end with [Bevy](https://bevyengine.org/) using the best practices, and share it with the community as an example.
+Mythmallow is created after playing excessive amount of [Brotato](https://store.steampowered.com/app/1942280/Brotato/) as a Rust enthusiast. The purpose is to learn how to develop a game from start to end with [Bevy](https://bevyengine.org/) using best practices, and share it with the community as an example.
 
 ## Installation
 
-Mythmallow is free and open source! It'll be released on Steam and Epic Games Store in the future for those who want to donate or want to have the convenience of having the game on a gaming platform.
+Mythmallow is free and open source! It'll be released on Steam and Epic Games Store for a small price in the future for those who want to donate or want to have the convenience of having the game on a gaming platform.
 
-At the time being, the only way to play is to build the game yourself. The game is still in its infancy, so the release process is non-existent.
+For the time being, the only way to play is to build the game yourself. The game is still in its infancy, so the release process is non-existent.
 
 ### Steam
 
@@ -41,7 +41,7 @@ You need [Nightly Rust Toolchain](https://www.rust-lang.org/tools/install), [Bev
 To build the game for development in your native platform, you can run:
 
 ```shell
-cargo build --features native,development,bevy/dynamic_linking
+cargo build
 ```
 
 ### Native (Release)
@@ -49,7 +49,7 @@ cargo build --features native,development,bevy/dynamic_linking
 To build the game for release in your native platform, you can run:
 
 ```shell
-cargo build --features native --release
+cargo build --release --no-default-features --features native-release
 ```
 
 ### WebAssembly (Debug)
@@ -57,7 +57,7 @@ cargo build --features native --release
 To build the game for development in WebAssembly, you can run:
 
 ```shell
-cargo build --target wasm32-unknown-unknown --features wasm,development
+cargo build --target wasm32-unknown-unknown --no-default-features --features wasm-development
 ```
 
 ### WebAssembly (Release)
@@ -65,49 +65,71 @@ cargo build --target wasm32-unknown-unknown --features wasm,development
 To build the game for release in WebAssembly, you can run:
 
 ```shell
-cargo build --target wasm32-unknown-unknown --features wasm --release
+cargo build --release --target wasm32-unknown-unknown --no-default-features --features wasm-release
 ```
 
 ## Usage
 
-### CLI Options
+### Arguments
+
+- In Native:
+  - Arguments are parsed from the command line arguments.
+    ```
+    mythmallow --seed 42 --game
+    ```
+- In WebAssembly:
+  - Arguments are parsed from the URL.
+    ```
+    https://mythmallow.io/?seed=42&game
+    ```
 
 #### \-\-configuration \<PATH>
 
-Sets the configuration directory.
+Specifies the configuration directory.
 
-- In native:
-  - defaults to current platforms config directory (see [dirs::config_dir](https://docs.rs/dirs/latest/dirs/fn.config_dir.html))
-- In wasm:
+- In Native:
+  - defaults to current platforms configuration directory (see [dirs::config_dir](https://docs.rs/dirs/latest/dirs/fn.config_dir.html))
+- In WebAssembly:
   - defaults to `session/configuration` which means browsers session storage will be used
 
 #### \-\-data \<PATH>
 
-Sets the data directory.
+Specifies the data directory.
 
-- In native:
+- In Native:
   - defaults to current platforms data directory (see [dirs::data_dir](https://docs.rs/dirs/latest/dirs/fn.data_dir.html))
-- In wasm:
-  - defaults to `session/configuration` which means browsers session storage will be used
+- In WebAssembly:
+  - defaults to `session/data` which means browsers session storage will be used
 
 #### \-\-seed \<SEED>
 
-Sets the seed for random number generation in the game.
+Specifies the seed for random number generation in the game.
 
 If not set manually, a random seed will be used.
 
-**Warning:** This flag is only for debugging purposes. Same seed can result in a different game, in different versions of the game.
+**Warning:** This argument is only for debugging purposes. Same seed can result in a different game, in different versions of the game.
 
 #### \-\-game
 
-Starts the application in the game, skipping menus.
+Starts the application directly in-game, bypassing menus.
+
+#### \-\-player \<PLAYER>
+
+Specifies the player when starting the application in-game.
+
+Available Players:
+- From Greek Mythology:
+  - `artemis`
+  - `hades`
+
+If not set manually, a random player will be selected.
 
 #### \-\-mode \<MODE>
 
-Sets the game mode when starting the application in the game.
+Specifies the game mode when starting the application in-game.
 
-Available modes:
-- Survival
+Available Game Modes:
+- `survival`
 
 If not set manually, a random game mode will be selected.
 
@@ -118,7 +140,7 @@ If not set manually, a random game mode will be selected.
 To view the API documentation, you can run:
 
 ```shell
-cargo doc --features native,development --open
+cargo doc --open
 ```
 
 ### Design Documentation
