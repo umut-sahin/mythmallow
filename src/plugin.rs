@@ -17,9 +17,9 @@ use crate::{
 };
 
 /// Main plugin.
-pub struct MythmellowPlugin;
+pub struct MythmallowPlugin;
 
-impl Plugin for MythmellowPlugin {
+impl Plugin for MythmallowPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(ConfigurationPlugin);
         app.add_plugins(CorePlugin);

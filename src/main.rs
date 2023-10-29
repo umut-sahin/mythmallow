@@ -3,7 +3,7 @@
 
 use {
     bevy::prelude::*,
-    mythmellow::prelude::*,
+    mythmallow::prelude::*,
 };
 
 fn main() {
@@ -18,7 +18,7 @@ fn main() {
     let mut app = initialize(&args);
     app.register_type::<Args>().insert_resource(args);
 
-    app.add_plugins(MythmellowPlugin);
+    app.add_plugins(MythmallowPlugin);
 
     #[cfg(debug_assertions)]
     {
@@ -66,7 +66,7 @@ fn initialize(args: &Args) -> App {
         Name::new("Primary Window"),
         PrimaryWindow,
         PersistentWindowBundle {
-            window: Window { title: "Mythmellow".to_owned(), ..Default::default() },
+            window: Window { title: "Mythmallow".to_owned(), ..Default::default() },
             state: Persistent::<WindowState>::builder()
                 .name("window state")
                 .format(StorageFormat::Toml)
