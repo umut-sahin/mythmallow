@@ -142,7 +142,7 @@
     - [Beauty of Aphrodite](./weapons/greek/beauty-of-aphrodite.md)
     - [Bident of Hades](./weapons/greek/bident-of-hades.md)
     - [Bow of Apollo](./weapons/greek/bow-of-apollo.md)
-    - [Bow of Artemis](./weapons/greek/bow-of-artemis.md)
+    - [Bow of Artemis](./weapons/greek/artemis-silver-bow.md)
     - [Bow of Eros](./weapons/greek/bow-of-eros.md)
     - [Caduceus of Hermes](./weapons/greek/caduceus-of-hermes.md)
     - [Hammer of Hephaestus](./weapons/greek/hammer-of-hephaestus.md)
