@@ -20,9 +20,10 @@ impl PlayerRegistry {
         let mythology_name = mythology.name();
         let player_name = player.name();
 
-        let enteries = match self.iter_mut().find(|(existing_mythology, _)| {
-            existing_mythology.deref().type_id() == mythology.type_id()
-        }) {
+        let entries = match self
+            .iter_mut()
+            .find(|(existing_mythology, _)| existing_mythology.id() == mythology.id())
+        {
             Some((_, entries)) => entries,
             None => {
                 self.push((Arc::new(mythology), Vec::new()));
@@ -30,7 +31,7 @@ impl PlayerRegistry {
             },
         };
 
-        if enteries.iter().any(|existing_player| existing_player.id() == player.id()) {
+        if entries.iter().any(|existing_player| existing_player.id() == player.id()) {
             log::warn!(
                 "tried to register {:?} from {:?} mythology to player registry again",
                 player_name,
@@ -42,7 +43,7 @@ impl PlayerRegistry {
                 player_name,
                 mythology_name,
             );
-            enteries.push(Arc::new(player));
+            entries.push(Arc::new(player));
         }
     }
 }
