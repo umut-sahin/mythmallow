@@ -22,16 +22,16 @@ pub fn spawn_player_selection_screen(
     let mut first = true;
 
     let player_registry = PLAYER_REGISTRY.lock().unwrap();
-    for (mythology_index, (_mythology, gods)) in player_registry.iter().enumerate() {
+    for (mythology_index, (_mythology, players)) in player_registry.iter().enumerate() {
         // TODO: Group player buttons by mythology.
-        for (god_index, god) in gods.iter().enumerate() {
-            let player_index = PlayerIndex { mythology_index, player_index: god_index };
+        for (player_index, player) in players.iter().enumerate() {
+            let player_index = PlayerIndex { mythology_index, player_index };
             let player_button = if first {
                 first = false;
                 Widget::button(
                     &mut commands,
                     (
-                        Name::new(format!("{} Button", god.name())),
+                        Name::new(format!("{} Button", player.name())),
                         PlayerSelectionScreenPlayerButton { player_index },
                         Widget::default().selected(),
                         WidgetSelected::new(),
@@ -40,13 +40,13 @@ pub fn spawn_player_selection_screen(
                     button_colors,
                     &button_font,
                     button_size,
-                    god.name(),
+                    player.name(),
                 )
             } else {
                 Widget::button(
                     &mut commands,
                     (
-                        Name::new(format!("{} Button", god.name())),
+                        Name::new(format!("{} Button", player.name())),
                         PlayerSelectionScreenPlayerButton { player_index },
                         Widget::default(),
                     ),
@@ -54,7 +54,7 @@ pub fn spawn_player_selection_screen(
                     button_colors,
                     &button_font,
                     button_size,
-                    god.name(),
+                    player.name(),
                 )
             };
             entities.push(player_button)
@@ -246,10 +246,10 @@ pub fn select_player_when_starting_in_game(
             let number_of_mythologies = player_registry.len();
             let mythology_index = (0..number_of_mythologies).choose(rng.deref_mut()).unwrap();
 
-            let number_of_gods_in_mythology = player_registry[mythology_index].1.len();
-            let god_index = (0..number_of_gods_in_mythology).choose(rng.deref_mut()).unwrap();
+            let number_of_players_in_mythology = player_registry[mythology_index].1.len();
+            let player_index = (0..number_of_players_in_mythology).choose(rng.deref_mut()).unwrap();
 
-            let selection = PlayerIndex { mythology_index, player_index: god_index };
+            let selection = PlayerIndex { mythology_index, player_index };
             log::info!(
                 "randomly selected {:?} from {:?} mythology as the player",
                 player_registry[selection].name(),
