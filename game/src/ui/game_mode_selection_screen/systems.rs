@@ -32,13 +32,9 @@ pub fn despawn_game_mode_selection_screen(
 }
 
 
-/// Starts the game.
-pub fn game_mode_selected(
-    mut next_app_state: ResMut<NextState<AppState>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
-) {
-    next_app_state.set(AppState::Game);
-    next_game_state.set(GameState::Initialization);
+/// Transitions to the player selection screen.
+pub fn game_mode_selected(mut next_app_state: ResMut<NextState<AppState>>) {
+    next_app_state.set(AppState::PlayerSelectionScreen);
 }
 
 

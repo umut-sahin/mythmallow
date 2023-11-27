@@ -19,8 +19,8 @@ impl Plugin for UiPlugin {
         // Add sub-plugins.
         app.add_plugins(WidgetPlugin);
         app.add_plugins(MainMenuPlugin);
-        app.add_plugins(PlayerSelectionScreenPlugin);
         app.add_plugins(GameModeSelectionScreenPlugin);
+        app.add_plugins(PlayerSelectionScreenPlugin);
         app.add_plugins(PauseMenuPlugin);
         app.add_plugins(GameOverMenuPlugin);
         app.add_plugins(DiagnosticsOverlayPlugin);
