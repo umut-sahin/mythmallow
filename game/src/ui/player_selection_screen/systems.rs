@@ -25,7 +25,7 @@ pub fn spawn_player_selection_screen(
     for (mythology_index, (_mythology, players)) in player_registry.iter().enumerate() {
         // TODO: Group player buttons by mythology.
         for (player_index, player) in players.iter().enumerate() {
-            let player_index = PlayerIndex { mythology_index, player_index };
+            let player_index = SelectedPlayerIndex { mythology_index, player_index };
             let player_button = if first {
                 first = false;
                 Widget::button(
@@ -220,13 +220,17 @@ pub fn select_player_when_starting_in_game(
     let player_registry = PLAYER_REGISTRY.lock().unwrap();
     match &args.start_in_game_player {
         Some(specified_player_id) => {
-            if let Some(selection) = player_registry.find(specified_player_id) {
+            if let Some(selection_index) = player_registry.find(specified_player_id) {
                 log::info!(
                     "selected manually specified {:?} first found in {:?} mythology \
                     as the player",
-                    player_registry[selection].name(),
-                    player_registry[selection.mythology_index].0.name()
+                    player_registry[selection_index].name(),
+                    player_registry[selection_index.mythology_index].0.name()
                 );
+
+                let selection = SelectedPlayer(Arc::clone(&player_registry[selection_index]));
+
+                commands.insert_resource(selection_index);
                 commands.insert_resource(selection);
             } else {
                 log::error!(
@@ -249,13 +253,16 @@ pub fn select_player_when_starting_in_game(
             let number_of_players_in_mythology = player_registry[mythology_index].1.len();
             let player_index = (0..number_of_players_in_mythology).choose(rng.deref_mut()).unwrap();
 
-            let selection = PlayerIndex { mythology_index, player_index };
+            let selection_index = SelectedPlayerIndex { mythology_index, player_index };
+            let selection = SelectedPlayer(Arc::clone(&player_registry[selection_index]));
+
             log::info!(
                 "randomly selected {:?} from {:?} mythology as the player",
-                player_registry[selection].name(),
+                player_registry[selection_index].name(),
                 player_registry[mythology_index].0.name()
             );
 
+            commands.insert_resource(selection_index);
             commands.insert_resource(selection);
         },
     }

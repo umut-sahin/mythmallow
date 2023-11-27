@@ -10,7 +10,7 @@ pub struct PlayerSelectionScreen;
 #[derive(Component, Debug, Reflect)]
 pub struct PlayerSelectionScreenPlayerButton {
     // Index of the player the button represents.
-    pub player_index: PlayerIndex,
+    pub player_index: SelectedPlayerIndex,
 }
 
 

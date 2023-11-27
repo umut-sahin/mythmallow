@@ -12,7 +12,12 @@ pub fn spawn_game_mode_selection_screen(mut commands: Commands) {
     }
 
     if game_mode_registry.len() == 1 {
-        commands.insert_resource(GameModeIndex(0));
+        let selection_index = SelectedGameModeIndex(0);
+        let selection = SelectedGameMode(Arc::clone(&game_mode_registry[selection_index]));
+
+        commands.insert_resource(selection_index);
+        commands.insert_resource(selection);
+
         return;
     }
 
@@ -50,7 +55,14 @@ pub fn select_game_mode_when_starting_in_game(
             for (index, game_mode) in game_mode_registry.iter().enumerate() {
                 if game_mode.id() == specified_game_mode_id {
                     log::info!("selected manually specified {:?} game mode", game_mode.id());
-                    commands.insert_resource(GameModeIndex(index));
+
+                    let selection_index = SelectedGameModeIndex(index);
+                    let selection =
+                        SelectedGameMode(Arc::clone(&game_mode_registry[selection_index]));
+
+                    commands.insert_resource(selection_index);
+                    commands.insert_resource(selection);
+
                     return;
                 }
             }
@@ -68,10 +80,14 @@ pub fn select_game_mode_when_starting_in_game(
                 return;
             }
 
-            let selection =
-                GameModeIndex((0..game_mode_registry.len()).choose(rng.deref_mut()).unwrap());
-            log::info!("randomly selected {:?} game mode", game_mode_registry[selection].name());
+            let selection_index = SelectedGameModeIndex(
+                (0..game_mode_registry.len()).choose(rng.deref_mut()).unwrap(),
+            );
+            let selection = SelectedGameMode(Arc::clone(&game_mode_registry[selection_index]));
 
+            log::info!("randomly selected {:?} game mode", selection.name());
+
+            commands.insert_resource(selection_index);
             commands.insert_resource(selection);
         },
     }

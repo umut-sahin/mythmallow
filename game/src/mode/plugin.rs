@@ -9,7 +9,7 @@ pub struct ModePlugin;
 impl Plugin for ModePlugin {
     fn build(&self, app: &mut App) {
         // Register resources.
-        app.register_type::<GameModeIndex>();
+        app.register_type::<SelectedGameModeIndex>();
 
         // Add systems.
         app.add_systems(

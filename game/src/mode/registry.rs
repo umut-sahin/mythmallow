@@ -26,10 +26,10 @@ impl GameModeRegistry {
     }
 }
 
-impl Index<GameModeIndex> for GameModeRegistry {
+impl Index<SelectedGameModeIndex> for GameModeRegistry {
     type Output = Arc<dyn Mode>;
 
-    fn index(&self, index: GameModeIndex) -> &Arc<dyn Mode> {
+    fn index(&self, index: SelectedGameModeIndex) -> &Arc<dyn Mode> {
         &self.deref()[index.0]
     }
 }

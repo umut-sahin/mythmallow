@@ -18,9 +18,9 @@ impl Plugin for GameModeSelectionScreenPlugin {
         );
         app.add_systems(
             PostUpdate,
-            game_mode_selected
-                .in_set(GameModeSelectionScreenSystems)
-                .run_if(|game_mode_index: Option<Res<GameModeIndex>>| game_mode_index.is_some()),
+            game_mode_selected.in_set(GameModeSelectionScreenSystems).run_if(
+                |game_mode_index: Option<Res<SelectedGameModeIndex>>| game_mode_index.is_some(),
+            ),
         );
         app.add_systems(
             OnExit(AppState::GameModeSelectionScreen),
