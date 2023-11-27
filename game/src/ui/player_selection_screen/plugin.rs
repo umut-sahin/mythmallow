@@ -29,7 +29,7 @@ impl Plugin for PlayerSelectionScreenPlugin {
         );
         app.add_systems(OnExit(AppState::PlayerSelectionScreen), despawn_player_selection_screen);
 
-        // Select a player when starting in game.
+        // Select the player when starting in game.
         let args = app.world.resource::<Args>();
         if args.start_in_game {
             app.add_systems(

@@ -62,7 +62,9 @@ pub fn select_game_mode_when_starting_in_game(
         },
         None => {
             if game_mode_registry.is_empty() {
-                log::error!("couldn't select a random game mode as no game modes are registered");
+                log::error!(
+                    "couldn't select the game mode randomly as no game modes are registered",
+                );
                 return;
             }
 
