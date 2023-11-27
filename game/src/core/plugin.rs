@@ -31,10 +31,10 @@ impl Plugin for CorePlugin {
         app.add_state::<GameState>();
         app.add_state::<DiagnosticsOverlayState>();
 
-        // Transition to player selection screen when starting in game.
+        // Transition to game mode selection screen when starting in game.
         let args = app.world.resource::<Args>();
         if args.start_in_game {
-            app.world.insert_resource(NextState(Some(AppState::PlayerSelectionScreen)));
+            app.world.insert_resource(NextState(Some(AppState::GameModeSelectionScreen)));
         }
 
         // Enable diagnostics overlay if it's enabled in the general settings.
@@ -46,8 +46,8 @@ impl Plugin for CorePlugin {
         // Configure system sets.
         MenuSystems::configure(app);
         MainMenuSystems::configure(app);
-        PlayerSelectionScreenSystems::configure(app);
         GameModeSelectionScreenSystems::configure(app);
+        PlayerSelectionScreenSystems::configure(app);
         InitializationSystems::configure(app);
         LoadingSystems::configure(app);
         GameplaySystems::configure(app);

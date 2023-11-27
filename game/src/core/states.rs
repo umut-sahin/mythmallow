@@ -6,8 +6,8 @@ use crate::prelude::*;
 pub enum AppState {
     #[default]
     MainMenu,
-    PlayerSelectionScreen,
     GameModeSelectionScreen,
+    PlayerSelectionScreen,
     Game,
 }
 

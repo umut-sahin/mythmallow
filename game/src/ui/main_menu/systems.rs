@@ -127,14 +127,14 @@ pub fn navigation(
 }
 
 
-/// Transitions to the player selection screen.
+/// Transitions to the game mode selection screen.
 pub fn play_button_interaction(
     mut play_button_query: Query<&mut Widget, (Changed<Widget>, With<MainMenuPlayButton>)>,
     mut next_app_state: ResMut<NextState<AppState>>,
 ) {
     if let Ok(mut button) = play_button_query.get_single_mut() {
         button.on_click(|| {
-            next_app_state.set(AppState::PlayerSelectionScreen);
+            next_app_state.set(AppState::GameModeSelectionScreen);
         });
     }
 }

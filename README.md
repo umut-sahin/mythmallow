@@ -113,6 +113,15 @@ If not set manually, a random seed will be used.
 
 Starts the application directly in-game, bypassing menus.
 
+#### \-\-mode \<MODE>
+
+Specifies the game mode when starting the application in-game.
+
+Available Game Modes:
+- `survival`
+
+If not set manually, a random game mode will be selected.
+
 #### \-\-player \<PLAYER>
 
 Specifies the player when starting the application in-game.
@@ -123,15 +132,6 @@ Available Players:
   - `hades`
 
 If not set manually, a random player will be selected.
-
-#### \-\-mode \<MODE>
-
-Specifies the game mode when starting the application in-game.
-
-Available Game Modes:
-- `survival`
-
-If not set manually, a random game mode will be selected.
 
 ## Documentation
 

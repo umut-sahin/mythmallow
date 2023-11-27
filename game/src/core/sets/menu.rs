@@ -13,8 +13,8 @@ impl MenuSystems {
         ) -> bool {
             match app_state.get() {
                 AppState::MainMenu => true,
-                AppState::PlayerSelectionScreen => true,
                 AppState::GameModeSelectionScreen => true,
+                AppState::PlayerSelectionScreen => true,
                 AppState::Game => {
                     match game_state.get() {
                         GameState::None => false,

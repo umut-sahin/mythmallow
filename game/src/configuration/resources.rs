@@ -15,10 +15,10 @@ pub struct Args {
     pub seed: Option<u64>,
     /// Flag for starting the application in game.
     pub start_in_game: bool,
-    /// Player to pick when starting in game.
-    pub start_in_game_player: Option<String>,
     /// Game mode to pick when starting in game.
     pub start_in_game_mode: Option<String>,
+    /// Player to pick when starting in game.
+    pub start_in_game_player: Option<String>,
 }
 
 impl Args {
@@ -52,9 +52,9 @@ impl Args {
             #[arg(long)]
             pub game: bool,
             #[arg(long)]
-            pub player: Option<String>,
-            #[arg(long)]
             pub mode: Option<String>,
+            #[arg(long)]
+            pub player: Option<String>,
         }
 
         impl Default for ArgsParser {
@@ -64,8 +64,8 @@ impl Args {
                     data: None,
                     seed: None,
                     game: false,
-                    player: None,
                     mode: None,
+                    player: None,
                 }
             }
         }
@@ -84,11 +84,11 @@ impl Args {
                 if self.game {
                     write!(f, " --game")?;
                 }
-                if let Some(player) = &self.player {
-                    write!(f, " --player {:?}", player)?;
-                }
                 if let Some(mode) = &self.mode {
                     write!(f, " --mode {:?}", mode)?;
+                }
+                if let Some(player) = &self.player {
+                    write!(f, " --player {:?}", player)?;
                 }
                 Ok(())
             }
@@ -145,16 +145,16 @@ impl Args {
 
                 let seed = self.seed;
                 let start_in_game = self.game;
-                let start_in_game_player = self.player;
                 let start_in_game_mode = self.mode;
+                let start_in_game_player = self.player;
 
                 Args {
                     data_directory,
                     configuration_directory,
                     seed,
                     start_in_game,
-                    start_in_game_player,
                     start_in_game_mode,
+                    start_in_game_player,
                 }
             }
         }
