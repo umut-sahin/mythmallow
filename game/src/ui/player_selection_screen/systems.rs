@@ -239,7 +239,7 @@ pub fn select_player_when_starting_in_game(
         },
         None => {
             if player_registry.is_empty() {
-                log::error!("couldn't select a random player as no players are registered");
+                log::error!("couldn't select the player randomly as no players are registered");
                 return;
             }
 

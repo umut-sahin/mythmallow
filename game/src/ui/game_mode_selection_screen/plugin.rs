@@ -27,7 +27,7 @@ impl Plugin for GameModeSelectionScreenPlugin {
             despawn_game_mode_selection_screen,
         );
 
-        // Select a game mode when starting in game.
+        // Select the game mode when starting in game.
         let args = app.world.resource::<Args>();
         if args.start_in_game {
             app.add_systems(
