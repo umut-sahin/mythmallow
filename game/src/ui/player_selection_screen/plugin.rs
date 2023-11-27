@@ -25,7 +25,7 @@ impl Plugin for PlayerSelectionScreenPlugin {
             PostUpdate,
             player_selected
                 .in_set(PlayerSelectionScreenSystems)
-                .run_if(|player_index: Option<Res<PlayerIndex>>| player_index.is_some()),
+                .run_if(|player_index: Option<Res<SelectedPlayerIndex>>| player_index.is_some()),
         );
         app.add_systems(OnExit(AppState::PlayerSelectionScreen), despawn_player_selection_screen);
 

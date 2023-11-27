@@ -50,12 +50,12 @@ impl PlayerRegistry {
 
 impl PlayerRegistry {
     /// Finds the player from it's id.
-    pub fn find(&self, id: impl AsRef<str>) -> Option<PlayerIndex> {
+    pub fn find(&self, id: impl AsRef<str>) -> Option<SelectedPlayerIndex> {
         let id = id.as_ref();
         for (mythology_index, (_, players)) in self.iter().enumerate() {
             for (player_index, player) in players.iter().enumerate() {
                 if player.id() == id {
-                    return Some(PlayerIndex { mythology_index, player_index });
+                    return Some(SelectedPlayerIndex { mythology_index, player_index });
                 }
             }
         }
@@ -71,10 +71,10 @@ impl Index<usize> for PlayerRegistry {
     }
 }
 
-impl Index<PlayerIndex> for PlayerRegistry {
+impl Index<SelectedPlayerIndex> for PlayerRegistry {
     type Output = Arc<dyn Playable>;
 
-    fn index(&self, index: PlayerIndex) -> &Arc<dyn Playable> {
+    fn index(&self, index: SelectedPlayerIndex) -> &Arc<dyn Playable> {
         let (_, players) = &self.deref()[index.mythology_index];
         &players.deref()[index.player_index]
     }

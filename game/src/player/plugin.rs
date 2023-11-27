@@ -10,7 +10,7 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         // Register components.
         app.register_type::<Player>();
-        app.register_type::<PlayerIndex>();
+        app.register_type::<SelectedPlayerIndex>();
 
         // Add systems.
         {
