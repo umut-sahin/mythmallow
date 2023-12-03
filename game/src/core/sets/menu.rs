@@ -15,6 +15,7 @@ impl MenuSystems {
                 AppState::MainMenu => true,
                 AppState::GameModeSelectionScreen => true,
                 AppState::PlayerSelectionScreen => true,
+                AppState::EnemySelectionScreen => true,
                 AppState::Game => {
                     match game_state.get() {
                         GameState::None => false,

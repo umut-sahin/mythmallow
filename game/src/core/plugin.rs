@@ -48,6 +48,7 @@ impl Plugin for CorePlugin {
         MainMenuSystems::configure(app);
         GameModeSelectionScreenSystems::configure(app);
         PlayerSelectionScreenSystems::configure(app);
+        EnemySelectionScreenSystems::configure(app);
         InitializationSystems::configure(app);
         LoadingSystems::configure(app);
         GameplaySystems::configure(app);

@@ -2,6 +2,7 @@ use crate::{
     prelude::*,
     ui::{
         diagnostics_overlay::plugin::DiagnosticsOverlayPlugin,
+        enemy_selection_screen::plugin::EnemySelectionScreenPlugin,
         game_mode_selection_screen::plugin::GameModeSelectionScreenPlugin,
         game_over_menu::plugin::GameOverMenuPlugin,
         main_menu::plugin::MainMenuPlugin,
@@ -21,6 +22,7 @@ impl Plugin for UiPlugin {
         app.add_plugins(MainMenuPlugin);
         app.add_plugins(GameModeSelectionScreenPlugin);
         app.add_plugins(PlayerSelectionScreenPlugin);
+        app.add_plugins(EnemySelectionScreenPlugin);
         app.add_plugins(PauseMenuPlugin);
         app.add_plugins(GameOverMenuPlugin);
         app.add_plugins(DiagnosticsOverlayPlugin);

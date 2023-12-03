@@ -1,3 +1,4 @@
+mod enemy_selection_screen;
 mod game_mode_selection_screen;
 mod game_over_menu;
 mod gameplay;
@@ -10,6 +11,7 @@ mod player_selection_screen;
 mod restart;
 
 pub use self::{
+    enemy_selection_screen::EnemySelectionScreenSystems,
     game_mode_selection_screen::GameModeSelectionScreenSystems,
     game_over_menu::GameOverMenuSystems,
     gameplay::GameplaySystems,

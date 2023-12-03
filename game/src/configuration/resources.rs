@@ -19,6 +19,8 @@ pub struct Args {
     pub start_in_game_mode: Option<String>,
     /// Player to pick when starting in game.
     pub start_in_game_player: Option<String>,
+    /// Enemies to pick when starting in game.
+    pub start_in_game_enemies: Option<String>,
 }
 
 impl Args {
@@ -55,6 +57,8 @@ impl Args {
             pub mode: Option<String>,
             #[arg(long)]
             pub player: Option<String>,
+            #[arg(long)]
+            pub enemies: Option<String>,
         }
 
         impl Default for ArgsParser {
@@ -66,6 +70,7 @@ impl Args {
                     game: false,
                     mode: None,
                     player: None,
+                    enemies: None,
                 }
             }
         }
@@ -89,6 +94,9 @@ impl Args {
                 }
                 if let Some(player) = &self.player {
                     write!(f, " --player {:?}", player)?;
+                }
+                if let Some(enemies) = &self.enemies {
+                    write!(f, " --enemies {:?}", enemies)?;
                 }
                 Ok(())
             }
@@ -147,6 +155,7 @@ impl Args {
                 let start_in_game = self.game;
                 let start_in_game_mode = self.mode;
                 let start_in_game_player = self.player;
+                let start_in_game_enemies = self.enemies;
 
                 Args {
                     data_directory,
@@ -155,6 +164,7 @@ impl Args {
                     start_in_game,
                     start_in_game_mode,
                     start_in_game_player,
+                    start_in_game_enemies,
                 }
             }
         }

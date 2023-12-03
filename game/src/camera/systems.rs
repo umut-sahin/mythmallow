@@ -7,8 +7,8 @@ pub fn spawn_main_camera(mut commands: Commands) {
 }
 
 
-/// Makes the main camera follow the player.
-pub fn follow_player(
+/// Makes the main camera locked to the player.
+pub fn player_lock(
     mut camera_query: Query<&mut Transform, With<MainCamera>>,
     player_query: Query<&Transform, (With<Player>, Changed<Transform>, Without<MainCamera>)>,
 ) {
