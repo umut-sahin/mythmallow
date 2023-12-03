@@ -8,6 +8,9 @@ pub trait Mode: Debug + Send + Sync + 'static {
     /// Gets the name of the game mode.
     fn name(&self) -> SmolStr;
 
+    /// Gets the default enemy spawn pattern of the game mode.
+    fn default_enemy_spawn_pattern(&self, world: &World) -> EnemySpawnPattern;
+
     /// Initializes the game mode.
     fn initialize(&self, world: &mut World);
     /// Deinitializes the game mode.

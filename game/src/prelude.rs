@@ -8,7 +8,13 @@ pub use crate::{
         sets::*,
         states::*,
     },
-    enemy::components::*,
+    enemy::{
+        components::*,
+        interfaces::*,
+        registry::*,
+        resources::*,
+        systems::follow_player,
+    },
     input::actions::*,
     inventory::resources::*,
     items::{
@@ -39,6 +45,7 @@ pub use crate::{
     status_effect::systems::cooldown,
     ui::{
         diagnostics_overlay::components::*,
+        enemy_selection_screen::components::*,
         game_mode_selection_screen::components::*,
         game_over_menu::components::*,
         main_menu::components::*,

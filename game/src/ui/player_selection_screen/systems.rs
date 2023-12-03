@@ -201,13 +201,9 @@ pub fn player_button_interaction(
 }
 
 
-/// Starts the game.
-pub fn player_selected(
-    mut next_app_state: ResMut<NextState<AppState>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
-) {
-    next_app_state.set(AppState::Game);
-    next_game_state.set(GameState::Initialization);
+/// Transitions to the enemy selection screen.
+pub fn player_selected(mut next_app_state: ResMut<NextState<AppState>>) {
+    next_app_state.set(AppState::EnemySelectionScreen);
 }
 
 

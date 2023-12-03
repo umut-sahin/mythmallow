@@ -133,6 +133,15 @@ Available Players:
 
 If not set manually, a random player will be selected.
 
+#### \-\-enemies \<ENEMIES>
+
+Specifies the enemies when starting the application in-game.
+
+Available Enemies:
+- `sweet`
+
+If not set manually, random enemies will be selected.
+
 ## Documentation
 
 ### API Documentation

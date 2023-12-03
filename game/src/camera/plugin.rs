@@ -19,10 +19,10 @@ impl Plugin for CameraPlugin {
 
         // Add systems.
         app.add_systems(Startup, spawn_main_camera);
-        app.add_systems(OnEnter(GameState::Loading), follow_player.in_set(LoadingSystems::Camera));
+        app.add_systems(OnEnter(GameState::Loading), player_lock.in_set(LoadingSystems::Camera));
         app.add_systems(
             PostUpdate,
-            follow_player
+            player_lock
                 .in_set(GameplaySystems::Camera)
                 .before(TransformSystem::TransformPropagate)
                 .after(PhysicsSet::Sync),

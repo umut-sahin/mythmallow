@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use {
+    mythmallow_enemies_sweet::prelude::*,
     mythmallow_game::prelude::*,
     mythmallow_items_greek::prelude::*,
     mythmallow_mode_survival::prelude::*,
@@ -80,6 +81,23 @@ fn main() {
             if number_of_players == 1 { "is" } else { "are" },
             number_of_mythologies,
             if number_of_mythologies == 1 { "y" } else { "ies" },
+        );
+    }
+
+    // Add enemy plugins.
+    app.add_plugins(SweetEnemiesPlugin);
+    {
+        let enemy_registry = ENEMY_REGISTRY.lock().unwrap();
+        let number_of_enemy_packs = enemy_registry.len();
+        let number_of_enemies =
+            enemy_registry.iter().map(|(_, enemies)| enemies.len()).sum::<usize>();
+        log::info!(
+            "{} enem{} {} registered across {} enemy pack{}",
+            number_of_enemies,
+            if number_of_enemies == 1 { "y" } else { "ies" },
+            if number_of_enemies == 1 { "is" } else { "are" },
+            number_of_enemy_packs,
+            if number_of_enemy_packs == 1 { "" } else { "s" },
         );
     }
 

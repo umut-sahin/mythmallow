@@ -8,6 +8,7 @@ pub enum AppState {
     MainMenu,
     GameModeSelectionScreen,
     PlayerSelectionScreen,
+    EnemySelectionScreen,
     Game,
 }
 

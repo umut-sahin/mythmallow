@@ -13,6 +13,7 @@ authors = [
 ]
 
 [dependencies]
+mythmallow-enemies-sweet = { path = "enemies/sweet" }
 mythmallow-game = { path = "game" }
 mythmallow-items-greek = { path = "items/greek" }
 mythmallow-mode-survival = { path = "modes/survival" }
@@ -37,6 +38,7 @@ wasm-release = ["wasm", "mythmallow-game/wasm-release"]
 [workspace]
 resolver = "2"
 members = [
+    "enemies/sweet",
     "game",
     "items/greek",
     "modes/survival",
