@@ -24,8 +24,9 @@ impl Mode for Survival {
         let mut spawns = Vec::new();
         if let Some(enemy) = enemy {
             spawns.push(
-                EnemySpawn::new(enemy, Duration::from_millis(500))
+                EnemySpawn::new(Duration::from_millis(500), enemy)
                     .count(3)
+                    .interval(Duration::from_millis(150))
                     .spread(EnemySpawnSpread::square(100.00))
                     .repeat(Duration::from_millis(1500)),
             );

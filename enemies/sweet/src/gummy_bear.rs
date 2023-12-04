@@ -19,6 +19,10 @@ impl Munchie for GummyBear {
         "Gummy Bear".into()
     }
 
+    fn collider(&self) -> Collider {
+        Collider::ball(SIZE)
+    }
+
     fn spawn(&self, world: &mut World, position: Position) {
         world.run_system_once_with(position, spawn);
     }
@@ -79,8 +83,11 @@ pub fn spawn(
             body: RigidBody::Dynamic,
             restitution: Restitution::PERFECTLY_INELASTIC,
             position,
-            collider: Collider::ball(SIZE),
-            layers: CollisionLayers::new([Layer::Enemy], [Layer::Enemy]),
+            collider: GummyBear.collider(),
+            layers: CollisionLayers::new(
+                [Layer::Enemy],
+                [Layer::MapBound, Layer::Enemy, Layer::PlayerHitBox],
+            ),
             // Texture
             mesh: MaterialMesh2dBundle {
                 mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),

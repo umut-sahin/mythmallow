@@ -21,6 +21,9 @@ pub trait Munchie: Debug + Send + Sync + 'static {
     /// Gets the name of the enemy.
     fn name(&self) -> SmolStr;
 
+    /// Gets the collider of the enemy.
+    fn collider(&self) -> Collider;
+
     /// Spawns the enemy.
     fn spawn(&self, world: &mut World, position: Position);
 }
