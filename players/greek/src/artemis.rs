@@ -63,7 +63,7 @@ pub fn spawn(
                 position: Position(Vector::new(0.00, 0.00)),
                 collider: Collider::ball(PLAYER_SIZE),
                 velocity: LinearVelocity(Vector::new(0.00, 0.00)),
-                layers: CollisionLayers::new([Layer::Player], [Layer::Player]),
+                layers: CollisionLayers::new([Layer::Player], [Layer::MapBound]),
                 mesh: MaterialMesh2dBundle {
                     mesh: meshes.add(shape::Circle::new(PLAYER_SIZE).into()).into(),
                     material: materials.add(ColorMaterial::from(Color::GREEN)),
@@ -77,7 +77,13 @@ pub fn spawn(
             },
         ))
         .with_children(|parent| {
-            parent.spawn((Name::new("Hit Box"), PlayerHitBox, Sensor, Collider::ball(PLAYER_SIZE)));
+            parent.spawn((
+                Name::new("Hit Box"),
+                PlayerHitBox,
+                Sensor,
+                Collider::ball(PLAYER_SIZE),
+                CollisionLayers::new([Layer::PlayerHitBox], [Layer::Enemy]),
+            ));
         });
 
     inventory.add(BowOfArtemis.instantiate());

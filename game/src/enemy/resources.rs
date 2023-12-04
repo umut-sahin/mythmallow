@@ -29,7 +29,7 @@ impl EnemyCounter {
 
 
 /// Resource for the enemy spawn pattern for the selected game mode and the selected enemy pack.
-#[derive(Clone, Debug, Resource)]
+#[derive(Clone, Resource)]
 pub struct EnemySpawnPattern {
     /// Spawns in the spawn pattern.
     pub spawns: Arc<Mutex<Vec<EnemySpawn>>>,
@@ -42,43 +42,86 @@ impl EnemySpawnPattern {
     }
 }
 
+impl Debug for EnemySpawnPattern {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut m = f.debug_map();
+        for (i, spawn) in self.spawns.lock().unwrap().iter().enumerate() {
+            m.entry(&i, &spawn);
+        }
+        m.finish()
+    }
+}
+
 
 /// Details of the enemy spawn.
-#[derive(Debug)]
 pub struct EnemySpawn {
+    /// Delay for the first spawn.
+    pub delay: Timer,
     /// Enemy to spawn.
     pub enemy: Arc<dyn Munchie>,
     /// Group size.
     pub count: u32,
+    /// Optional spawn interval within the group.
+    pub interval: Option<Timer>,
     /// Group position.
     pub position: EnemySpawnPosition,
     /// Group direction.
     pub direction: EnemySpawnDirection,
     /// Group spread.
     pub spread: EnemySpawnSpread,
-    /// Delay for the first spawn.
-    pub delay: Timer,
     /// Optional repeat for the spawn.
     pub repeat: Option<Timer>,
+
+    /// Amount of enemies spawned within the group.
+    ///
+    /// Also used for retrying a failed spawn.
+    pub(crate) spawned: u32,
+
+    /// Amount of enemies to be spawned within the group.
+    ///
+    /// Can be used for multiple groups.
+    pub(crate) remaining: u32,
+
+    /// Current spawn position for the group.
+    ///
+    /// Updated on every `self.count` spawns.
+    pub(crate) group_position: Position,
 }
 
 impl EnemySpawn {
     /// Creates a new enemy spawn.
-    pub fn new(enemy: &Arc<dyn Munchie>, delay: Duration) -> EnemySpawn {
+    pub fn new(delay: Duration, enemy: &Arc<dyn Munchie>) -> EnemySpawn {
         EnemySpawn {
+            delay: Timer::new(delay, TimerMode::Once),
             enemy: Arc::clone(enemy),
             count: 1,
+            interval: None,
             position: EnemySpawnPosition::Random,
-            direction: EnemySpawnDirection::Any,
+            direction: EnemySpawnDirection::any(),
             spread: EnemySpawnSpread::default(),
-            delay: Timer::new(delay, TimerMode::Once),
             repeat: None,
+            spawned: 0,
+            remaining: 0,
+            group_position: Position::new(Vector::ZERO),
         }
     }
 
     /// Sets the group size of the spawn.
+    ///
+    /// # Panics
+    ///
+    /// - Panics if `count` is zero.
     pub fn count(mut self, count: u32) -> EnemySpawn {
+        if count == 0 {
+            panic!("spawn count cannot be 0");
+        }
         self.count = count;
+        self
+    }
+
+    /// Sets the interval of the spawn.
+    pub fn interval(mut self, interval: Duration) -> EnemySpawn {
+        self.interval = Some(Timer::new(interval, TimerMode::Repeating));
         self
     }
 
@@ -107,9 +150,28 @@ impl EnemySpawn {
     }
 }
 
+impl Debug for EnemySpawn {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut s = f.debug_struct("Pattern");
+        s.field("delay", &self.delay.duration());
+        s.field("enemy", &self.enemy);
+        s.field("count", &self.count);
+        if let Some(timer) = self.interval.as_ref() {
+            s.field("interval", &timer.duration());
+        }
+        s.field("position", &self.position);
+        s.field("direction", &self.direction);
+        s.field("spread", &self.spread);
+        if let Some(timer) = self.repeat.as_ref() {
+            s.field("repeat", &timer.duration());
+        }
+        s.finish()
+    }
+}
+
 
 /// Position for the enemy spawn.
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum EnemySpawnPosition {
     /// In a predefined position. If set, spawn direction is ignored.
     At(Position),
@@ -121,20 +183,48 @@ pub enum EnemySpawnPosition {
 
 
 /// Direction for the enemy spawn.
-#[derive(Debug)]
-pub enum EnemySpawnDirection {
-    /// Spawn the enemy in any direction.
-    Any,
-    /// Tries to spawn the enemy above the player.
-    Above,
-    /// Tries to spawn the enemy below the player.
-    Below,
-    /// Tries to spawn the enemy left of the player.
-    Left,
-    /// Tries to spawn the enemy right of the player.
-    Right,
-    /// Tries to spawn the enemy between two angles.
-    Between(Rotation, Rotation),
+#[derive(Clone, Copy, Debug)]
+pub struct EnemySpawnDirection {
+    pub from_degrees: f32,
+    pub to_degrees: f32,
+}
+
+impl EnemySpawnDirection {
+    pub fn any() -> EnemySpawnDirection {
+        EnemySpawnDirection { from_degrees: 0.00, to_degrees: 360.00 }
+    }
+
+    pub fn top() -> EnemySpawnDirection {
+        EnemySpawnDirection { from_degrees: 0.00, to_degrees: 180.00 }
+    }
+
+    pub fn bottom() -> EnemySpawnDirection {
+        EnemySpawnDirection { from_degrees: 180.00, to_degrees: 360.00 }
+    }
+
+    pub fn left() -> EnemySpawnDirection {
+        EnemySpawnDirection { from_degrees: 90.00, to_degrees: 270.00 }
+    }
+
+    pub fn right() -> EnemySpawnDirection {
+        EnemySpawnDirection { from_degrees: 270.00, to_degrees: 90.00 }
+    }
+
+    pub fn top_left() -> EnemySpawnDirection {
+        EnemySpawnDirection { from_degrees: 90.00, to_degrees: 180.00 }
+    }
+
+    pub fn top_right() -> EnemySpawnDirection {
+        EnemySpawnDirection { from_degrees: 0.00, to_degrees: 90.00 }
+    }
+
+    pub fn bottom_left() -> EnemySpawnDirection {
+        EnemySpawnDirection { from_degrees: 180.00, to_degrees: 270.00 }
+    }
+
+    pub fn bottom_right() -> EnemySpawnDirection {
+        EnemySpawnDirection { from_degrees: 270.00, to_degrees: 360.00 }
+    }
 }
 
 
