@@ -5,6 +5,7 @@ use {
     mythmallow_enemies_sweet::prelude::*,
     mythmallow_game::prelude::*,
     mythmallow_items_greek::prelude::*,
+    mythmallow_mode_escape::prelude::*,
     mythmallow_mode_survival::prelude::*,
     mythmallow_players_greek::prelude::*,
 };
@@ -42,6 +43,7 @@ fn main() {
     app.add_plugins(MythmallowPlugin);
 
     // Add game mode plugins.
+    app.add_plugins(EscapeModePlugin);
     app.add_plugins(SurvivalModePlugin);
     {
         let game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
