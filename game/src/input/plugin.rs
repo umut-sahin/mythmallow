@@ -11,6 +11,7 @@ impl Plugin for InputPlugin {
         // Setup actions.
         GlobalAction::setup(app);
         MainMenuAction::setup(app);
+        GameModeSelectionScreenAction::setup(app);
         PlayerSelectionScreenAction::setup(app);
         GameAction::setup(app);
         PauseMenuAction::setup(app);
