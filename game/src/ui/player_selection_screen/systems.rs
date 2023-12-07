@@ -158,7 +158,7 @@ pub fn navigation(
     };
 
     if player_selection_screen_action_state.just_pressed(&PlayerSelectionScreenAction::Back) {
-        next_app_state.set(AppState::MainMenu);
+        next_app_state.set(AppState::GameModeSelectionScreen);
         return;
     }
 
@@ -181,7 +181,7 @@ pub fn navigation(
 }
 
 
-/// Returns to the main menu.
+/// Returns to the game mode selection screen.
 pub fn back_button_interaction(
     mut back_button_query: Query<
         &mut Widget,
@@ -191,7 +191,7 @@ pub fn back_button_interaction(
 ) {
     if let Ok(mut button) = back_button_query.get_single_mut() {
         button.on_click(|| {
-            next_app_state.set(AppState::MainMenu);
+            next_app_state.set(AppState::GameModeSelectionScreen);
         });
     }
 }
