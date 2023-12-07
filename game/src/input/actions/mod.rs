@@ -1,4 +1,5 @@
 mod game;
+mod game_mode_selection_screen;
 mod game_over_menu;
 mod global;
 mod level_up_screen;
@@ -10,6 +11,7 @@ mod settings_menu;
 
 pub use {
     game::GameAction,
+    game_mode_selection_screen::GameModeSelectionScreenAction,
     game_over_menu::GameOverMenuAction,
     global::GlobalAction,
     level_up_screen::LevelUpScreenAction,

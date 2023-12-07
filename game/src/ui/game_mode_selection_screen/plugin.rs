@@ -16,6 +16,12 @@ impl Plugin for GameModeSelectionScreenPlugin {
             OnEnter(AppState::GameModeSelectionScreen),
             spawn_game_mode_selection_screen,
         );
+        app.add_systems(PreUpdate, navigation.in_set(GameModeSelectionScreenSystems));
+        app.add_systems(
+            Update,
+            (game_mode_button_interaction, back_button_interaction)
+                .in_set(GameModeSelectionScreenSystems),
+        );
         app.add_systems(
             PostUpdate,
             game_mode_selected.in_set(GameModeSelectionScreenSystems).run_if(
