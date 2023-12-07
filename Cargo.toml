@@ -17,6 +17,7 @@ level-adjusted-log = { package = "log", version = "0.4", features = ["max_level_
 mythmallow-enemies-sweet = { path = "enemies/sweet" }
 mythmallow-game = { path = "game" }
 mythmallow-items-greek = { path = "items/greek" }
+mythmallow-mode-escape = { path = "modes/escape" }
 mythmallow-mode-survival = { path = "modes/survival" }
 mythmallow-perks-basic = { path = "perks/basic" }
 mythmallow-players-greek = { path = "players/greek" }
@@ -43,6 +44,7 @@ members = [
     "enemies/sweet",
     "game",
     "items/greek",
+    "modes/escape",
     "modes/survival",
     "perks/basic",
     "players/greek",

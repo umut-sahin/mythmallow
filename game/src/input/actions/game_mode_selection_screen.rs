@@ -22,7 +22,7 @@ impl GameModeSelectionScreenAction {
         ]);
 
         // Extend the input map from key bindings.
-        let key_bindings = app.world.resource::<Persistent<KeyBindings>>();
+        let key_bindings = app.world().resource::<Persistent<KeyBindings>>();
         for key_code in key_bindings.up.iter().cloned() {
             input_map.insert(GameModeSelectionScreenAction::Up, key_code);
         }

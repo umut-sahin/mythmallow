@@ -2,6 +2,7 @@ use crate::{
     prelude::*,
     ui::game_mode_selection_screen::{
         constants::*,
+        localization,
         styles,
     },
 };
@@ -13,6 +14,7 @@ pub fn spawn_game_mode_selection_screen(
     asset_server: Res<AssetServer>,
     game_mode_selection_screen_action_input_map: Res<InputMap<GameModeSelectionScreenAction>>,
     game_mode_registry: Res<GameModeRegistry>,
+    localization: Res<Localization>,
 ) {
     if game_mode_registry.is_empty() {
         // TODO: Replace panic with a proper error communicated through the UI.
@@ -40,7 +42,7 @@ pub fn spawn_game_mode_selection_screen(
             Widget::button(
                 &mut commands,
                 (
-                    Name::new(format!("{} Button", game_mode.name())),
+                    Name::new(format!("Game Mode Button [{}]", game_mode.id())),
                     GameModeSelectionScreenGameModeButton { game_mode_index },
                     Widget::default().selected(),
                     WidgetSelected::now(),
@@ -50,12 +52,13 @@ pub fn spawn_game_mode_selection_screen(
                 &button_font,
                 button_size,
                 game_mode.name(),
+                &localization,
             )
         } else {
             Widget::button(
                 &mut commands,
                 (
-                    Name::new(format!("{} Button", game_mode.name())),
+                    Name::new(format!("Game Mode Button [{}]", game_mode.id())),
                     GameModeSelectionScreenGameModeButton { game_mode_index },
                     Widget::default(),
                 ),
@@ -64,6 +67,7 @@ pub fn spawn_game_mode_selection_screen(
                 &button_font,
                 button_size,
                 game_mode.name(),
+                &localization,
             )
         };
         entities.push(game_mode_button)
@@ -76,7 +80,8 @@ pub fn spawn_game_mode_selection_screen(
         button_colors,
         &button_font,
         button_size,
-        "Back",
+        localization::back_button(),
+        &localization,
     );
     entities.push(back_button);
 

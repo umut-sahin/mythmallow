@@ -11,6 +11,9 @@ impl Plugin for GameModeSelectionScreenPlugin {
         // Register components.
         app.register_type::<GameModeSelectionScreen>();
 
+        // Setup localization.
+        app.world_mut().resource_mut::<LocaleAssets>().push("ui/game_mode_selection_screen.ftl");
+
         // Add systems.
         app.add_systems(
             OnEnter(AppState::GameModeSelectionScreen),
