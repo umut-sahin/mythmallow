@@ -13,6 +13,24 @@ pub fn spawn_player_selection_screen(
     asset_server: Res<AssetServer>,
     player_selection_screen_action_input_map: Res<InputMap<PlayerSelectionScreenAction>>,
 ) {
+    let player_registry = PLAYER_REGISTRY.lock().unwrap();
+
+    if player_registry.is_empty() {
+        drop(player_registry);
+        // TODO: Replace panic with a proper error communicated through the UI.
+        panic!("no players are available");
+    }
+
+    if player_registry.len() == 1 {
+        let selection_index = SelectedPlayerIndex { mythology_index: 0, player_index: 0 };
+        let selection = SelectedPlayer(Arc::clone(&player_registry[selection_index]));
+
+        commands.insert_resource(selection_index);
+        commands.insert_resource(selection);
+
+        return;
+    }
+
     let button_style = styles::button();
     let button_colors = WidgetColors::button();
     let button_font = asset_server.load("fonts/FiraSans-Bold.ttf");
@@ -21,7 +39,6 @@ pub fn spawn_player_selection_screen(
     let mut entities = Vec::new();
     let mut first = true;
 
-    let player_registry = PLAYER_REGISTRY.lock().unwrap();
     for (mythology_index, (_mythology, players)) in player_registry.iter().enumerate() {
         // TODO: Group player buttons by mythology.
         for (player_index, player) in players.iter().enumerate() {
