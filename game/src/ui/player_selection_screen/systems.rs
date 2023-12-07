@@ -14,6 +14,21 @@ pub fn spawn_player_selection_screen(
     player_selection_screen_action_input_map: Res<InputMap<PlayerSelectionScreenAction>>,
     player_registry: Res<PlayerRegistry>,
 ) {
+    if player_registry.is_empty() {
+        // TODO: Replace panic with a proper error communicated through the UI.
+        panic!("no players are available");
+    }
+
+    if player_registry.number_of_players() == 1 {
+        let mythology_index = SelectedMythologyIndex(0);
+        let player_index = SelectedPlayerIndex(0);
+
+        commands.insert_resource(mythology_index);
+        commands.insert_resource(player_index);
+
+        return;
+    }
+
     let button_style = styles::button();
     let button_colors = WidgetColors::button();
     let button_font = asset_server.load("fonts/FiraSans-Bold.ttf");
