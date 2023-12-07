@@ -12,6 +12,7 @@ impl Plugin for InputPlugin {
         GlobalAction::setup(app);
         MainMenuAction::setup(app);
         SettingsMenuAction::setup(app);
+        GameModeSelectionScreenAction::setup(app);
         PlayerSelectionScreenAction::setup(app);
         GameAction::setup(app);
         LevelUpScreenAction::setup(app);
