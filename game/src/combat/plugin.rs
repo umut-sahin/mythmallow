@@ -9,16 +9,17 @@ pub struct CombatPlugin;
 impl Plugin for CombatPlugin {
     fn build(&self, app: &mut App) {
         // Register components.
-        app.register_type::<RemainingHealth>();
+        app.register_type::<DamageCooldown>();
         app.register_type::<Cooldown<Attack>>();
+        app.register_type::<Projectile>();
+        app.register_type::<RemainingHealth>();
 
         // Add systems.
         app.add_systems(PreUpdate, cooldown::<Attack>.in_set(GameplaySystems::Combat));
+        app.add_systems(Update, (damage_player, damage_enemies).in_set(GameplaySystems::Combat));
         app.add_systems(
-            Update,
-            (damage_player_on_contact_with_enemies, player_death)
-                .chain()
-                .in_set(GameplaySystems::Combat),
+            PostUpdate,
+            (player_death, enemy_death, despawn_projectiles).in_set(GameplaySystems::Combat),
         );
     }
 }

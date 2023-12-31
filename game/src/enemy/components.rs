@@ -6,6 +6,16 @@ use crate::prelude::*;
 pub struct Enemy;
 
 
+/// Tag component for hit boxes of enemies.
+#[derive(Component, Debug, Reflect)]
+pub struct EnemyHitBox;
+
+
+/// Tag component for entities that apply damage to enemies on contact.
+#[derive(Component, Debug, Reflect)]
+pub struct DamageEnemiesOnContact;
+
+
 /// Bundle for enemies.
 #[derive(Bundle)]
 pub struct EnemyBundle {
@@ -13,7 +23,6 @@ pub struct EnemyBundle {
     pub name: Name,
     pub tag: Enemy,
     // Properties
-    pub damage: Damage,
     pub health: Health,
     pub speed: Speed,
     // Combat

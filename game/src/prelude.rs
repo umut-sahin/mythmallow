@@ -108,6 +108,7 @@ pub use {
             Any,
             TypeId,
         },
+        cmp::Ordering,
         fmt::{
             self,
             Debug,

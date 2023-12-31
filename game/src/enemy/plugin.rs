@@ -10,6 +10,8 @@ impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         // Register components.
         app.register_type::<Enemy>();
+        app.register_type::<EnemyHitBox>();
+        app.register_type::<DamageEnemiesOnContact>();
 
         // Add systems.
         app.add_systems(

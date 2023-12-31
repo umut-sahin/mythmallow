@@ -95,7 +95,7 @@ pub fn dash(
         }
         commands.entity(entity).insert((
             Dashing { timer: Timer::new(INITIAL_DASH_DURATION, TimerMode::Once) },
-            Cooldown::<Dashing>::new(Timer::new(INITIAL_DASH_COOLDOWN, TimerMode::Once)),
+            Cooldown::<Dashing>::new(INITIAL_DASH_COOLDOWN),
         ));
     }
 }

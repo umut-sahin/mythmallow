@@ -64,6 +64,7 @@ pub fn spawn(
                 collider: Collider::ball(PLAYER_SIZE),
                 velocity: LinearVelocity(Vector::new(0.0, 0.0)),
                 layers: CollisionLayers::new([Layer::Player], [Layer::MapBound]),
+                axes: LockedAxes::ROTATION_LOCKED,
                 mesh: MaterialMesh2dBundle {
                     mesh: meshes.add(shape::Circle::new(PLAYER_SIZE).into()).into(),
                     material: materials.add(ColorMaterial::from(Color::BLACK)),
@@ -82,7 +83,7 @@ pub fn spawn(
                 PlayerHitBox,
                 Sensor,
                 Collider::ball(PLAYER_SIZE),
-                CollisionLayers::new([Layer::PlayerHitBox], [Layer::Enemy]),
+                CollisionLayers::new([Layer::PlayerHitBox], [Layer::DamagePlayer]),
             ));
         });
 
