@@ -13,6 +13,7 @@ impl Plugin for MapPlugin {
 
         // Register components.
         app.register_type::<Map>();
+        app.register_type::<MapBound>();
 
         // Add systems.
         app.add_systems(OnEnter(GameState::Won), despawn_map);

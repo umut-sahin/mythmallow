@@ -11,6 +11,11 @@ pub struct Player;
 pub struct PlayerHitBox;
 
 
+/// Tag component for entities that apply damage to the player on contact.
+#[derive(Component, Debug, Reflect)]
+pub struct DamagePlayerOnContact;
+
+
 /// Bundle for players.
 #[derive(Bundle)]
 pub struct PlayerBundle {
@@ -30,6 +35,7 @@ pub struct PlayerBundle {
     pub collider: Collider,
     pub velocity: LinearVelocity,
     pub layers: CollisionLayers,
+    pub axes: LockedAxes,
     // Texture
     pub mesh: MaterialMesh2dBundle<ColorMaterial>,
     // Input
