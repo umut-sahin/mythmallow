@@ -67,7 +67,10 @@ pub use {
         },
         ecs::{
             self as bevy_ecs,
-            system::RunSystemOnce,
+            system::{
+                EntityCommands,
+                RunSystemOnce,
+            },
         },
         input::mouse::MouseMotion,
         log::{

@@ -1,11 +1,14 @@
 use {
     crate::prelude::*,
     greek_items::prelude::*,
-    mythmallow::{
-        player::constants::*,
-        prelude::*,
-    },
+    mythmallow::prelude::*,
 };
+
+/// Size of the player.
+pub const SIZE: f32 = 20.00;
+
+/// Color of the player.
+pub const COLOR: Color = Color::BLACK;
 
 /// Tag component for the player "Hades".
 #[derive(Clone, Component, Debug, Reflect)]
@@ -21,7 +24,7 @@ impl Playable for Hades {
     }
 
     fn collider(&self) -> Collider {
-        Collider::ball(PLAYER_SIZE)
+        Collider::ball(SIZE)
     }
 
     fn spawn(&self, world: &mut World) {
@@ -44,9 +47,6 @@ impl Plugin for HadesPlugin {
     }
 }
 
-/// Size of the player.
-pub const PLAYER_SIZE: f32 = 20.00;
-
 /// Spawns the player "Hades".
 pub fn spawn(
     In(player): In<Hades>,
@@ -56,37 +56,19 @@ pub fn spawn(
     game_action_input_map: Res<InputMap<GameAction>>,
     mut inventory: ResMut<Inventory>,
 ) {
-    commands
-        .spawn((
-            player.clone(),
-            PlayerBundle {
-                name: Name::new("Player"),
-                tag: Player,
-                health: Health(BASE_PLAYER_HEALTH),
-                speed: Speed(BASE_PLAYER_SPEED),
-                remaining_health: RemainingHealth(BASE_PLAYER_HEALTH),
-                body: RigidBody::Dynamic,
-                restitution: Restitution::PERFECTLY_INELASTIC,
-                position: Position(Vector::new(0.00, 0.00)),
-                collider: player.collider(),
-                velocity: LinearVelocity(Vector::new(0.0, 0.0)),
-                layers: CollisionLayers::new([Layer::Player], [Layer::MapBound]),
-                axes: LockedAxes::ROTATION_LOCKED,
-                mesh: MaterialMesh2dBundle {
-                    mesh: meshes.add(shape::Circle::new(PLAYER_SIZE).into()).into(),
-                    material: materials.add(ColorMaterial::from(Color::BLACK)),
-                    transform: Transform::from_translation(Vec3::new(0.00, 0.00, 2.00)),
-                    ..default()
-                },
-                input: InputManagerBundle::<GameAction> {
-                    action_state: ActionState::default(),
-                    input_map: game_action_input_map.clone(),
-                },
-            },
-        ))
-        .with_children(|parent| {
-            parent.spawn(PlayerHitBox::bundle(&player));
-        });
+    let mesh = MaterialMesh2dBundle {
+        mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),
+        material: materials.add(ColorMaterial::from(COLOR)),
+        transform: Transform::from_translation(Vec3::new(0.00, 0.00, 2.00)),
+        ..default()
+    };
+
+    PlayerBundle::builder()
+        .player(player)
+        .mesh(mesh)
+        .input(game_action_input_map.clone())
+        .build()
+        .spawn(&mut commands);
 
     inventory.add(BidentOfHades.instantiate());
 }
