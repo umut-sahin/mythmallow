@@ -2,17 +2,31 @@ use crate::prelude::*;
 
 
 /// Tag component for the player.
-#[derive(Component, Debug, Reflect)]
+#[derive(Component, Debug, Default, Reflect)]
 pub struct Player;
 
 
 /// Tag component for the hit box of the player.
-#[derive(Component, Debug, Reflect)]
+#[derive(Component, Debug, Default, Reflect)]
 pub struct PlayerHitBox;
+
+impl PlayerHitBox {
+    pub fn bundle<P: Playable>(player: &P) -> impl Bundle {
+        (
+            // Tags
+            Name::new("Hit Box"),
+            PlayerHitBox,
+            // Physics
+            player.collider(),
+            CollisionLayers::new([Layer::PlayerHitBox], [Layer::DamagePlayer]),
+            Sensor,
+        )
+    }
+}
 
 
 /// Tag component for entities that apply damage to the player on contact.
-#[derive(Component, Debug, Reflect)]
+#[derive(Component, Debug, Default, Reflect)]
 pub struct DamagePlayerOnContact;
 
 

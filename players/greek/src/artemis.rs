@@ -82,13 +82,7 @@ pub fn spawn(
             },
         ))
         .with_children(|parent| {
-            parent.spawn((
-                Name::new("Hit Box"),
-                PlayerHitBox,
-                Sensor,
-                player.collider(),
-                CollisionLayers::new([Layer::PlayerHitBox], [Layer::DamagePlayer]),
-            ));
+            parent.spawn(PlayerHitBox::bundle(&player));
         });
 
     inventory.add(BowOfArtemis.instantiate());

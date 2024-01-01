@@ -2,17 +2,31 @@ use crate::prelude::*;
 
 
 /// Tag component for enemies.
-#[derive(Component, Debug, Reflect)]
+#[derive(Component, Debug, Default, Reflect)]
 pub struct Enemy;
 
 
 /// Tag component for hit boxes of enemies.
-#[derive(Component, Debug, Reflect)]
+#[derive(Component, Debug, Default, Reflect)]
 pub struct EnemyHitBox;
+
+impl EnemyHitBox {
+    pub fn bundle<E: Munchie>(enemy: &E) -> impl Bundle {
+        (
+            // Tags
+            Name::new("Hit Box"),
+            EnemyHitBox,
+            // Physics
+            enemy.collider(),
+            CollisionLayers::new([Layer::EnemyHitBox], [Layer::DamageEnemies]),
+            Sensor,
+        )
+    }
+}
 
 
 /// Tag component for entities that apply damage to enemies on contact.
-#[derive(Component, Debug, Reflect)]
+#[derive(Component, Debug, Default, Reflect)]
 pub struct DamageEnemiesOnContact;
 
 
