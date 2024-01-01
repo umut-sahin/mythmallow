@@ -44,6 +44,9 @@ impl Plugin for ArtemisPlugin {
     }
 }
 
+/// Size of the player.
+pub const PLAYER_SIZE: f32 = 20.00;
+
 /// Spawns the player "Artemis".
 pub fn spawn(
     In(player): In<Artemis>,

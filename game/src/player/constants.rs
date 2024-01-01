@@ -1,10 +1,6 @@
 use crate::prelude::*;
 
 
-/// Size of the player.
-pub const PLAYER_SIZE: f32 = 20.00;
-
-
 /// Base health of players.
 pub const BASE_PLAYER_HEALTH: f32 = 10.00;
 
