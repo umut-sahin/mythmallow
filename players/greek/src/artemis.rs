@@ -59,7 +59,6 @@ pub fn spawn(
             PlayerBundle {
                 name: Name::new("Player"),
                 tag: Player,
-                damage: Damage(INITIAL_PLAYER_DAMAGE),
                 health: Health(INITIAL_PLAYER_HEALTH),
                 speed: Speed(INITIAL_PLAYER_SPEED),
                 remaining_health: RemainingHealth(INITIAL_PLAYER_HEALTH),
