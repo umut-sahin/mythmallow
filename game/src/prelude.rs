@@ -129,6 +129,7 @@ pub use {
     },
     strum::IntoEnumIterator,
     strum_macros::EnumIter,
+    typed_builder::TypedBuilder,
 };
 
 #[cfg(feature = "native")]
