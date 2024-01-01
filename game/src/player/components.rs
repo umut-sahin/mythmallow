@@ -23,7 +23,6 @@ pub struct PlayerBundle {
     pub name: Name,
     pub tag: Player,
     // Properties
-    pub damage: Damage,
     pub health: Health,
     pub speed: Speed,
     // Combat
