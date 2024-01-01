@@ -8,7 +8,7 @@ use {
 };
 
 /// Tag component for the player "Hades".
-#[derive(Component, Debug, Reflect)]
+#[derive(Clone, Component, Debug, Reflect)]
 pub struct Hades;
 
 impl Playable for Hades {
@@ -20,8 +20,12 @@ impl Playable for Hades {
         "Hades".into()
     }
 
+    fn collider(&self) -> Collider {
+        Collider::ball(PLAYER_SIZE)
+    }
+
     fn spawn(&self, world: &mut World) {
-        world.run_system_once(spawn);
+        world.run_system_once_with(self.clone(), spawn);
     }
 }
 
@@ -42,6 +46,7 @@ impl Plugin for HadesPlugin {
 
 /// Spawns the player "Hades".
 pub fn spawn(
+    In(player): In<Hades>,
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -50,7 +55,7 @@ pub fn spawn(
 ) {
     commands
         .spawn((
-            Hades,
+            player.clone(),
             PlayerBundle {
                 name: Name::new("Player"),
                 tag: Player,
@@ -61,7 +66,7 @@ pub fn spawn(
                 body: RigidBody::Dynamic,
                 restitution: Restitution::PERFECTLY_INELASTIC,
                 position: Position(Vector::new(0.00, 0.00)),
-                collider: Collider::ball(PLAYER_SIZE),
+                collider: player.collider(),
                 velocity: LinearVelocity(Vector::new(0.0, 0.0)),
                 layers: CollisionLayers::new([Layer::Player], [Layer::MapBound]),
                 axes: LockedAxes::ROTATION_LOCKED,
@@ -82,7 +87,7 @@ pub fn spawn(
                 Name::new("Hit Box"),
                 PlayerHitBox,
                 Sensor,
-                Collider::ball(PLAYER_SIZE),
+                player.collider(),
                 CollisionLayers::new([Layer::PlayerHitBox], [Layer::DamagePlayer]),
             ));
         });
