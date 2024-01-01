@@ -59,9 +59,9 @@ pub fn spawn(
             PlayerBundle {
                 name: Name::new("Player"),
                 tag: Player,
-                health: Health(INITIAL_PLAYER_HEALTH),
-                speed: Speed(INITIAL_PLAYER_SPEED),
-                remaining_health: RemainingHealth(INITIAL_PLAYER_HEALTH),
+                health: Health(BASE_PLAYER_HEALTH),
+                speed: Speed(BASE_PLAYER_SPEED),
+                remaining_health: RemainingHealth(BASE_PLAYER_HEALTH),
                 body: RigidBody::Dynamic,
                 restitution: Restitution::PERFECTLY_INELASTIC,
                 position: Position(Vector::new(0.00, 0.00)),
