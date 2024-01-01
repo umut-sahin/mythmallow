@@ -7,7 +7,7 @@ use {
 };
 
 /// Tag component for the enemy "Gummy Bear".
-#[derive(Component, Debug, Reflect)]
+#[derive(Clone, Component, Debug, Reflect)]
 pub struct GummyBear;
 
 impl Munchie for GummyBear {
@@ -24,7 +24,7 @@ impl Munchie for GummyBear {
     }
 
     fn spawn(&self, world: &mut World, position: Position) {
-        world.run_system_once_with(position, spawn);
+        world.run_system_once_with((self.clone(), position), spawn);
     }
 }
 
@@ -63,7 +63,7 @@ pub const DAMAGE_COOLDOWN: Duration = Duration::from_millis(1000);
 
 /// Spawns the enemy.
 pub fn spawn(
-    In(position): In<Position>,
+    In((enemy, position)): In<(GummyBear, Position)>,
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -73,7 +73,7 @@ pub fn spawn(
     commands
         .spawn((
             // Tag
-            GummyBear,
+            enemy.clone(),
             // Attack
             DamagePlayerOnContact,
             Damage(INITIAL_DAMAGE),
@@ -92,7 +92,7 @@ pub fn spawn(
                 body: RigidBody::Dynamic,
                 restitution: Restitution::PERFECTLY_INELASTIC,
                 position,
-                collider: GummyBear.collider(),
+                collider: enemy.collider(),
                 layers: CollisionLayers::new(
                     [Layer::Enemy, Layer::DamagePlayer],
                     [Layer::MapBound, Layer::Enemy, Layer::PlayerHitBox],
@@ -107,12 +107,6 @@ pub fn spawn(
             },
         ))
         .with_children(|parent| {
-            parent.spawn((
-                Name::new("Hit Box"),
-                EnemyHitBox,
-                Sensor,
-                Collider::ball(SIZE),
-                CollisionLayers::new([Layer::EnemyHitBox], [Layer::DamageEnemies]),
-            ));
+            parent.spawn(EnemyHitBox::bundle(&enemy));
         });
 }
