@@ -1,4 +1,7 @@
-use crate::prelude::*;
+use crate::{
+    player::constants::*,
+    prelude::*,
+};
 
 
 /// Interface for mythologies.
@@ -17,9 +20,17 @@ pub trait Playable: Debug + Send + Sync + 'static {
     /// Gets the name of the player.
     fn name(&self) -> SmolStr;
 
+    /// Gets the health of the player.
+    fn health(&self) -> Health {
+        Health(BASE_HEALTH)
+    }
+    /// Gets the speed of the player.
+    fn speed(&self) -> Speed {
+        Speed(BASE_SPEED)
+    }
+
     /// Gets the collider of the player.
     fn collider(&self) -> Collider;
-
     /// Spawns the player.
     fn spawn(&self, world: &mut World);
 }

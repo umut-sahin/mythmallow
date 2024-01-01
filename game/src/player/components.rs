@@ -11,13 +11,13 @@ pub struct Player;
 pub struct PlayerHitBox;
 
 impl PlayerHitBox {
-    pub fn bundle<P: Playable>(player: &P) -> impl Bundle {
+    pub fn bundle(collider: Collider) -> impl Bundle {
         (
             // Tags
             Name::new("Hit Box"),
             PlayerHitBox,
             // Physics
-            player.collider(),
+            collider,
             CollisionLayers::new([Layer::PlayerHitBox], [Layer::DamagePlayer]),
             Sensor,
         )
@@ -31,26 +31,53 @@ pub struct DamagePlayerOnContact;
 
 
 /// Bundle for players.
-#[derive(Bundle)]
-pub struct PlayerBundle {
-    // Tags
-    pub name: Name,
-    pub tag: Player,
-    // Properties
-    pub health: Health,
-    pub speed: Speed,
-    // Combat
-    pub remaining_health: RemainingHealth,
-    // Physics
-    pub body: RigidBody,
-    pub restitution: Restitution,
-    pub position: Position,
-    pub collider: Collider,
-    pub velocity: LinearVelocity,
-    pub layers: CollisionLayers,
-    pub axes: LockedAxes,
-    // Texture
+#[derive(Bundle, TypedBuilder)]
+pub struct PlayerBundle<P: Component + Playable> {
+    pub player: P,
     pub mesh: MaterialMesh2dBundle<ColorMaterial>,
-    // Input
+    #[builder(setter(transform =
+        |input_map: InputMap<GameAction>| {
+            InputManagerBundle::<GameAction> { action_state: ActionState::default(), input_map }
+        }
+    ))]
     pub input: InputManagerBundle<GameAction>,
+}
+
+impl<P: Component + Playable> PlayerBundle<P> {
+    /// Spawns the player.
+    pub fn spawn<'w, 's, 'a>(
+        self,
+        commands: &'a mut Commands<'w, 's>,
+    ) -> EntityCommands<'w, 's, 'a> {
+        let name = format!("Player [{}]", self.player.name());
+        let health = self.player.health();
+        let speed = self.player.speed();
+        let collider = self.player.collider();
+
+        let mut player = commands.spawn((
+            // Tags
+            Name::new(name),
+            Player,
+            // Player
+            self,
+            health,
+            speed,
+            // Combat
+            RemainingHealth(*health),
+            // Physics
+            RigidBody::Dynamic,
+            Position::from_xy(0.00, 0.00),
+            LinearVelocity::ZERO,
+            Restitution::PERFECTLY_INELASTIC,
+            LockedAxes::ROTATION_LOCKED,
+            collider.clone(),
+            CollisionLayers::new([Layer::Player], [Layer::MapBound]),
+        ));
+
+        player.with_children(|parent| {
+            parent.spawn(PlayerHitBox::bundle(collider));
+        });
+
+        player
+    }
 }
