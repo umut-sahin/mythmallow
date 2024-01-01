@@ -44,6 +44,9 @@ impl Plugin for HadesPlugin {
     }
 }
 
+/// Size of the player.
+pub const PLAYER_SIZE: f32 = 20.00;
+
 /// Spawns the player "Hades".
 pub fn spawn(
     In(player): In<Hades>,
