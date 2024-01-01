@@ -6,7 +6,22 @@ use {
     },
 };
 
-/// Tag component for the enemy "Gummy Bear".
+/// Size of the enemy.
+pub const SIZE: f32 = 15.00;
+
+/// Health of the enemy.
+pub const HEALTH: f32 = 5.00;
+
+/// Speed of the enemy.
+pub const SPEED: f32 = 100.00;
+
+/// Contact damage of the enemy.
+pub const CONTACT_DAMAGE: f32 = 3.00;
+
+/// Cooldown of contact damage of the enemy.
+pub const CONTACT_DAMAGE_COOLDOWN: Duration = Duration::from_millis(1000);
+
+/// Component for the enemy "Gummy Bear".
 #[derive(Clone, Component, Debug, Reflect)]
 pub struct GummyBear;
 
@@ -17,6 +32,18 @@ impl Munchie for GummyBear {
 
     fn name(&self) -> SmolStr {
         "Gummy Bear".into()
+    }
+
+    fn contact_damage(&self) -> Option<(Damage, DamageCooldown)> {
+        Some((Damage(CONTACT_DAMAGE), DamageCooldown::new(CONTACT_DAMAGE_COOLDOWN)))
+    }
+
+    fn health(&self) -> Health {
+        Health(HEALTH)
+    }
+
+    fn speed(&self) -> Speed {
+        Speed(SPEED)
     }
 
     fn collider(&self) -> Collider {
@@ -46,21 +73,6 @@ impl Plugin for GummyBearPlugin {
     }
 }
 
-/// Size of the enemy.
-pub const SIZE: f32 = 15.00;
-
-/// Initial damage of the enemy.
-pub const INITIAL_DAMAGE: f32 = 3.00;
-
-/// Initial health of the enemy.
-pub const INITIAL_HEALTH: f32 = 5.00;
-
-/// Initial speed of the enemy.
-pub const INITIAL_SPEED: f32 = 100.00;
-
-/// Cooldown of applying damage to the player when in contact.
-pub const DAMAGE_COOLDOWN: Duration = Duration::from_millis(1000);
-
 /// Spawns the enemy.
 pub fn spawn(
     In((enemy, position)): In<(GummyBear, Position)>,
@@ -69,44 +81,17 @@ pub fn spawn(
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut counter: ResMut<EnemyCounter>,
 ) {
-    counter.increment();
-    commands
-        .spawn((
-            // Tag
-            enemy.clone(),
-            // Attack
-            DamagePlayerOnContact,
-            Damage(INITIAL_DAMAGE),
-            DamageCooldown::new(DAMAGE_COOLDOWN),
-            // Enemy
-            EnemyBundle {
-                // Tags
-                name: Name::new(format!("Enemy {} [Gummy Bear]", counter.get())),
-                tag: Enemy,
-                // Properties
-                health: Health(INITIAL_HEALTH),
-                speed: Speed(INITIAL_SPEED),
-                // Combat
-                remaining_health: RemainingHealth(INITIAL_HEALTH),
-                // Physics
-                body: RigidBody::Dynamic,
-                restitution: Restitution::PERFECTLY_INELASTIC,
-                position,
-                collider: enemy.collider(),
-                layers: CollisionLayers::new(
-                    [Layer::Enemy, Layer::DamagePlayer],
-                    [Layer::MapBound, Layer::Enemy, Layer::PlayerHitBox],
-                ),
-                // Texture
-                mesh: MaterialMesh2dBundle {
-                    mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),
-                    material: materials.add(ColorMaterial::from(Color::RED)),
-                    transform: Transform::from_translation(Vec3::new(position.x, position.y, 1.00)),
-                    ..default()
-                },
-            },
-        ))
-        .with_children(|parent| {
-            parent.spawn(EnemyHitBox::bundle(&enemy));
-        });
+    let mesh = MaterialMesh2dBundle {
+        mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),
+        material: materials.add(ColorMaterial::from(Color::RED)),
+        transform: Transform::from_translation(Vec3::new(position.x, position.y, 1.00)),
+        ..default()
+    };
+
+    EnemyBundle::builder()
+        .enemy(enemy)
+        .position(position)
+        .mesh(mesh)
+        .build()
+        .spawn(&mut commands, &mut counter);
 }
