@@ -6,7 +6,7 @@ use {
     mythmallow::prelude::*,
 };
 
-/// Plugin for managing the "Survival" game mode.
+/// Plugin for managing "Survival" game mode.
 pub struct SurvivalModePlugin;
 
 impl Plugin for SurvivalModePlugin {
@@ -40,7 +40,7 @@ impl Plugin for SurvivalModePlugin {
 
         // Add gameplay systems.
         app.add_systems(
-            Update,
+            PreUpdate,
             tick.in_set(GameplaySystems::GameMode).run_if(in_game_mode::<Survival>),
         );
 

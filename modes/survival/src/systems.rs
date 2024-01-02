@@ -12,34 +12,29 @@ pub fn initialize(mut commands: Commands) {
     commands.insert_resource(CurrentWave(1));
 }
 
+
 /// Loads the current wave.
 pub fn load(mut commands: Commands) {
-    commands.insert_resource(WaveTimer(Timer::new(Duration::from_secs(5), TimerMode::Once)));
+    commands.insert_resource(WaveTimer::new(Duration::from_secs(10)));
 }
-
 
 /// Spawns the map.
 pub fn spawn_map(mut commands: Commands) {
-    commands.insert_resource(MapBounds {
-        x_min: -MAP_BOUND,
-        x_max: MAP_BOUND,
-        y_min: -MAP_BOUND,
-        y_max: MAP_BOUND,
-    });
+    commands.insert_resource(MAP_BOUNDS);
     commands.spawn((Name::new("Map"), Map, SpatialBundle::default())).with_children(|parent| {
         // Spawn horizontal lines.
-        for i in 0..=MAP_SIZE {
+        for i in 0..=GRID_SIZE {
             parent.spawn((
                 Name::new(format!("Horizontal Line {}", i + 1)),
                 SpriteBundle {
                     transform: Transform::from_translation(Vec3::new(
-                        0.0,
-                        (((MAP_SIZE as f32) / 2.0) - (i as f32)) * GRID_SPACING,
-                        0.0,
+                        0.00,
+                        (((GRID_SIZE as f32) / 2.00) - (i as f32)) * GRID_SPACING,
+                        0.00,
                     )),
                     sprite: Sprite {
-                        color: Color::rgb(0.27, 0.27, 0.27),
-                        custom_size: Some(Vec2::new(MAP_SIZE as f32 * GRID_SPACING, GRID_WIDTH)),
+                        color: GRID_COLOR,
+                        custom_size: Some(Vec2::new(GRID_SIZE as f32 * GRID_SPACING, GRID_WIDTH)),
                         ..default()
                     },
                     ..default()
@@ -47,18 +42,18 @@ pub fn spawn_map(mut commands: Commands) {
             ));
         }
         // Spawn vertical lines.
-        for i in 0..=MAP_SIZE {
+        for i in 0..=GRID_SIZE {
             parent.spawn((
                 Name::new(format!("Vertical Line {}", i + 1)),
                 SpriteBundle {
                     transform: Transform::from_translation(Vec3::new(
-                        ((i as f32) - ((MAP_SIZE as f32) / 2.0)) * GRID_SPACING,
-                        0.0,
-                        0.0,
+                        ((i as f32) - ((GRID_SIZE as f32) / 2.00)) * GRID_SPACING,
+                        0.00,
+                        0.00,
                     )),
                     sprite: Sprite {
-                        color: Color::rgb(0.27, 0.27, 0.27),
-                        custom_size: Some(Vec2::new(GRID_WIDTH, MAP_SIZE as f32 * GRID_SPACING)),
+                        color: GRID_COLOR,
+                        custom_size: Some(Vec2::new(GRID_WIDTH, GRID_SIZE as f32 * GRID_SPACING)),
                         ..default()
                     },
                     ..default()
@@ -67,6 +62,7 @@ pub fn spawn_map(mut commands: Commands) {
         }
     });
 }
+
 
 /// Ticks wave timer and wins the current wave when wave timer is finished.
 pub fn tick(
@@ -80,6 +76,7 @@ pub fn tick(
     }
 }
 
+
 /// Wins the current wave.
 pub fn win(mut commands: Commands, mut next_game_state: ResMut<NextState<GameState>>) {
     commands.insert_resource(GameResult::Won);
@@ -91,6 +88,7 @@ pub fn win(mut commands: Commands, mut next_game_state: ResMut<NextState<GameSta
 pub fn unload(mut commands: Commands) {
     commands.remove_resource::<WaveTimer>();
 }
+
 
 /// Deinitializes the game mode.
 pub fn deinitialize(mut commands: Commands) {
