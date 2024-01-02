@@ -28,6 +28,13 @@ impl ItemRegistry {
     }
 }
 
+impl ItemRegistry {
+    /// Gets the number of items in the item registry.
+    pub fn number_of_items(&self) -> usize {
+        self.0.len()
+    }
+}
+
 /// Container for item registry entries.
 #[derive(Debug)]
 pub struct ItemRegistryEntry {

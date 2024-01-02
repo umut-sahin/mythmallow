@@ -26,6 +26,13 @@ impl GameModeRegistry {
     }
 }
 
+impl GameModeRegistry {
+    /// Gets the number of game modes in the game mode registry.
+    pub fn number_of_game_modes(&self) -> usize {
+        self.0.len()
+    }
+}
+
 impl Index<SelectedGameModeIndex> for GameModeRegistry {
     type Output = Arc<dyn IGameMode>;
 
