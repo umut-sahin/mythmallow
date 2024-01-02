@@ -1,5 +1,5 @@
 // Disable spawning command prompt on Windows in release mode.
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#![cfg_attr(not(feature = "development"), windows_subsystem = "windows")]
 
 use {
     mythmallow_enemies_sweet::prelude::*,
@@ -139,7 +139,7 @@ fn initialize(app: &mut App, args: &Args) {
     // Add persistent windows plugin.
     app.add_plugins(PersistentWindowsPlugin);
 
-    #[cfg(debug_assertions)]
+    #[cfg(feature = "development")]
     {
         // Setup exiting the application with CTRL+Q in development mode.
         fn exit_with_ctrl_q(
