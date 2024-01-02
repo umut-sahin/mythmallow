@@ -13,7 +13,19 @@ impl Plugin for PhysicsPlugin {
 
         // Setup physics.
         app.insert_resource(Gravity::ZERO);
-        app.add_plugins(XpbdPlugin::new(PostUpdate));
+        app.add_plugins(XpbdPlugin::default());
+
+        // Setup physics debug in development mode.
+        #[cfg(feature = "development")]
+        {
+            let general_settings = app.world.resource::<Persistent<GeneralSettings>>();
+            app.insert_resource(PhysicsDebugConfig {
+                enabled: general_settings.debug_physics,
+                ..default()
+            });
+
+            app.add_plugins(PhysicsDebugPlugin::default());
+        }
 
         // Pause physics in startup.
         app.world.resource_mut::<Time<Physics>>().pause();

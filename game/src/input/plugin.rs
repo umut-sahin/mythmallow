@@ -17,8 +17,14 @@ impl Plugin for InputPlugin {
         GameOverMenuAction::setup(app);
 
         // Add systems.
-        app.add_systems(Update, toggle_fullscreen);
-        app.add_systems(Update, toggle_diagnostics_overlay);
-        app.add_systems(Update, pause_on_losing_focus.in_set(GameplaySystems::Input));
+        {
+            app.add_systems(Update, pause_on_losing_focus.in_set(GameplaySystems::Input));
+
+            app.add_systems(Update, toggle_fullscreen);
+            app.add_systems(Update, toggle_diagnostics_overlay);
+
+            #[cfg(feature = "development")]
+            app.add_systems(Update, toggle_physics_debug);
+        }
     }
 }

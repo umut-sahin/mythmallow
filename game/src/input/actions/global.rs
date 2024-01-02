@@ -5,6 +5,9 @@ use crate::prelude::*;
 pub enum GlobalAction {
     ToggleFullscreen,
     ToggleDiagnosticsOverlay,
+
+    #[cfg(feature = "development")]
+    TogglePhysicsDebug,
 }
 
 impl GlobalAction {
@@ -14,10 +17,16 @@ impl GlobalAction {
         app.add_plugins(InputManagerPlugin::<GlobalAction>::default());
 
         // Create the input map.
-        let input_map = InputMap::new([
-            (KeyCode::F11, GlobalAction::ToggleFullscreen),
-            (KeyCode::F10, GlobalAction::ToggleDiagnosticsOverlay),
-        ]);
+        let mut input_map = InputMap::default();
+
+        input_map.insert(KeyCode::F11, GlobalAction::ToggleFullscreen);
+        input_map.insert(KeyCode::F10, GlobalAction::ToggleDiagnosticsOverlay);
+
+        #[cfg(feature = "development")]
+        input_map.insert(
+            UserInput::chord([KeyCode::ControlLeft, KeyCode::P]),
+            GlobalAction::TogglePhysicsDebug,
+        );
 
         // Insert the input map resource.
         app.insert_resource(input_map);

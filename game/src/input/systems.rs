@@ -1,6 +1,21 @@
 use crate::prelude::*;
 
 
+/// Pauses the game when the application loses it's focus.
+pub fn pause_on_losing_focus(
+    mut window_focused_reader: EventReader<WindowFocused>,
+    general_settings: Res<Persistent<GeneralSettings>>,
+    mut next_game_state: ResMut<NextState<GameState>>,
+) {
+    for event in window_focused_reader.read() {
+        if !event.focused && general_settings.pause_on_losing_focus {
+            next_game_state.set(GameState::Paused);
+            break;
+        }
+    }
+}
+
+
 /// Toggles the window mode between fullscreen and windowed.
 #[cfg(feature = "native")]
 pub fn toggle_fullscreen(
@@ -70,16 +85,20 @@ pub fn toggle_diagnostics_overlay(
 }
 
 
-/// Pauses the game when the application loses it's focus.
-pub fn pause_on_losing_focus(
-    mut window_focused_reader: EventReader<WindowFocused>,
-    general_settings: Res<Persistent<GeneralSettings>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
+/// Toggles physics debug.
+#[cfg(feature = "development")]
+pub fn toggle_physics_debug(
+    global_action_state: Res<ActionState<GlobalAction>>,
+    mut general_settings: ResMut<Persistent<GeneralSettings>>,
+    mut physics_debug_config: ResMut<PhysicsDebugConfig>,
 ) {
-    for event in window_focused_reader.read() {
-        if !event.focused && general_settings.pause_on_losing_focus {
-            next_game_state.set(GameState::Paused);
-            break;
-        }
+    if global_action_state.just_pressed(GlobalAction::TogglePhysicsDebug) {
+        general_settings
+            .update(|general_settings| {
+                general_settings.debug_physics = !general_settings.debug_physics;
+            })
+            .ok();
+
+        physics_debug_config.enabled = general_settings.debug_physics;
     }
 }
