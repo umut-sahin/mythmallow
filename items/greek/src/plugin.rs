@@ -6,7 +6,7 @@ use {
     mythmallow::prelude::*,
 };
 
-/// Plugin for managing the items from Greek mythology.
+/// Plugin for managing the items from "Greek" mythology.
 pub struct GreekItemsPlugin;
 
 impl Plugin for GreekItemsPlugin {

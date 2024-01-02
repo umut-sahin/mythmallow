@@ -19,7 +19,8 @@ pub const PROJECTILE_SIZE: f32 = 3.00;
 pub const BASE_PROJECTILE_SPEED: f32 = 250.00;
 
 /// Tag component for the item "Bow of Artemis".
-#[derive(Clone, Component, Debug, Reflect)]
+#[derive(Clone, Component, Debug, Default, Reflect)]
+#[reflect(Component)]
 pub struct BowOfArtemis;
 
 impl IItem for BowOfArtemis {
@@ -35,14 +36,12 @@ impl IItem for BowOfArtemis {
         ItemInstance::new(self.clone())
     }
 
-    fn acquire(&self, world: &mut World) -> Option<Entity> {
+    fn acquire(&self, world: &mut World) -> Entity {
         world.run_system_once_with(self.clone(), acquire)
     }
 
-    fn release(&self, world: &mut World, entity: Option<Entity>) {
-        if let Some(entity) = entity {
-            world.run_system_once_with(entity, release);
-        }
+    fn release(&self, world: &mut World, entity: Entity) {
+        world.run_system_once_with(entity, release);
     }
 }
 
@@ -68,11 +67,11 @@ impl Plugin for BowOfArtemisPlugin {
 pub fn acquire(
     In(item): In<BowOfArtemis>,
     mut commands: Commands,
+    inventory: Res<Inventory>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    inventory: Res<Inventory>,
-) -> Option<Entity> {
-    let item = commands
+) -> Entity {
+    commands
         .spawn((
             Name::new(format!("Item {} ({})", inventory.items.len(), item.name().to_string())),
             item,
@@ -83,8 +82,7 @@ pub fn acquire(
                 ..default()
             },
         ))
-        .id();
-    Some(item)
+        .id()
 }
 
 /// Releases the item.
