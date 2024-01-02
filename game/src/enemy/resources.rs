@@ -8,7 +8,7 @@ pub struct SelectedEnemyPackIndex(pub usize);
 
 /// Resource for the selected enemy pack.
 #[derive(Clone, Debug, Deref, Resource)]
-pub struct SelectedEnemyPack(pub (Arc<dyn MunchiePack>, Vec<EnemyRegistryEntry>));
+pub struct SelectedEnemyPack(pub (Arc<dyn IEnemyPack>, Vec<EnemyRegistryEntry>));
 
 
 /// Resource for counting spawned enemies.
@@ -58,7 +58,7 @@ pub struct EnemySpawn {
     /// Delay for the first spawn.
     pub delay: Timer,
     /// Enemy to spawn.
-    pub enemy: Arc<dyn Munchie>,
+    pub enemy: Arc<dyn IEnemy>,
     /// Group size.
     pub count: u32,
     /// Optional spawn interval within the group.
@@ -90,7 +90,7 @@ pub struct EnemySpawn {
 
 impl EnemySpawn {
     /// Creates a new enemy spawn.
-    pub fn new(delay: Duration, enemy: &Arc<dyn Munchie>) -> EnemySpawn {
+    pub fn new(delay: Duration, enemy: &Arc<dyn IEnemy>) -> EnemySpawn {
         EnemySpawn {
             delay: Timer::new(delay, TimerMode::Once),
             enemy: Arc::clone(enemy),

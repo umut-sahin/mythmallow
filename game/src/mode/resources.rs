@@ -8,9 +8,9 @@ pub struct SelectedGameModeIndex(pub usize);
 
 /// Resource for the selected game mode.
 #[derive(Clone, Debug, Deref, Resource)]
-pub struct SelectedGameMode(pub Arc<dyn Mode>);
+pub struct SelectedGameMode(pub Arc<dyn IGameMode>);
 
 
 /// Resource for the current game mode.
 #[derive(Debug, Default, Deref, Reflect, Resource)]
-pub struct GameMode<M: Mode>(pub M);
+pub struct GameMode<M: IGameMode>(pub M);

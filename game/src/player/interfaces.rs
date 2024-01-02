@@ -5,7 +5,7 @@ use crate::{
 
 
 /// Interface for mythologies.
-pub trait Mythology: Any + Debug + Send + Sync + 'static {
+pub trait IMythology: Any + Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the mythology.
     fn id(&self) -> SmolStr;
     /// Gets the name of the mythology.
@@ -14,7 +14,7 @@ pub trait Mythology: Any + Debug + Send + Sync + 'static {
 
 
 /// Interface for players.
-pub trait Playable: Debug + Send + Sync + 'static {
+pub trait IPlayer: Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the player.
     fn id(&self) -> SmolStr;
     /// Gets the name of the player.

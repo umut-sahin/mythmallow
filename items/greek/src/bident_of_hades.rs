@@ -7,7 +7,7 @@ use {
 #[derive(Clone, Component, Debug, Reflect)]
 pub struct BidentOfHades;
 
-impl Item for BidentOfHades {
+impl IItem for BidentOfHades {
     fn id(&self) -> SmolStr {
         "bident-of-hades".into()
     }

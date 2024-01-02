@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 /// Interface for enemy packs.
-pub trait MunchiePack: Any + Debug + Send + Sync + 'static {
+pub trait IEnemyPack: Any + Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the enemy pack.
     fn id(&self) -> SmolStr;
     /// Gets the name of the enemy pack.
@@ -15,7 +15,7 @@ pub trait MunchiePack: Any + Debug + Send + Sync + 'static {
 }
 
 /// Interface for enemies.
-pub trait Munchie: Debug + Send + Sync + 'static {
+pub trait IEnemy: Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the enemy.
     fn id(&self) -> SmolStr;
     /// Gets the name of the enemy.

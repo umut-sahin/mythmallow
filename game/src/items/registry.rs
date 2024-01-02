@@ -16,7 +16,7 @@ impl ItemRegistry {
 
 impl ItemRegistry {
     /// Registers an item to the item registry.
-    pub fn register(&mut self, item: impl Item) -> &mut ItemRegistryEntry {
+    pub fn register(&mut self, item: impl IItem) -> &mut ItemRegistryEntry {
         let id = item.id();
         if self.iter().any(|entry| entry.id() == id) {
             log::warn!("tried to register {:?} to item registry again", item.id());
@@ -31,13 +31,13 @@ impl ItemRegistry {
 /// Container for item registry entries.
 #[derive(Debug)]
 pub struct ItemRegistryEntry {
-    pub item: Arc<dyn Item>,
+    pub item: Arc<dyn IItem>,
     pub tags: SmallVec<[SmolStr; 3]>,
 }
 
 impl ItemRegistryEntry {
     /// Create a new entry for an item.
-    pub fn new<I: Item>(item: I) -> ItemRegistryEntry {
+    pub fn new<I: IItem>(item: I) -> ItemRegistryEntry {
         ItemRegistryEntry { item: Arc::new(item), tags: SmallVec::new() }
     }
 }
@@ -51,9 +51,9 @@ impl ItemRegistryEntry {
 }
 
 impl Deref for ItemRegistryEntry {
-    type Target = Arc<dyn Item>;
+    type Target = Arc<dyn IItem>;
 
-    fn deref(&self) -> &Arc<dyn Item> {
+    fn deref(&self) -> &Arc<dyn IItem> {
         &self.item
     }
 }

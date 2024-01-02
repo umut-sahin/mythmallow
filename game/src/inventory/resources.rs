@@ -4,21 +4,21 @@ use crate::prelude::*;
 /// Container for the items in the inventory.
 #[derive(Debug)]
 pub struct ItemInstance {
-    pub item: Box<dyn Item>,
+    pub item: Box<dyn IItem>,
     pub entity: Option<Entity>,
 }
 
 impl ItemInstance {
     /// Creates a new item instance.
-    pub fn new(item: impl Item) -> ItemInstance {
+    pub fn new(item: impl IItem) -> ItemInstance {
         ItemInstance { item: Box::new(item), entity: None }
     }
 }
 
 impl Deref for ItemInstance {
-    type Target = Box<dyn Item>;
+    type Target = Box<dyn IItem>;
 
-    fn deref(&self) -> &Box<dyn Item> {
+    fn deref(&self) -> &Box<dyn IItem> {
         &self.item
     }
 }

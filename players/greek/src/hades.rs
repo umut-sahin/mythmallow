@@ -14,7 +14,7 @@ pub const COLOR: Color = Color::BLACK;
 #[derive(Clone, Component, Debug, Reflect)]
 pub struct Hades;
 
-impl Playable for Hades {
+impl IPlayer for Hades {
     fn id(&self) -> SmolStr {
         "hades".into()
     }

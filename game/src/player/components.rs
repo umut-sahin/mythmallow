@@ -32,7 +32,7 @@ pub struct DamagePlayerOnContact;
 
 /// Bundle for players.
 #[derive(Bundle, TypedBuilder)]
-pub struct PlayerBundle<P: Component + Playable> {
+pub struct PlayerBundle<P: Component + IPlayer> {
     pub player: P,
     pub mesh: MaterialMesh2dBundle<ColorMaterial>,
     #[builder(setter(transform =
@@ -43,7 +43,7 @@ pub struct PlayerBundle<P: Component + Playable> {
     pub input: InputManagerBundle<GameAction>,
 }
 
-impl<P: Component + Playable> PlayerBundle<P> {
+impl<P: Component + IPlayer> PlayerBundle<P> {
     /// Spawns the player.
     pub fn spawn<'w, 's, 'a>(
         self,

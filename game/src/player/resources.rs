@@ -10,4 +10,4 @@ pub struct SelectedPlayerIndex {
 
 /// Resource for the selected player.
 #[derive(Clone, Debug, Deref, Resource)]
-pub struct SelectedPlayer(pub Arc<dyn Playable>);
+pub struct SelectedPlayer(pub Arc<dyn IPlayer>);

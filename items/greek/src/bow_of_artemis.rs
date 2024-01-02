@@ -22,7 +22,7 @@ pub const BASE_PROJECTILE_SPEED: f32 = 250.00;
 #[derive(Clone, Component, Debug, Reflect)]
 pub struct BowOfArtemis;
 
-impl Item for BowOfArtemis {
+impl IItem for BowOfArtemis {
     fn id(&self) -> SmolStr {
         "bow-of-artemis".into()
     }
