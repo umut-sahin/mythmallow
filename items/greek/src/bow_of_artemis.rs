@@ -3,6 +3,21 @@ use {
     mythmallow::prelude::*,
 };
 
+/// Base range of the item.
+pub const BASE_RANGE: f32 = 250.00;
+
+/// Base damage of the item.
+pub const BASE_DAMAGE: Damage = Damage(5.00);
+
+/// Cooldown duration for the attack with the item.
+pub const ATTACK_COOLDOWN: Duration = Duration::from_millis(600);
+
+/// Size of the projectiles of the item.
+pub const PROJECTILE_SIZE: f32 = 3.00;
+
+/// Base speed for the projectiles of the item.
+pub const BASE_PROJECTILE_SPEED: f32 = 250.00;
+
 /// Tag component for the item "Bow of Artemis".
 #[derive(Clone, Component, Debug, Reflect)]
 pub struct BowOfArtemis;
@@ -49,21 +64,6 @@ impl Plugin for BowOfArtemisPlugin {
     }
 }
 
-/// Cooldown duration for the attack with the item.
-pub const ATTACK_COOLDOWN: Duration = Duration::from_millis(600);
-
-/// Base range of the item.
-pub const BASE_RANGE: f32 = 250.00;
-
-/// Base damage of the item.
-pub const BASE_DAMAGE: Damage = Damage(5.00);
-
-/// Radius of the projectiles of the item.
-pub const PROJECTILE_RADIUS: f32 = 3.00;
-
-/// Base speed for the projectiles of the item.
-pub const BASE_PROJECTILE_SPEED: f32 = 250.00;
-
 /// Acquires the item.
 pub fn acquire(
     In(item): In<BowOfArtemis>,
@@ -71,13 +71,7 @@ pub fn acquire(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     inventory: Res<Inventory>,
-    player_query: Query<Entity, With<Player>>,
 ) -> Option<Entity> {
-    let player_entity = match player_query.get_single() {
-        Ok(query_result) => query_result,
-        Err(_) => return None,
-    };
-
     let item = commands
         .spawn((
             Name::new(format!("Item {} ({})", inventory.items.len(), item.name().to_string())),
@@ -90,9 +84,6 @@ pub fn acquire(
             },
         ))
         .id();
-
-    commands.entity(player_entity).add_child(item);
-
     Some(item)
 }
 
@@ -165,16 +156,14 @@ pub fn attack(
                             body: RigidBody::Dynamic,
                             position: item_position,
                             velocity: LinearVelocity(enemy_direction * projectile_speed),
-                            collider: Collider::ball(PROJECTILE_RADIUS),
+                            collider: Collider::ball(PROJECTILE_SIZE),
                             layers: CollisionLayers::new(
                                 [Layer::Projectile, Layer::DamageEnemies],
                                 [Layer::MapBound, Layer::MapObstacle, Layer::EnemyHitBox],
                             ),
                             // Texture
                             mesh: MaterialMesh2dBundle {
-                                mesh: meshes
-                                    .add(shape::Circle::new(PROJECTILE_RADIUS).into())
-                                    .into(),
+                                mesh: meshes.add(shape::Circle::new(PROJECTILE_SIZE).into()).into(),
                                 material: materials.add(ColorMaterial::from(Color::DARK_GRAY)),
                                 transform: Transform::from_translation(item_position.extend(3.00)),
                                 ..default()
