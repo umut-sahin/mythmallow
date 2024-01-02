@@ -125,7 +125,7 @@ fn initialize(app: &mut App, args: &Args) {
         Name::new("Primary Window"),
         PrimaryWindow,
         PersistentWindowBundle {
-            window: Window { title: "Mythmellow".to_owned(), ..Default::default() },
+            window: Window { title: "Mythmallow".to_owned(), ..Default::default() },
             state: Persistent::<WindowState>::builder()
                 .name("window state")
                 .format(StorageFormat::Toml)
