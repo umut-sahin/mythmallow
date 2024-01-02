@@ -16,12 +16,14 @@ pub fn acquire_release_items(world: &mut World) {
         }
     }
     for item_to_release in items_to_release {
-        item_to_release.release(world, item_to_release.entity);
+        if let Some(entity) = item_to_release.entity {
+            item_to_release.release(world, entity);
+        }
     }
 
     let mut new_items = Vec::with_capacity(items_to_acquire.len());
     for mut item_to_acquire in items_to_acquire {
-        item_to_acquire.entity = item_to_acquire.acquire(world);
+        item_to_acquire.entity = Some(item_to_acquire.acquire(world));
         new_items.push(Arc::new(item_to_acquire));
     }
 
@@ -46,6 +48,8 @@ pub fn clear_inventory(world: &mut World) {
     inventory.items_to_remove = Vec::new();
 
     for item in std::mem::take(&mut inventory.items) {
-        item.release(world, item.entity);
+        if let Some(entity) = item.entity {
+            item.release(world, entity);
+        }
     }
 }

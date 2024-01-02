@@ -4,7 +4,8 @@ use {
 };
 
 /// Tag component for the item "Bident of Hades".
-#[derive(Clone, Component, Debug, Reflect)]
+#[derive(Clone, Component, Debug, Default, Reflect)]
+#[reflect(Component)]
 pub struct BidentOfHades;
 
 impl IItem for BidentOfHades {
@@ -20,12 +21,12 @@ impl IItem for BidentOfHades {
         ItemInstance::new(self.clone())
     }
 
-    fn acquire(&self, _world: &mut World) -> Option<Entity> {
-        None
+    fn acquire(&self, world: &mut World) -> Entity {
+        world.run_system_once_with(self.clone(), acquire)
     }
 
-    fn release(&self, _world: &mut World, entity: Option<Entity>) {
-        assert_eq!(entity, None);
+    fn release(&self, world: &mut World, entity: Entity) {
+        world.run_system_once_with(entity, release);
     }
 }
 
@@ -39,7 +40,28 @@ impl Plugin for BidentOfHadesPlugin {
         item_registry.register(BidentOfHades).add_tag(GREEK_ITEM_TAG);
         drop(item_registry);
 
-        // Register resources.
+        // Register components.
         app.register_type::<BidentOfHades>();
+    }
+}
+
+/// Acquires the item.
+pub fn acquire(
+    In(item): In<BidentOfHades>,
+    mut commands: Commands,
+    inventory: Res<Inventory>,
+) -> Entity {
+    commands
+        .spawn((
+            Name::new(format!("Item {} ({})", inventory.items.len(), item.name().to_string())),
+            item,
+        ))
+        .id()
+}
+
+/// Releases the item.
+pub fn release(In(entity): In<Entity>, mut commands: Commands) {
+    if let Some(entity) = commands.get_entity(entity) {
+        entity.despawn_recursive();
     }
 }
