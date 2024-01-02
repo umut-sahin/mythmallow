@@ -3,8 +3,9 @@ use mythmallow::{
     prelude::*,
 };
 
-/// Survival game mode.
+/// Resource for "Survival" game mode.
 #[derive(Debug, Default, Reflect, Resource)]
+#[reflect(Resource)]
 pub struct Survival;
 
 impl IGameMode for Survival {
