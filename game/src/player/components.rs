@@ -66,7 +66,6 @@ impl<P: Component + Playable> PlayerBundle<P> {
             RemainingHealth(*health),
             // Physics
             RigidBody::Dynamic,
-            Position::from_xy(0.00, 0.00),
             LinearVelocity::ZERO,
             Restitution::PERFECTLY_INELASTIC,
             LockedAxes::ROTATION_LOCKED,
