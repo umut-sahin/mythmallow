@@ -10,7 +10,6 @@ pub trait Item: Debug + Send + Sync + 'static {
 
     /// Instantiates the item to add it to the inventory.
     fn instantiate(&self) -> ItemInstance;
-
     // Acquires the item.
     fn acquire(&self, world: &mut World) -> Option<Entity>;
     // Releases the item.
