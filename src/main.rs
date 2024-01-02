@@ -45,7 +45,7 @@ fn main() {
     app.add_plugins(SurvivalModePlugin);
     {
         let game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
-        let number_of_game_modes = game_mode_registry.len();
+        let number_of_game_modes = game_mode_registry.number_of_game_modes();
         log::info!(
             "{} game mode{} {} registered",
             number_of_game_modes,
@@ -58,7 +58,7 @@ fn main() {
     app.add_plugins(GreekItemsPlugin);
     {
         let item_registry = ITEM_REGISTRY.lock().unwrap();
-        let number_of_items = item_registry.len();
+        let number_of_items = item_registry.number_of_items();
         log::info!(
             "{} item{} {} registered",
             number_of_items,
@@ -71,9 +71,8 @@ fn main() {
     app.add_plugins(GreekPlayersPlugin);
     {
         let player_registry = PLAYER_REGISTRY.lock().unwrap();
-        let number_of_mythologies = player_registry.len();
-        let number_of_players =
-            player_registry.iter().map(|(_, players)| players.len()).sum::<usize>();
+        let number_of_mythologies = player_registry.number_of_mythologies();
+        let number_of_players = player_registry.number_of_players();
         log::info!(
             "{} player{} {} registered across {} mytholog{}",
             number_of_players,
@@ -88,9 +87,8 @@ fn main() {
     app.add_plugins(SweetEnemiesPlugin);
     {
         let enemy_registry = ENEMY_REGISTRY.lock().unwrap();
-        let number_of_enemy_packs = enemy_registry.len();
-        let number_of_enemies =
-            enemy_registry.iter().map(|(_, enemies)| enemies.len()).sum::<usize>();
+        let number_of_enemy_packs = enemy_registry.number_of_enemy_packs();
+        let number_of_enemies = enemy_registry.number_of_enemies();
         log::info!(
             "{} enem{} {} registered across {} enemy pack{}",
             number_of_enemies,

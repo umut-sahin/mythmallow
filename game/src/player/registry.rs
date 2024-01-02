@@ -49,6 +49,16 @@ impl PlayerRegistry {
 }
 
 impl PlayerRegistry {
+    /// Gets the number of mythologies in the player registry.
+    pub fn number_of_mythologies(&self) -> usize {
+        self.0.len()
+    }
+
+    /// Gets the number of players in the player registry.
+    pub fn number_of_players(&self) -> usize {
+        self.0.iter().map(|(_, players)| players.len()).sum()
+    }
+
     /// Finds the player from it's id.
     pub fn find(&self, id: impl AsRef<str>) -> Option<SelectedPlayerIndex> {
         let id = id.as_ref();

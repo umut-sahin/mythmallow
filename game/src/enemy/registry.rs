@@ -66,6 +66,18 @@ impl EnemyRegistry {
     }
 }
 
+impl EnemyRegistry {
+    /// Gets the number of enemy packs in the enemy registry.
+    pub fn number_of_enemy_packs(&self) -> usize {
+        self.0.len()
+    }
+
+    /// Gets the number of enemies in the enemy registry.
+    pub fn number_of_enemies(&self) -> usize {
+        self.0.iter().map(|(_, enemies)| enemies.len()).sum()
+    }
+}
+
 impl Index<SelectedEnemyPackIndex> for EnemyRegistry {
     type Output = (Arc<dyn IEnemyPack>, Vec<EnemyRegistryEntry>);
 
