@@ -25,6 +25,14 @@ pub fn acquire_release_items(world: &mut World) {
         new_items.push(Arc::new(item_to_acquire));
     }
 
+    if let Ok(player_entity) = world.query_filtered::<Entity, With<Player>>().get_single(world) {
+        for new_item in &new_items {
+            if let Some(new_item_entity) = new_item.entity {
+                world.entity_mut(player_entity).add_child(new_item_entity);
+            }
+        }
+    }
+
     let mut inventory = world.resource_mut::<Inventory>();
     inventory.items.extend(new_items);
 }
