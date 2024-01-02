@@ -1,6 +1,11 @@
 #![doc = include_str!("../README.md")]
 pub use mythmallow_game::*;
 pub mod content {
+    pub mod enemies {
+        pub mod sweet {
+            pub use mythmallow_enemies_sweet::*;
+        }
+    }
     pub mod items {
         pub mod greek {
             pub use mythmallow_items_greek::*;
