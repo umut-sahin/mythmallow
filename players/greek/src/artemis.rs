@@ -14,7 +14,7 @@ pub const COLOR: Color = Color::GREEN;
 #[derive(Clone, Component, Debug, Reflect)]
 pub struct Artemis;
 
-impl Playable for Artemis {
+impl IPlayer for Artemis {
     fn id(&self) -> SmolStr {
         "artemis".into()
     }

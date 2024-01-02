@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 
 /// Interface for items.
-pub trait Item: Debug + Send + Sync + 'static {
+pub trait IItem: Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the item.
     fn id(&self) -> SmolStr;
     /// Gets the name of the item.

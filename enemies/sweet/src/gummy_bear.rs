@@ -25,7 +25,7 @@ pub const CONTACT_DAMAGE_COOLDOWN: Duration = Duration::from_millis(1000);
 #[derive(Clone, Component, Debug, Reflect)]
 pub struct GummyBear;
 
-impl Munchie for GummyBear {
+impl IEnemy for GummyBear {
     fn id(&self) -> SmolStr {
         "gummy-bear".into()
     }
@@ -62,7 +62,7 @@ impl Plugin for GummyBearPlugin {
     fn build(&self, app: &mut App) {
         // Register the enemy.
         let mut enemy_registry = ENEMY_REGISTRY.lock().unwrap();
-        enemy_registry.register(SweetMunchiesPack, GummyBear).add_tag(MELEE_ENEMY_TAG);
+        enemy_registry.register(SweetEnemyPack, GummyBear).add_tag(MELEE_ENEMY_TAG);
         drop(enemy_registry);
 
         // Register components.

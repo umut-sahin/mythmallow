@@ -7,7 +7,7 @@ use mythmallow::{
 #[derive(Debug, Default, Reflect, Resource)]
 pub struct Survival;
 
-impl Mode for Survival {
+impl IGameMode for Survival {
     fn id(&self) -> SmolStr {
         "survival".into()
     }

@@ -32,13 +32,13 @@ pub struct DamageEnemiesOnContact;
 
 /// Bundle for enemies.
 #[derive(Bundle, TypedBuilder)]
-pub struct EnemyBundle<E: Component + Munchie> {
+pub struct EnemyBundle<E: Component + IEnemy> {
     pub enemy: E,
     pub position: Position,
     pub mesh: MaterialMesh2dBundle<ColorMaterial>,
 }
 
-impl<E: Component + Munchie> EnemyBundle<E> {
+impl<E: Component + IEnemy> EnemyBundle<E> {
     /// Spawns the enemy.
     pub fn spawn<'w, 's, 'a>(
         self,

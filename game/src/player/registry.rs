@@ -5,7 +5,7 @@ pub static PLAYER_REGISTRY: Mutex<PlayerRegistry> = Mutex::new(PlayerRegistry::n
 
 /// Container for player registry.
 #[derive(Default, Deref, DerefMut, Resource)]
-pub struct PlayerRegistry(pub Vec<(Arc<dyn Mythology>, Vec<Arc<dyn Playable>>)>);
+pub struct PlayerRegistry(pub Vec<(Arc<dyn IMythology>, Vec<Arc<dyn IPlayer>>)>);
 
 impl PlayerRegistry {
     /// Creates a new player registry.
@@ -16,7 +16,7 @@ impl PlayerRegistry {
 
 impl PlayerRegistry {
     /// Registers a player to player registry.
-    pub fn register(&mut self, mythology: impl Mythology, player: impl Playable) {
+    pub fn register(&mut self, mythology: impl IMythology, player: impl IPlayer) {
         let mythology_name = mythology.name();
         let player_name = player.name();
 
@@ -64,17 +64,17 @@ impl PlayerRegistry {
 }
 
 impl Index<usize> for PlayerRegistry {
-    type Output = (Arc<dyn Mythology>, Vec<Arc<dyn Playable>>);
+    type Output = (Arc<dyn IMythology>, Vec<Arc<dyn IPlayer>>);
 
-    fn index(&self, index: usize) -> &(Arc<dyn Mythology>, Vec<Arc<dyn Playable>>) {
+    fn index(&self, index: usize) -> &(Arc<dyn IMythology>, Vec<Arc<dyn IPlayer>>) {
         &self.deref()[index]
     }
 }
 
 impl Index<SelectedPlayerIndex> for PlayerRegistry {
-    type Output = Arc<dyn Playable>;
+    type Output = Arc<dyn IPlayer>;
 
-    fn index(&self, index: SelectedPlayerIndex) -> &Arc<dyn Playable> {
+    fn index(&self, index: SelectedPlayerIndex) -> &Arc<dyn IPlayer> {
         let (_, players) = &self.deref()[index.mythology_index];
         &players.deref()[index.player_index]
     }

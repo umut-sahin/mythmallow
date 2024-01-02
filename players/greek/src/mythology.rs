@@ -4,7 +4,7 @@ use mythmallow::prelude::*;
 #[derive(Debug)]
 pub struct GreekMythology;
 
-impl Mythology for GreekMythology {
+impl IMythology for GreekMythology {
     fn id(&self) -> SmolStr {
         "greek".into()
     }

@@ -5,7 +5,7 @@ pub static GAME_MODE_REGISTRY: Mutex<GameModeRegistry> = Mutex::new(GameModeRegi
 
 /// Container for game mode registry.
 #[derive(Default, Deref, DerefMut, Resource)]
-pub struct GameModeRegistry(pub Vec<Arc<dyn Mode>>);
+pub struct GameModeRegistry(pub Vec<Arc<dyn IGameMode>>);
 
 impl GameModeRegistry {
     /// Creates a new game mode registry.
@@ -16,7 +16,7 @@ impl GameModeRegistry {
 
 impl GameModeRegistry {
     /// Registers a game mode to game mode registry.
-    pub fn register(&mut self, game_mode: impl Mode) {
+    pub fn register(&mut self, game_mode: impl IGameMode) {
         if self.iter().any(|existing_entry| existing_entry.id() == game_mode.id()) {
             log::warn!("tried to register {:?} to game mode registry again", game_mode.name());
         } else {
@@ -27,9 +27,9 @@ impl GameModeRegistry {
 }
 
 impl Index<SelectedGameModeIndex> for GameModeRegistry {
-    type Output = Arc<dyn Mode>;
+    type Output = Arc<dyn IGameMode>;
 
-    fn index(&self, index: SelectedGameModeIndex) -> &Arc<dyn Mode> {
+    fn index(&self, index: SelectedGameModeIndex) -> &Arc<dyn IGameMode> {
         &self.deref()[index.0]
     }
 }

@@ -5,7 +5,7 @@ pub static ENEMY_REGISTRY: Mutex<EnemyRegistry> = Mutex::new(EnemyRegistry::new(
 
 /// Container for enemy registry.
 #[derive(Default, Deref, DerefMut, Resource)]
-pub struct EnemyRegistry(pub Vec<(Arc<dyn MunchiePack>, Vec<EnemyRegistryEntry>)>);
+pub struct EnemyRegistry(pub Vec<(Arc<dyn IEnemyPack>, Vec<EnemyRegistryEntry>)>);
 
 impl EnemyRegistry {
     /// Creates a new enemy registry.
@@ -18,8 +18,8 @@ impl EnemyRegistry {
     /// Registers an enemy to enemy registry.
     pub fn register(
         &mut self,
-        pack: impl MunchiePack,
-        enemy: impl Munchie,
+        pack: impl IEnemyPack,
+        enemy: impl IEnemy,
     ) -> &mut EnemyRegistryEntry {
         let pack_id = pack.id();
         let pack_name = pack.name();
@@ -67,12 +67,12 @@ impl EnemyRegistry {
 }
 
 impl Index<SelectedEnemyPackIndex> for EnemyRegistry {
-    type Output = (Arc<dyn MunchiePack>, Vec<EnemyRegistryEntry>);
+    type Output = (Arc<dyn IEnemyPack>, Vec<EnemyRegistryEntry>);
 
     fn index(
         &self,
         index: SelectedEnemyPackIndex,
-    ) -> &(Arc<dyn MunchiePack>, Vec<EnemyRegistryEntry>) {
+    ) -> &(Arc<dyn IEnemyPack>, Vec<EnemyRegistryEntry>) {
         &self.deref()[index.0]
     }
 }
@@ -80,13 +80,13 @@ impl Index<SelectedEnemyPackIndex> for EnemyRegistry {
 /// Container for enemy registry entries.
 #[derive(Clone, Debug)]
 pub struct EnemyRegistryEntry {
-    pub enemy: Arc<dyn Munchie>,
+    pub enemy: Arc<dyn IEnemy>,
     pub tags: SmallVec<[SmolStr; 3]>,
 }
 
 impl EnemyRegistryEntry {
     /// Create a new entry for an enemy.
-    pub fn new<E: Munchie>(enemy: E) -> EnemyRegistryEntry {
+    pub fn new<E: IEnemy>(enemy: E) -> EnemyRegistryEntry {
         EnemyRegistryEntry { enemy: Arc::new(enemy), tags: SmallVec::new() }
     }
 }
@@ -107,9 +107,9 @@ impl EnemyRegistryEntry {
 }
 
 impl Deref for EnemyRegistryEntry {
-    type Target = Arc<dyn Munchie>;
+    type Target = Arc<dyn IEnemy>;
 
-    fn deref(&self) -> &Arc<dyn Munchie> {
+    fn deref(&self) -> &Arc<dyn IEnemy> {
         &self.enemy
     }
 }

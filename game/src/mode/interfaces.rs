@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 
 /// Interface for game modes.
-pub trait Mode: Debug + Send + Sync + 'static {
+pub trait IGameMode: Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the game mode.
     fn id(&self) -> SmolStr;
     /// Gets the name of the game mode.
