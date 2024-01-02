@@ -220,6 +220,9 @@ impl Args {
 pub struct GeneralSettings {
     pub pause_on_losing_focus: bool,
     pub show_diagnostics_overlay: bool,
+
+    #[cfg(feature = "development")]
+    pub debug_physics: bool,
 }
 
 impl GeneralSettings {
@@ -250,7 +253,13 @@ impl GeneralSettings {
 
 impl Default for GeneralSettings {
     fn default() -> GeneralSettings {
-        GeneralSettings { pause_on_losing_focus: true, show_diagnostics_overlay: false }
+        GeneralSettings {
+            pause_on_losing_focus: true,
+            show_diagnostics_overlay: false,
+
+            #[cfg(feature = "development")]
+            debug_physics: false,
+        }
     }
 }
 
