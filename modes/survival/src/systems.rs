@@ -27,47 +27,6 @@ pub fn spawn_map(mut commands: Commands) {
         y_max: MAP_BOUND,
     });
     commands.spawn((Name::new("Map"), Map, SpatialBundle::default())).with_children(|parent| {
-        // Define physics layers of the walls.
-        let layers = CollisionLayers::new(
-            [Layer::MapBound],
-            [Layer::Player, Layer::Enemy, Layer::Projectile],
-        );
-        // Spawn left wall.
-        parent.spawn((
-            Name::new("Left Wall"),
-            MapBound,
-            RigidBody::Static,
-            Collider::cuboid(50.0, MAP_BOUND * 2.0),
-            layers,
-            Position(Vector::NEG_X * (MAP_BOUND + 25.0)),
-        ));
-        // Spawn top wall.
-        parent.spawn((
-            Name::new("Top Wall"),
-            MapBound,
-            RigidBody::Static,
-            Collider::cuboid(MAP_BOUND * 2.0, 50.0),
-            layers,
-            Position(Vector::Y * (MAP_BOUND + 25.0)),
-        ));
-        // Spawn right wall.
-        parent.spawn((
-            Name::new("Right Wall"),
-            MapBound,
-            RigidBody::Static,
-            Collider::cuboid(50.0, MAP_BOUND * 2.0),
-            layers,
-            Position(Vector::X * (MAP_BOUND + 25.0)),
-        ));
-        // Spawn bottom wall.
-        parent.spawn((
-            Name::new("Bottom Wall"),
-            MapBound,
-            RigidBody::Static,
-            Collider::cuboid(MAP_BOUND * 2.0, 50.0),
-            layers,
-            Position(Vector::NEG_Y * (MAP_BOUND + 25.0)),
-        ));
         // Spawn horizontal lines.
         for i in 0..=MAP_SIZE {
             parent.spawn((

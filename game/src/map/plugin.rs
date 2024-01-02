@@ -16,6 +16,7 @@ impl Plugin for MapPlugin {
         app.register_type::<MapBound>();
 
         // Add systems.
+        app.add_systems(OnExit(GameState::Loading), spawn_map_bounds);
         app.add_systems(OnEnter(GameState::Won), despawn_map);
         app.add_systems(OnEnter(GameState::Over), despawn_map);
         app.add_systems(OnEnter(GameState::Restart), despawn_map.in_set(RestartSystems::Map));
