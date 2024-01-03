@@ -78,7 +78,7 @@ pub fn acquire(
             MaterialMesh2dBundle {
                 mesh: meshes.add(shape::Circle::new(5.00).into()).into(),
                 material: materials.add(ColorMaterial::from(Color::BLUE)),
-                transform: Transform::from_translation(Vec3::new(10.00, 0.00, 3.00)),
+                transform: Transform::from_translation(Vec3::new(10.00, 0.00, Depth::Item.z())),
                 ..default()
             },
         ))
@@ -163,7 +163,9 @@ pub fn attack(
                             mesh: MaterialMesh2dBundle {
                                 mesh: meshes.add(shape::Circle::new(PROJECTILE_SIZE).into()).into(),
                                 material: materials.add(ColorMaterial::from(Color::DARK_GRAY)),
-                                transform: Transform::from_translation(item_position.extend(3.00)),
+                                transform: Transform::from_translation(
+                                    item_position.extend(Depth::Projectile.z()),
+                                ),
                                 ..default()
                             },
                         },

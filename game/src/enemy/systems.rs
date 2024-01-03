@@ -189,8 +189,11 @@ pub fn spawn_enemy(world: &mut World, map_bounds: &MapBounds, spawn: &mut EnemyS
 
     let enemy = &spawn.enemy;
 
-    let desired_enemy_transform =
-        Transform::from_translation(Vec3::new(enemy_position.x, enemy_position.y, 1.00));
+    let desired_enemy_transform = Transform::from_translation(Vec3::new(
+        enemy_position.x,
+        enemy_position.y,
+        Depth::Enemy.z(),
+    ));
     let found_enemy_transform = world
         .run_system_once_with((desired_enemy_transform, enemy.collider(), 0.25), find_free_space);
 
@@ -229,7 +232,9 @@ pub fn find_free_space(
         );
 
         if intersections.is_empty() {
-            return Some(target_transform.with_translation(target_position.extend(1.0)));
+            return Some(
+                target_transform.with_translation(target_position.extend(Depth::Enemy.z())),
+            );
         } else {
             for entity in intersections {
                 let Ok((hit_collider, hit_transform)) = query.get(entity) else {
