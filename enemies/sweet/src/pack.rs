@@ -1,7 +1,8 @@
 use mythmallow::prelude::*;
 
-/// Sweet enemies.
-#[derive(Debug)]
+/// Resource for "Sweet" enemy pack.
+#[derive(Debug, Default, Reflect, Resource)]
+#[reflect(Resource)]
 pub struct SweetEnemyPack;
 
 impl IEnemyPack for SweetEnemyPack {

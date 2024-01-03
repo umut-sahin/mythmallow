@@ -22,7 +22,8 @@ pub const CONTACT_DAMAGE: f32 = 3.00;
 pub const CONTACT_DAMAGE_COOLDOWN: Duration = Duration::from_millis(1000);
 
 /// Component for the enemy "Gummy Bear".
-#[derive(Clone, Component, Debug, Reflect)]
+#[derive(Clone, Component, Debug, Default, Reflect)]
+#[reflect(Component)]
 pub struct GummyBear;
 
 impl IEnemy for GummyBear {
