@@ -47,7 +47,6 @@ members = [
 
 [workspace.lints.clippy]
 derivable_impls = "allow"
-new_without_default = "allow"
 type_complexity = "allow"
 
 [profile.dev]

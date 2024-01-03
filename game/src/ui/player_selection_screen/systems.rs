@@ -34,7 +34,7 @@ pub fn spawn_player_selection_screen(
                         Name::new(format!("{} Button", player.name())),
                         PlayerSelectionScreenPlayerButton { player_index },
                         Widget::default().selected(),
-                        WidgetSelected::new(),
+                        WidgetSelected::now(),
                     ),
                     &button_style,
                     button_colors,
@@ -162,9 +162,9 @@ pub fn navigation(
 
     if (go_up || go_down) && !(go_up && go_down) {
         if go_down {
-            commands.entity(down_widget.0).insert(WidgetSelected::new());
+            commands.entity(down_widget.0).insert(WidgetSelected::now());
         } else {
-            commands.entity(up_widget.0).insert(WidgetSelected::new());
+            commands.entity(up_widget.0).insert(WidgetSelected::now());
         }
     }
 }

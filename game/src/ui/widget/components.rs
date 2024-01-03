@@ -148,7 +148,7 @@ pub struct WidgetSelected {
 
 impl WidgetSelected {
     /// Creates a new widget selected component at this instant.
-    pub fn new() -> WidgetSelected {
+    pub fn now() -> WidgetSelected {
         WidgetSelected { at: Instant::now() }
     }
 }

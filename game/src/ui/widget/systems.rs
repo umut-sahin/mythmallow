@@ -11,7 +11,7 @@ pub fn manage_widget_selected_on_mouse_wiggle(
         let mut hovered = false;
         for (entity, interaction) in &widget_query {
             if *interaction == Interaction::Hovered {
-                commands.entity(entity).insert(WidgetSelected::new());
+                commands.entity(entity).insert(WidgetSelected::now());
                 hovered = true;
                 break;
             }
@@ -19,7 +19,7 @@ pub fn manage_widget_selected_on_mouse_wiggle(
         if !hovered {
             for (entity, interaction) in &widget_query {
                 if *interaction == Interaction::Pressed {
-                    commands.entity(entity).insert(WidgetSelected::new());
+                    commands.entity(entity).insert(WidgetSelected::now());
                     break;
                 }
             }
@@ -77,7 +77,7 @@ pub fn update_widget_state_on_user_interactions(
                     widget.clicked = true;
                 }
 
-                commands.entity(entity).insert(WidgetSelected::new());
+                commands.entity(entity).insert(WidgetSelected::now());
 
                 widget.is_selected = true;
                 widget.is_hovered = true;
