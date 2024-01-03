@@ -46,7 +46,7 @@ jobs:
       - name: Commit Lint
         uses: gsactions/commit-message-checker@v1
         with:
-          pattern: "^(feat|fix|refactor|style|test|docs|ci|chore): "
+          pattern: "^(feat|fix|refactor|tweak|style|test|docs|ci|chore): "
           error: "One of the commit messages doesn't conform to the commit style of the project."
           excludeTitle: "true"
           excludeDescription: "true"
