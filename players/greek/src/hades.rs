@@ -11,7 +11,8 @@ pub const SIZE: f32 = 20.00;
 pub const COLOR: Color = Color::BLACK;
 
 /// Tag component for the player "Hades".
-#[derive(Clone, Component, Debug, Reflect)]
+#[derive(Clone, Component, Debug, Default, Reflect)]
+#[reflect(Component)]
 pub struct Hades;
 
 impl IPlayer for Hades {
@@ -47,7 +48,7 @@ impl Plugin for HadesPlugin {
     }
 }
 
-/// Spawns the player "Hades".
+/// Spawns the player.
 pub fn spawn(
     In(player): In<Hades>,
     mut commands: Commands,

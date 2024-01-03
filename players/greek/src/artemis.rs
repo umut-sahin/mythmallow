@@ -11,7 +11,8 @@ pub const SIZE: f32 = 20.00;
 pub const COLOR: Color = Color::GREEN;
 
 /// Tag component for the player "Artemis".
-#[derive(Clone, Component, Debug, Reflect)]
+#[derive(Clone, Component, Debug, Default, Reflect)]
+#[reflect(Component)]
 pub struct Artemis;
 
 impl IPlayer for Artemis {
@@ -47,7 +48,7 @@ impl Plugin for ArtemisPlugin {
     }
 }
 
-/// Spawns the player "Artemis".
+/// Spawns the player.
 pub fn spawn(
     In(player): In<Artemis>,
     mut commands: Commands,

@@ -1,7 +1,8 @@
 use mythmallow::prelude::*;
 
-/// Greek mythology.
-#[derive(Debug)]
+/// Resource for "Greek" mythology.
+#[derive(Debug, Default, Reflect, Resource)]
+#[reflect(Resource)]
 pub struct GreekMythology;
 
 impl IMythology for GreekMythology {
