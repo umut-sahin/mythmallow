@@ -16,7 +16,7 @@ pub const ATTACK_COOLDOWN: Duration = Duration::from_millis(600);
 pub const PROJECTILE_SIZE: f32 = 3.00;
 
 /// Base speed for the projectiles of the item.
-pub const BASE_PROJECTILE_SPEED: f32 = 250.00;
+pub const BASE_PROJECTILE_SPEED: f32 = 200.00;
 
 /// Tag component for the item "Bow of Artemis".
 #[derive(Clone, Component, Debug, Default, Reflect)]
