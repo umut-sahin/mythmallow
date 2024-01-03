@@ -56,6 +56,13 @@ pub use crate::{
     },
 };
 
+pub mod utils {
+    pub use crate::{
+        combat::utils as combat,
+        map::utils as map,
+    };
+}
+
 #[doc(inline)]
 pub use {
     bevy::transform::TransformSystem,

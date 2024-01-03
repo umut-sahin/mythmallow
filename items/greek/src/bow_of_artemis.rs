@@ -3,17 +3,26 @@ use {
     mythmallow::prelude::*,
 };
 
+/// Size of the item.
+pub const SIZE: f32 = 5.00;
+
+/// Color of the item.
+pub const COLOR: Color = Color::BLUE;
+
 /// Base range of the item.
 pub const BASE_RANGE: f32 = 250.00;
 
 /// Base damage of the item.
 pub const BASE_DAMAGE: Damage = Damage(5.00);
 
-/// Cooldown duration for the attack with the item.
-pub const ATTACK_COOLDOWN: Duration = Duration::from_millis(600);
+/// Base cooldown duration of the attacks with the item.
+pub const BASE_ATTACK_COOLDOWN: Duration = Duration::from_millis(600);
 
 /// Size of the projectiles of the item.
 pub const PROJECTILE_SIZE: f32 = 3.00;
+
+/// Color of the projectiles of the item.
+pub const PROJECTILE_COLOR: Color = Color::DARK_GRAY;
 
 /// Base speed for the projectiles of the item.
 pub const BASE_PROJECTILE_SPEED: f32 = 200.00;
@@ -76,9 +85,9 @@ pub fn acquire(
             Name::new(format!("Item {} ({})", inventory.items.len(), item.name().to_string())),
             item,
             MaterialMesh2dBundle {
-                mesh: meshes.add(shape::Circle::new(5.00).into()).into(),
-                material: materials.add(ColorMaterial::from(Color::BLUE)),
-                transform: Transform::from_translation(Vec3::new(10.00, 0.00, Depth::Item.z())),
+                mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),
+                material: materials.add(ColorMaterial::from(COLOR)),
+                transform: Transform::from_translation(Vec3::new(0.00, 0.00, Depth::Item.z())),
                 ..default()
             },
         ))
@@ -101,77 +110,47 @@ pub fn attack(
     enemy_hit_box_query: Query<&Position, With<EnemyHitBox>>,
     spatial_query: SpatialQuery,
 ) {
-    let damage = BASE_DAMAGE;
-    let projectile_speed = BASE_PROJECTILE_SPEED;
     let attack_area = Collider::ball(BASE_RANGE);
     for (item_entity, &item_transform) in item_query.iter() {
         let item_position = Position(item_transform.translation().xy());
-
-        let intersections = spatial_query.shape_intersections(
+        let enemies_in_range = utils::combat::find_enemies_in_range(
+            &spatial_query,
+            &item_position,
             &attack_area,
-            item_position.xy(),
-            0.00,
-            SpatialQueryFilter::new().with_masks([Layer::EnemyHitBox]),
+            &enemy_hit_box_query,
         );
 
-        let mut enemies_in_range = intersections
-            .iter()
-            .filter_map(|&enemy_hit_box_entity| {
-                enemy_hit_box_query
-                    .get(enemy_hit_box_entity)
-                    .map(|&enemy_hit_box_position| {
-                        (enemy_hit_box_position, enemy_hit_box_position.distance(*item_position))
-                    })
-                    .ok()
-            })
-            .collect::<Vec<_>>();
-
-        enemies_in_range.sort_by(|(_, distance1), (_, distance2)| {
-            distance1.partial_cmp(distance2).unwrap_or(Ordering::Equal)
-        });
-
-        for (enemy_position, enemy_distance) in enemies_in_range {
+        for (_, enemy_position, enemy_distance) in enemies_in_range {
             let enemy_direction = (enemy_position.xy() - item_position.xy()).normalize();
-            let obstacle_between_item_and_enemy = spatial_query.cast_ray(
-                *item_position,
-                enemy_direction,
+            let obstacle_between_item_and_enemy = utils::map::find_obstacle(
+                &spatial_query,
+                &item_position,
+                &enemy_direction,
                 enemy_distance,
-                false,
-                SpatialQueryFilter::new().with_masks([Layer::MapObstacle]),
             );
             if obstacle_between_item_and_enemy.is_none() {
-                let mut item_entity_commands = commands.entity(item_entity);
-                item_entity_commands.with_children(|parent| {
-                    parent.spawn((
-                        Name::new("Projectile"),
-                        DamageEnemiesOnContact,
-                        ProjectileBundle {
-                            // Tags
-                            tag: Projectile,
-                            // Properties
-                            damage,
-                            // Physics
-                            body: RigidBody::Dynamic,
-                            position: item_position,
-                            velocity: LinearVelocity(enemy_direction * projectile_speed),
-                            collider: Collider::ball(PROJECTILE_SIZE),
-                            layers: CollisionLayers::new(
-                                [Layer::Projectile, Layer::DamageEnemies],
-                                [Layer::MapBound, Layer::MapObstacle, Layer::EnemyHitBox],
-                            ),
-                            // Texture
-                            mesh: MaterialMesh2dBundle {
-                                mesh: meshes.add(shape::Circle::new(PROJECTILE_SIZE).into()).into(),
-                                material: materials.add(ColorMaterial::from(Color::DARK_GRAY)),
-                                transform: Transform::from_translation(
-                                    item_position.extend(Depth::Projectile.z()),
-                                ),
-                                ..default()
-                            },
-                        },
-                    ));
-                });
-                item_entity_commands.insert(Cooldown::<Attack>::new(ATTACK_COOLDOWN));
+                let projectile_entity = ProjectileBundle::builder()
+                    .mesh(MaterialMesh2dBundle {
+                        mesh: meshes.add(shape::Circle::new(PROJECTILE_SIZE).into()).into(),
+                        material: materials.add(ColorMaterial::from(PROJECTILE_COLOR)),
+                        transform: Transform::from_translation(
+                            item_position.extend(Depth::Projectile.z()),
+                        ),
+                        ..default()
+                    })
+                    .collider(Collider::ball(PROJECTILE_SIZE))
+                    .position(item_position)
+                    .velocity(LinearVelocity(enemy_direction * BASE_PROJECTILE_SPEED))
+                    .damage(BASE_DAMAGE)
+                    .build()
+                    .spawn_toward_enemies(&mut commands)
+                    .id();
+
+                commands
+                    .entity(item_entity)
+                    .add_child(projectile_entity)
+                    .insert(Cooldown::<Attack>::new(BASE_ATTACK_COOLDOWN));
+
                 break;
             }
         }
