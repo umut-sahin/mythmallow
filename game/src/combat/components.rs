@@ -26,20 +26,59 @@ pub struct Projectile;
 
 
 /// Bundle for projectiles.
-#[derive(Bundle)]
+#[derive(Bundle, TypedBuilder)]
 pub struct ProjectileBundle {
-    // Tags
-    pub tag: Projectile,
-    // Properties
-    pub damage: Damage,
-    // Physics
-    pub body: RigidBody,
+    pub mesh: MaterialMesh2dBundle<ColorMaterial>,
+    pub collider: Collider,
     pub position: Position,
     pub velocity: LinearVelocity,
-    pub collider: Collider,
-    pub layers: CollisionLayers,
-    // Texture
-    pub mesh: MaterialMesh2dBundle<ColorMaterial>,
+    pub damage: Damage,
+}
+
+impl ProjectileBundle {
+    /// Spawns the projectile.
+    fn spawn<'w, 's, 'a>(
+        self,
+        commands: &'a mut Commands<'w, 's>,
+        layers: CollisionLayers,
+        additional_components: impl Bundle,
+    ) -> EntityCommands<'w, 's, 'a> {
+        commands.spawn((
+            // Tags
+            Name::new("Projectile"),
+            Projectile,
+            // Projectile
+            self,
+            additional_components,
+            // Physics
+            RigidBody::Dynamic,
+            layers,
+        ))
+    }
+
+    /// Spawns the projectile toward the player.
+    pub fn spawn_toward_player<'w, 's, 'a>(
+        self,
+        commands: &'a mut Commands<'w, 's>,
+    ) -> EntityCommands<'w, 's, 'a> {
+        let layers = CollisionLayers::new(
+            [Layer::Projectile, Layer::DamagePlayer],
+            [Layer::MapBound, Layer::MapObstacle, Layer::PlayerHitBox],
+        );
+        self.spawn(commands, layers, DamagePlayerOnContact)
+    }
+
+    /// Spawns the projectile toward enemies.
+    pub fn spawn_toward_enemies<'w, 's, 'a>(
+        self,
+        commands: &'a mut Commands<'w, 's>,
+    ) -> EntityCommands<'w, 's, 'a> {
+        let layers = CollisionLayers::new(
+            [Layer::Projectile, Layer::DamageEnemies],
+            [Layer::MapBound, Layer::MapObstacle, Layer::EnemyHitBox],
+        );
+        self.spawn(commands, layers, DamageEnemiesOnContact)
+    }
 }
 
 
