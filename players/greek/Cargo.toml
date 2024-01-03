@@ -6,3 +6,6 @@ edition = "2021"
 [dependencies]
 mythmallow = { path = "../../game", package = "mythmallow-game" }
 greek-items = { path = "../../items/greek", package = "mythmallow-items-greek" }
+
+[lints]
+workspace = true

@@ -40,3 +40,6 @@ native-release = ["native"]
 wasm = ["bevy-persistent/json"]
 wasm-development = ["wasm", "development"]
 wasm-release = ["wasm"]
+
+[lints]
+workspace = true

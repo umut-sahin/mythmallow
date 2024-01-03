@@ -5,3 +5,6 @@ edition = "2021"
 
 [dependencies]
 mythmallow = { path = "../../game", package = "mythmallow-game" }
+
+[lints]
+workspace = true
