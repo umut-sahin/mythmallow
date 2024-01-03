@@ -59,7 +59,7 @@ pub fn spawn(
     let mesh = MaterialMesh2dBundle {
         mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),
         material: materials.add(ColorMaterial::from(COLOR)),
-        transform: Transform::from_translation(Vec3::new(0.00, 0.00, 2.00)),
+        transform: Transform::from_translation(Vec3::new(0.00, 0.00, Depth::Player.z())),
         ..default()
     };
 

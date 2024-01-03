@@ -4,6 +4,7 @@ pub use crate::{
     combat::components::*,
     configuration::resources::*,
     core::{
+        depths::*,
         resources::*,
         sets::*,
         states::*,

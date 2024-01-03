@@ -30,7 +30,7 @@ pub fn spawn_map(mut commands: Commands) {
                     transform: Transform::from_translation(Vec3::new(
                         0.00,
                         (((GRID_SIZE as f32) / 2.00) - (i as f32)) * GRID_SPACING,
-                        0.00,
+                        Depth::Map.z(),
                     )),
                     sprite: Sprite {
                         color: GRID_COLOR,
@@ -49,7 +49,7 @@ pub fn spawn_map(mut commands: Commands) {
                     transform: Transform::from_translation(Vec3::new(
                         ((i as f32) - ((GRID_SIZE as f32) / 2.00)) * GRID_SPACING,
                         0.00,
-                        0.00,
+                        Depth::Map.z(),
                     )),
                     sprite: Sprite {
                         color: GRID_COLOR,
