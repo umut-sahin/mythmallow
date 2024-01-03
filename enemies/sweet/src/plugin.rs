@@ -3,7 +3,7 @@ use {
     mythmallow::prelude::*,
 };
 
-/// Plugin for managing the enemies from Sweet enemy pack.
+/// Plugin for managing the enemies from "Sweet" enemy pack.
 pub struct SweetEnemiesPlugin;
 
 impl Plugin for SweetEnemiesPlugin {
