@@ -6,11 +6,6 @@ use crate::prelude::*;
 pub struct SelectedEnemyPackIndex(pub usize);
 
 
-/// Resource for the selected enemy pack.
-#[derive(Clone, Debug, Deref, Resource)]
-pub struct SelectedEnemyPack(pub (Arc<dyn IEnemyPack>, Vec<EnemyRegistryEntry>));
-
-
 /// Resource for counting spawned enemies.
 #[derive(Debug, Default, Reflect, Resource)]
 pub struct EnemyCounter(usize);

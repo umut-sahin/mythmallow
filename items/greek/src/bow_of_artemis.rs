@@ -60,9 +60,8 @@ pub struct BowOfArtemisPlugin;
 impl Plugin for BowOfArtemisPlugin {
     fn build(&self, app: &mut App) {
         // Register the item.
-        let mut item_registry = ITEM_REGISTRY.lock().unwrap();
+        let mut item_registry = app.world.resource_mut::<ItemRegistry>();
         item_registry.register(BowOfArtemis).add_tag(GREEK_ITEM_TAG);
-        drop(item_registry);
 
         // Register resources.
         app.register_type::<BowOfArtemis>();

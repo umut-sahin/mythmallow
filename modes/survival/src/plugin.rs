@@ -12,9 +12,8 @@ pub struct SurvivalModePlugin;
 impl Plugin for SurvivalModePlugin {
     fn build(&self, app: &mut App) {
         // Register the game mode.
-        let mut game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
+        let mut game_mode_registry = app.world.resource_mut::<GameModeRegistry>();
         game_mode_registry.register(Survival);
-        drop(game_mode_registry);
 
         // Register resources.
         app.register_type::<CurrentWave>();

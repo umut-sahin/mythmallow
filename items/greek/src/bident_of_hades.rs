@@ -36,9 +36,8 @@ pub struct BidentOfHadesPlugin;
 impl Plugin for BidentOfHadesPlugin {
     fn build(&self, app: &mut App) {
         // Register the item.
-        let mut item_registry = ITEM_REGISTRY.lock().unwrap();
+        let mut item_registry = app.world.resource_mut::<ItemRegistry>();
         item_registry.register(BidentOfHades).add_tag(GREEK_ITEM_TAG);
-        drop(item_registry);
 
         // Register components.
         app.register_type::<BidentOfHades>();

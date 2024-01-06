@@ -11,13 +11,14 @@ pub fn initialize_enemy_counter(mut commands: Commands) {
 
 /// Initializes the enemy spawn pattern.
 pub fn initialize_enemy_spawn_pattern(world: &mut World) {
-    let enemy_registry = ENEMY_REGISTRY.lock().unwrap();
-    let selection = world.resource::<SelectedEnemyPackIndex>();
-    let spawn_pattern = enemy_registry[*selection].0.spawn_pattern(world).unwrap_or_else(|| {
-        let game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
-        let selected_game_mode_index = world.resource::<SelectedGameModeIndex>();
-        game_mode_registry[*selected_game_mode_index].default_enemy_spawn_pattern(world)
-    });
+    let enemy_registry = world.resource::<EnemyRegistry>();
+    let selected_enemy_pack_index = world.resource::<SelectedEnemyPackIndex>();
+    let spawn_pattern =
+        enemy_registry[*selected_enemy_pack_index].pack.spawn_pattern(world).unwrap_or_else(|| {
+            let game_mode_registry = world.resource::<GameModeRegistry>();
+            let selected_game_mode_index = world.resource::<SelectedGameModeIndex>();
+            game_mode_registry[*selected_game_mode_index].default_enemy_spawn_pattern(world)
+        });
     log::info!("enemy spawn pattern for the level:\n{:#?}", spawn_pattern);
     world.insert_resource(spawn_pattern);
 }
@@ -275,7 +276,6 @@ pub fn clear_enemy_counter(mut commands: Commands) {
 /// Clears the enemy pack selection.
 pub fn clear_enemy_pack_selection(mut commands: Commands) {
     commands.remove_resource::<SelectedEnemyPackIndex>();
-    commands.remove_resource::<SelectedEnemyPack>();
 }
 
 

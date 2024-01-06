@@ -12,6 +12,7 @@ pub fn spawn_player_selection_screen(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     player_selection_screen_action_input_map: Res<InputMap<PlayerSelectionScreenAction>>,
+    player_registry: Res<PlayerRegistry>,
 ) {
     let button_style = styles::button();
     let button_colors = WidgetColors::button();
@@ -21,18 +22,19 @@ pub fn spawn_player_selection_screen(
     let mut entities = Vec::new();
     let mut first = true;
 
-    let player_registry = PLAYER_REGISTRY.lock().unwrap();
-    for (mythology_index, (_mythology, players)) in player_registry.iter().enumerate() {
+    for (mythology_index, entry) in player_registry.iter().enumerate() {
         // TODO: Group player buttons by mythology.
-        for (player_index, player) in players.iter().enumerate() {
-            let player_index = SelectedPlayerIndex { mythology_index, player_index };
+        for (player_index, player) in entry.players.iter().enumerate() {
+            let mythology_index = SelectedMythologyIndex(mythology_index);
+            let player_index = SelectedPlayerIndex(player_index);
+
             let player_button = if first {
                 first = false;
                 Widget::button(
                     &mut commands,
                     (
                         Name::new(format!("{} Button", player.name())),
-                        PlayerSelectionScreenPlayerButton { player_index },
+                        PlayerSelectionScreenPlayerButton { mythology_index, player_index },
                         Widget::default().selected(),
                         WidgetSelected::now(),
                     ),
@@ -47,7 +49,7 @@ pub fn spawn_player_selection_screen(
                     &mut commands,
                     (
                         Name::new(format!("{} Button", player.name())),
-                        PlayerSelectionScreenPlayerButton { player_index },
+                        PlayerSelectionScreenPlayerButton { mythology_index, player_index },
                         Widget::default(),
                     ),
                     &button_style,
@@ -195,6 +197,7 @@ pub fn player_button_interaction(
 ) {
     for (mut button, metadata) in &mut player_button_query {
         button.on_click(|| {
+            commands.insert_resource(metadata.mythology_index);
             commands.insert_resource(metadata.player_index);
         });
     }
@@ -212,22 +215,25 @@ pub fn select_player_when_starting_in_game(
     mut commands: Commands,
     args: ResMut<Args>,
     mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
+    player_registry: Res<PlayerRegistry>,
 ) {
-    let player_registry = PLAYER_REGISTRY.lock().unwrap();
     match &args.start_in_game_player {
         Some(specified_player_id) => {
-            if let Some(selection_index) = player_registry.find(specified_player_id) {
+            if let Some((mythology_index, player_index)) =
+                player_registry.find_player(specified_player_id)
+            {
+                let selected_mythology = &player_registry[mythology_index];
+                let selected_player = &selected_mythology[player_index];
+
                 log::info!(
                     "selected manually specified {:?} first found in {:?} mythology \
                     as the player",
-                    player_registry[selection_index].name(),
-                    player_registry[selection_index.mythology_index].0.name()
+                    selected_player.id(),
+                    selected_mythology.id()
                 );
 
-                let selection = SelectedPlayer(Arc::clone(&player_registry[selection_index]));
-
-                commands.insert_resource(selection_index);
-                commands.insert_resource(selection);
+                commands.insert_resource(mythology_index);
+                commands.insert_resource(player_index);
             } else {
                 log::error!(
                     "couldn't select \
@@ -244,22 +250,25 @@ pub fn select_player_when_starting_in_game(
             }
 
             let number_of_mythologies = player_registry.len();
-            let mythology_index = (0..number_of_mythologies).choose(rng.deref_mut()).unwrap();
+            let mythology_index =
+                SelectedMythologyIndex((0..number_of_mythologies).choose(rng.deref_mut()).unwrap());
 
-            let number_of_players_in_mythology = player_registry[mythology_index].1.len();
-            let player_index = (0..number_of_players_in_mythology).choose(rng.deref_mut()).unwrap();
+            let number_of_players_in_mythology = player_registry[mythology_index].players.len();
+            let player_index = SelectedPlayerIndex(
+                (0..number_of_players_in_mythology).choose(rng.deref_mut()).unwrap(),
+            );
 
-            let selection_index = SelectedPlayerIndex { mythology_index, player_index };
-            let selection = SelectedPlayer(Arc::clone(&player_registry[selection_index]));
+            let selected_mythology = player_registry[mythology_index].clone();
+            let selected_player = player_registry[mythology_index][player_index].clone();
 
             log::info!(
                 "randomly selected {:?} from {:?} mythology as the player",
-                player_registry[selection_index].name(),
-                player_registry[mythology_index].0.name()
+                selected_player.id(),
+                selected_mythology.id()
             );
 
-            commands.insert_resource(selection_index);
-            commands.insert_resource(selection);
+            commands.insert_resource(mythology_index);
+            commands.insert_resource(player_index);
         },
     }
 }

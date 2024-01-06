@@ -1,30 +1,27 @@
 use crate::prelude::*;
 
-/// Registry for items.
-pub static ITEM_REGISTRY: Mutex<ItemRegistry> = Mutex::new(ItemRegistry::new());
 
 /// Container for the item registry.
-#[derive(Default, Deref, DerefMut, Resource)]
-pub struct ItemRegistry(pub Vec<ItemRegistryEntry>);
-
-impl ItemRegistry {
-    /// Creates a new item registry.
-    pub const fn new() -> ItemRegistry {
-        ItemRegistry(Vec::new())
-    }
-}
+#[derive(Debug, Default, Deref, Resource)]
+pub struct ItemRegistry(Vec<ItemRegistryEntry>);
 
 impl ItemRegistry {
     /// Registers an item to the item registry.
-    pub fn register(&mut self, item: impl IItem) -> &mut ItemRegistryEntry {
-        let id = item.id();
-        if self.iter().any(|entry| entry.id() == id) {
-            log::warn!("tried to register {:?} to item registry again", item.id());
-        } else {
-            log::info!("registered {:?} to item registry", item.name());
-            self.push(ItemRegistryEntry::new(item));
-        }
-        self.iter_mut().find(|entry| entry.id() == id).unwrap()
+    pub fn register(&mut self, item: impl IItem) -> &mut RegisteredItem {
+        let item_id = item.id();
+        let item_index = match self.iter().position(|entry| entry.item.id() == item_id) {
+            Some(index) => {
+                log::warn!("tried to register {:?} to the item registry again", item_id);
+                index
+            },
+            None => {
+                log::info!("registered {:?} to the item registry", item_id);
+                let index = self.len();
+                self.0.push(ItemRegistryEntry::new(item));
+                index
+            },
+        };
+        &mut self.0[item_index].item
     }
 }
 
@@ -35,29 +32,44 @@ impl ItemRegistry {
     }
 }
 
-/// Container for item registry entries.
+
+/// Container for the entries of the iem registry.
 #[derive(Debug)]
 pub struct ItemRegistryEntry {
+    pub item: RegisteredItem,
+}
+
+impl ItemRegistryEntry {
+    /// Creates a new item registry entry.
+    pub fn new(item: impl IItem) -> ItemRegistryEntry {
+        ItemRegistryEntry { item: RegisteredItem::new(item) }
+    }
+}
+
+
+/// Container for registered items.
+#[derive(Debug)]
+pub struct RegisteredItem {
     pub item: Arc<dyn IItem>,
     pub tags: SmallVec<[SmolStr; 3]>,
 }
 
-impl ItemRegistryEntry {
-    /// Create a new entry for an item.
-    pub fn new<I: IItem>(item: I) -> ItemRegistryEntry {
-        ItemRegistryEntry { item: Arc::new(item), tags: SmallVec::new() }
+impl RegisteredItem {
+    /// Creates a new registered item.
+    pub fn new(item: impl IItem) -> RegisteredItem {
+        RegisteredItem { item: Arc::new(item), tags: SmallVec::new() }
     }
 }
 
-impl ItemRegistryEntry {
-    /// Add a tag to the item.
-    pub fn add_tag(&mut self, tag: impl ToString) -> &mut ItemRegistryEntry {
+impl RegisteredItem {
+    /// Adds a tag to the item.
+    pub fn add_tag(&mut self, tag: impl ToString) -> &mut RegisteredItem {
         self.tags.push(tag.to_string().into());
         self
     }
 }
 
-impl Deref for ItemRegistryEntry {
+impl Deref for RegisteredItem {
     type Target = Arc<dyn IItem>;
 
     fn deref(&self) -> &Arc<dyn IItem> {
