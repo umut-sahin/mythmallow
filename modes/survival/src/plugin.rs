@@ -6,15 +6,14 @@ use {
     mythmallow::prelude::*,
 };
 
-/// Plugin for managing the "Survival" game mode.
+/// Plugin for managing "Survival" game mode.
 pub struct SurvivalModePlugin;
 
 impl Plugin for SurvivalModePlugin {
     fn build(&self, app: &mut App) {
         // Register the game mode.
-        let mut game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
+        let mut game_mode_registry = app.world.resource_mut::<GameModeRegistry>();
         game_mode_registry.register(Survival);
-        drop(game_mode_registry);
 
         // Register resources.
         app.register_type::<CurrentWave>();
@@ -40,7 +39,7 @@ impl Plugin for SurvivalModePlugin {
 
         // Add gameplay systems.
         app.add_systems(
-            Update,
+            PreUpdate,
             tick.in_set(GameplaySystems::GameMode).run_if(in_game_mode::<Survival>),
         );
 

@@ -6,7 +6,7 @@ use {
     mythmallow::prelude::*,
 };
 
-/// Plugin for managing the players from Greek mythology.
+/// Plugin for managing the players from "Greek" mythology.
 pub struct GreekPlayersPlugin;
 
 impl Plugin for GreekPlayersPlugin {

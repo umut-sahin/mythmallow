@@ -8,6 +8,7 @@ pub enum GameplaySystems {
     Enemy,
     GameMode,
     Input,
+    Item,
     Movement,
     Physics,
     Player,

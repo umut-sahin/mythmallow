@@ -4,6 +4,7 @@ pub use crate::{
     combat::components::*,
     configuration::resources::*,
     core::{
+        depths::*,
         resources::*,
         sets::*,
         states::*,
@@ -55,6 +56,13 @@ pub use crate::{
     },
 };
 
+pub mod utils {
+    pub use crate::{
+        combat::utils as combat,
+        map::utils as map,
+    };
+}
+
 #[doc(inline)]
 pub use {
     bevy::transform::TransformSystem,
@@ -67,7 +75,10 @@ pub use {
         },
         ecs::{
             self as bevy_ecs,
-            system::RunSystemOnce,
+            system::{
+                EntityCommands,
+                RunSystemOnce,
+            },
         },
         input::mouse::MouseMotion,
         log::{
@@ -108,6 +119,7 @@ pub use {
             Any,
             TypeId,
         },
+        cmp::Ordering,
         fmt::{
             self,
             Debug,
@@ -128,6 +140,7 @@ pub use {
     },
     strum::IntoEnumIterator,
     strum_macros::EnumIter,
+    typed_builder::TypedBuilder,
 };
 
 #[cfg(feature = "native")]

@@ -1,10 +1,11 @@
 use mythmallow::prelude::*;
 
-/// Greek mythology.
-#[derive(Debug)]
+/// Resource for "Greek" mythology.
+#[derive(Debug, Default, Reflect, Resource)]
+#[reflect(Resource)]
 pub struct GreekMythology;
 
-impl Mythology for GreekMythology {
+impl IMythology for GreekMythology {
     fn id(&self) -> SmolStr {
         "greek".into()
     }

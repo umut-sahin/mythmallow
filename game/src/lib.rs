@@ -1,7 +1,3 @@
-#![allow(clippy::derivable_impls)]
-#![allow(clippy::new_without_default)]
-#![allow(clippy::type_complexity)]
-
 pub mod camera;
 pub mod combat;
 pub mod configuration;

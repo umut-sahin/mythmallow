@@ -1,5 +1,5 @@
 pub use crate::{
     gummy_bear::GummyBear,
-    pack::SweetMunchiesPack,
+    pack::SweetEnemyPack,
     plugin::SweetEnemiesPlugin,
 };

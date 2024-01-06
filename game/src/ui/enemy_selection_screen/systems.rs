@@ -2,26 +2,18 @@ use crate::prelude::*;
 
 
 /// Spawns the enemy selection screen.
-pub fn spawn_enemy_selection_screen(mut commands: Commands) {
-    let enemy_registry = ENEMY_REGISTRY.lock().unwrap();
-
+pub fn spawn_enemy_selection_screen(mut commands: Commands, enemy_registry: Res<EnemyRegistry>) {
     if enemy_registry.is_empty() {
-        drop(enemy_registry);
         // TODO: Replace panic with a proper error communicated through the UI.
         panic!("no enemy packs are available");
     }
 
     if enemy_registry.len() == 1 {
-        let selection_index = SelectedEnemyPackIndex(0);
-        let selection = SelectedEnemyPack(enemy_registry[selection_index].clone());
-
-        commands.insert_resource(selection_index);
-        commands.insert_resource(selection);
-
+        let selected_enemy_pack_index = SelectedEnemyPackIndex(0);
+        commands.insert_resource(selected_enemy_pack_index);
         return;
     }
 
-    drop(enemy_registry);
     // TODO: Add support for multiple enemy packs and a nice enemy selection screen.
     panic!("multiple enemy packs are not supported at the moment")
 }
@@ -52,20 +44,16 @@ pub fn select_enemy_pack_when_starting_in_game(
     mut commands: Commands,
     args: ResMut<Args>,
     mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
+    enemy_registry: Res<EnemyRegistry>,
 ) {
-    let enemy_registry = ENEMY_REGISTRY.lock().unwrap();
     match &args.start_in_game_mode {
         Some(specified_enemy_pack_id) => {
-            for (index, (enemy_pack, _)) in enemy_registry.iter().enumerate() {
-                if enemy_pack.id() == specified_enemy_pack_id {
-                    log::info!("selected manually specified {:?} enemies", enemy_pack.id());
+            for (index, entry) in enemy_registry.iter().enumerate() {
+                if entry.pack.id() == specified_enemy_pack_id {
+                    log::info!("selected manually specified {:?} enemies", entry.pack.id());
 
-                    let selection_index = SelectedEnemyPackIndex(index);
-                    let selection = SelectedEnemyPack(enemy_registry[selection_index].clone());
-
-                    commands.insert_resource(selection_index);
-                    commands.insert_resource(selection);
-
+                    let selected_enemy_pack_index = SelectedEnemyPackIndex(index);
+                    commands.insert_resource(selected_enemy_pack_index);
                     return;
                 }
             }
@@ -83,14 +71,13 @@ pub fn select_enemy_pack_when_starting_in_game(
                 return;
             }
 
-            let selection_index =
+            let selected_enemy_pack_index =
                 SelectedEnemyPackIndex((0..enemy_registry.len()).choose(rng.deref_mut()).unwrap());
-            let selection = SelectedEnemyPack(enemy_registry[selection_index].clone());
 
-            log::info!("randomly selected {:?} enemies", enemy_registry[selection_index].0.name());
+            let selected_enemy_pack = &enemy_registry[selected_enemy_pack_index].pack;
+            log::info!("randomly selected {:?} enemies", selected_enemy_pack.name());
 
-            commands.insert_resource(selection_index);
-            commands.insert_resource(selection);
+            commands.insert_resource(selected_enemy_pack_index);
         },
     }
 }

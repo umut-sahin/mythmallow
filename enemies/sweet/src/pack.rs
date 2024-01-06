@@ -1,10 +1,11 @@
 use mythmallow::prelude::*;
 
-/// Sweet enemies.
-#[derive(Debug)]
-pub struct SweetMunchiesPack;
+/// Resource for "Sweet" enemy pack.
+#[derive(Debug, Default, Reflect, Resource)]
+#[reflect(Resource)]
+pub struct SweetEnemyPack;
 
-impl MunchiePack for SweetMunchiesPack {
+impl IEnemyPack for SweetEnemyPack {
     fn id(&self) -> SmolStr {
         "sweet".into()
     }

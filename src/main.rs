@@ -1,5 +1,5 @@
 // Disable spawning command prompt on Windows in release mode.
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#![cfg_attr(not(feature = "development"), windows_subsystem = "windows")]
 
 use {
     mythmallow_enemies_sweet::prelude::*,
@@ -44,8 +44,8 @@ fn main() {
     // Add game mode plugins.
     app.add_plugins(SurvivalModePlugin);
     {
-        let game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
-        let number_of_game_modes = game_mode_registry.len();
+        let game_mode_registry = app.world.resource_mut::<GameModeRegistry>();
+        let number_of_game_modes = game_mode_registry.number_of_game_modes();
         log::info!(
             "{} game mode{} {} registered",
             number_of_game_modes,
@@ -57,8 +57,8 @@ fn main() {
     // Add item plugins.
     app.add_plugins(GreekItemsPlugin);
     {
-        let item_registry = ITEM_REGISTRY.lock().unwrap();
-        let number_of_items = item_registry.len();
+        let item_registry = app.world.resource_mut::<ItemRegistry>();
+        let number_of_items = item_registry.number_of_items();
         log::info!(
             "{} item{} {} registered",
             number_of_items,
@@ -70,10 +70,9 @@ fn main() {
     // Add player plugins.
     app.add_plugins(GreekPlayersPlugin);
     {
-        let player_registry = PLAYER_REGISTRY.lock().unwrap();
-        let number_of_mythologies = player_registry.len();
-        let number_of_players =
-            player_registry.iter().map(|(_, players)| players.len()).sum::<usize>();
+        let player_registry = app.world.resource::<PlayerRegistry>();
+        let number_of_mythologies = player_registry.number_of_mythologies();
+        let number_of_players = player_registry.number_of_players();
         log::info!(
             "{} player{} {} registered across {} mytholog{}",
             number_of_players,
@@ -87,10 +86,9 @@ fn main() {
     // Add enemy plugins.
     app.add_plugins(SweetEnemiesPlugin);
     {
-        let enemy_registry = ENEMY_REGISTRY.lock().unwrap();
-        let number_of_enemy_packs = enemy_registry.len();
-        let number_of_enemies =
-            enemy_registry.iter().map(|(_, enemies)| enemies.len()).sum::<usize>();
+        let enemy_registry = app.world.resource_mut::<EnemyRegistry>();
+        let number_of_enemy_packs = enemy_registry.number_of_packs();
+        let number_of_enemies = enemy_registry.number_of_enemies();
         log::info!(
             "{} enem{} {} registered across {} enemy pack{}",
             number_of_enemies,
@@ -125,7 +123,7 @@ fn initialize(app: &mut App, args: &Args) {
         Name::new("Primary Window"),
         PrimaryWindow,
         PersistentWindowBundle {
-            window: Window { title: "Mythmellow".to_owned(), ..Default::default() },
+            window: Window { title: "Mythmallow".to_owned(), ..Default::default() },
             state: Persistent::<WindowState>::builder()
                 .name("window state")
                 .format(StorageFormat::Toml)
@@ -141,7 +139,7 @@ fn initialize(app: &mut App, args: &Args) {
     // Add persistent windows plugin.
     app.add_plugins(PersistentWindowsPlugin);
 
-    #[cfg(debug_assertions)]
+    #[cfg(feature = "development")]
     {
         // Setup exiting the application with CTRL+Q in development mode.
         fn exit_with_ctrl_q(

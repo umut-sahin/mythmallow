@@ -14,8 +14,8 @@ pub struct Cooldown<T: Send + Sync + 'static> {
 
 impl<T: Send + Sync + 'static> Cooldown<T> {
     /// Creates a cooldown.
-    pub fn new(timer: Timer) -> Cooldown<T> {
-        Cooldown { timer, phantom: PhantomData }
+    pub fn new(duration: Duration) -> Cooldown<T> {
+        Cooldown { timer: Timer::new(duration, TimerMode::Once), phantom: PhantomData }
     }
 }
 

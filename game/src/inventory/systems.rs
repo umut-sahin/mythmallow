@@ -16,13 +16,23 @@ pub fn acquire_release_items(world: &mut World) {
         }
     }
     for item_to_release in items_to_release {
-        item_to_release.release(world, item_to_release.entity);
+        if let Some(entity) = item_to_release.entity {
+            item_to_release.release(world, entity);
+        }
     }
 
     let mut new_items = Vec::with_capacity(items_to_acquire.len());
     for mut item_to_acquire in items_to_acquire {
-        item_to_acquire.entity = item_to_acquire.acquire(world);
+        item_to_acquire.entity = Some(item_to_acquire.acquire(world));
         new_items.push(Arc::new(item_to_acquire));
+    }
+
+    if let Ok(player_entity) = world.query_filtered::<Entity, With<Player>>().get_single(world) {
+        for new_item in &new_items {
+            if let Some(new_item_entity) = new_item.entity {
+                world.entity_mut(player_entity).add_child(new_item_entity);
+            }
+        }
     }
 
     let mut inventory = world.resource_mut::<Inventory>();
@@ -38,6 +48,8 @@ pub fn clear_inventory(world: &mut World) {
     inventory.items_to_remove = Vec::new();
 
     for item in std::mem::take(&mut inventory.items) {
-        item.release(world, item.entity);
+        if let Some(entity) = item.entity {
+            item.release(world, entity);
+        }
     }
 }

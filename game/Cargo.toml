@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 bevy = { version = "0.12", features = ["serialize"] }
 bevy-persistent = { version = "0.4" }
-bevy_editor_pls = { version = "0.6", optional = true }
+bevy_editor_pls = { version = "0.7", optional = true }
 bevy_prng = { version = "0.2", features = ["rand_chacha"] }
 bevy_rand = { version = "0.4" }
 bevy_xpbd_2d = { version = "0.3" }
@@ -19,6 +19,7 @@ smallvec = { version = "1.11", features = ["serde"] }
 smol_str = { version = "0.2" }
 strum = { version = "0.25" }
 strum_macros = { version = "0.25" }
+typed-builder = { version = "0.18" }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 bevy-persistent-windows = { version = "0.4" }
@@ -39,3 +40,6 @@ native-release = ["native"]
 wasm = ["bevy-persistent/json"]
 wasm-development = ["wasm", "development"]
 wasm-release = ["wasm"]
+
+[lints]
+workspace = true

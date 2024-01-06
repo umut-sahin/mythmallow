@@ -11,13 +11,14 @@ pub fn initialize_enemy_counter(mut commands: Commands) {
 
 /// Initializes the enemy spawn pattern.
 pub fn initialize_enemy_spawn_pattern(world: &mut World) {
-    let enemy_registry = ENEMY_REGISTRY.lock().unwrap();
-    let selection = world.resource::<SelectedEnemyPackIndex>();
-    let spawn_pattern = enemy_registry[*selection].0.spawn_pattern(world).unwrap_or_else(|| {
-        let game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
-        let selected_game_mode_index = world.resource::<SelectedGameModeIndex>();
-        game_mode_registry[*selected_game_mode_index].default_enemy_spawn_pattern(world)
-    });
+    let enemy_registry = world.resource::<EnemyRegistry>();
+    let selected_enemy_pack_index = world.resource::<SelectedEnemyPackIndex>();
+    let spawn_pattern =
+        enemy_registry[*selected_enemy_pack_index].pack.spawn_pattern(world).unwrap_or_else(|| {
+            let game_mode_registry = world.resource::<GameModeRegistry>();
+            let selected_game_mode_index = world.resource::<SelectedGameModeIndex>();
+            game_mode_registry[*selected_game_mode_index].default_enemy_spawn_pattern(world)
+        });
     log::info!("enemy spawn pattern for the level:\n{:#?}", spawn_pattern);
     world.insert_resource(spawn_pattern);
 }
@@ -190,7 +191,7 @@ pub fn spawn_enemy(world: &mut World, map_bounds: &MapBounds, spawn: &mut EnemyS
     let enemy = &spawn.enemy;
 
     let desired_enemy_transform =
-        Transform::from_translation(Vec3::new(enemy_position.x, enemy_position.y, 1.00));
+        Transform::from_translation(enemy_position.extend(Depth::Enemy.z()));
     let found_enemy_transform = world
         .run_system_once_with((desired_enemy_transform, enemy.collider(), 0.25), find_free_space);
 
@@ -229,7 +230,9 @@ pub fn find_free_space(
         );
 
         if intersections.is_empty() {
-            return Some(target_transform.with_translation(target_position.extend(1.0)));
+            return Some(
+                target_transform.with_translation(target_position.extend(Depth::Enemy.z())),
+            );
         } else {
             for entity in intersections {
                 let Ok((hit_collider, hit_transform)) = query.get(entity) else {
@@ -273,7 +276,6 @@ pub fn clear_enemy_counter(mut commands: Commands) {
 /// Clears the enemy pack selection.
 pub fn clear_enemy_pack_selection(mut commands: Commands) {
     commands.remove_resource::<SelectedEnemyPackIndex>();
-    commands.remove_resource::<SelectedEnemyPack>();
 }
 
 

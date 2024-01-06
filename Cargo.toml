@@ -45,6 +45,10 @@ members = [
     "players/greek",
 ]
 
+[workspace.lints.clippy]
+derivable_impls = "allow"
+type_complexity = "allow"
+
 [profile.dev]
 opt-level = 1
 

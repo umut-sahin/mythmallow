@@ -6,6 +6,7 @@ use crate::{
     enemy::plugin::EnemyPlugin,
     input::plugin::InputPlugin,
     inventory::plugin::InventoryPlugin,
+    items::plugin::ItemPlugin,
     map::plugin::MapPlugin,
     mode::plugin::ModePlugin,
     movement::plugin::MovementPlugin,
@@ -30,6 +31,7 @@ impl Plugin for MythmallowPlugin {
         app.add_plugins(UiPlugin);
         app.add_plugins(PhysicsPlugin);
         app.add_plugins(ModePlugin);
+        app.add_plugins(ItemPlugin);
         app.add_plugins(InventoryPlugin);
         app.add_plugins(MapPlugin);
         app.add_plugins(PropertyPlugin);
