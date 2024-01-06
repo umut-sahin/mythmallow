@@ -44,7 +44,7 @@ fn main() {
     // Add game mode plugins.
     app.add_plugins(SurvivalModePlugin);
     {
-        let game_mode_registry = GAME_MODE_REGISTRY.lock().unwrap();
+        let game_mode_registry = app.world.resource_mut::<GameModeRegistry>();
         let number_of_game_modes = game_mode_registry.number_of_game_modes();
         log::info!(
             "{} game mode{} {} registered",
@@ -57,7 +57,7 @@ fn main() {
     // Add item plugins.
     app.add_plugins(GreekItemsPlugin);
     {
-        let item_registry = ITEM_REGISTRY.lock().unwrap();
+        let item_registry = app.world.resource_mut::<ItemRegistry>();
         let number_of_items = item_registry.number_of_items();
         log::info!(
             "{} item{} {} registered",
@@ -70,7 +70,7 @@ fn main() {
     // Add player plugins.
     app.add_plugins(GreekPlayersPlugin);
     {
-        let player_registry = PLAYER_REGISTRY.lock().unwrap();
+        let player_registry = app.world.resource::<PlayerRegistry>();
         let number_of_mythologies = player_registry.number_of_mythologies();
         let number_of_players = player_registry.number_of_players();
         log::info!(
@@ -86,8 +86,8 @@ fn main() {
     // Add enemy plugins.
     app.add_plugins(SweetEnemiesPlugin);
     {
-        let enemy_registry = ENEMY_REGISTRY.lock().unwrap();
-        let number_of_enemy_packs = enemy_registry.number_of_enemy_packs();
+        let enemy_registry = app.world.resource_mut::<EnemyRegistry>();
+        let number_of_enemy_packs = enemy_registry.number_of_packs();
         let number_of_enemies = enemy_registry.number_of_enemies();
         log::info!(
             "{} enem{} {} registered across {} enemy pack{}",

@@ -23,9 +23,12 @@ impl Plugin for PlayerSelectionScreenPlugin {
         );
         app.add_systems(
             PostUpdate,
-            player_selected
-                .in_set(PlayerSelectionScreenSystems)
-                .run_if(|player_index: Option<Res<SelectedPlayerIndex>>| player_index.is_some()),
+            player_selected.in_set(PlayerSelectionScreenSystems).run_if(
+                |selected_mythology_index: Option<Res<SelectedMythologyIndex>>,
+                 selected_player_index: Option<Res<SelectedPlayerIndex>>| {
+                    selected_mythology_index.is_some() && selected_player_index.is_some()
+                },
+            ),
         );
         app.add_systems(OnExit(AppState::PlayerSelectionScreen), despawn_player_selection_screen);
 

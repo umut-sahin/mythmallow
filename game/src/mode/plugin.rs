@@ -11,6 +11,9 @@ impl Plugin for ModePlugin {
         // Register resources.
         app.register_type::<SelectedGameModeIndex>();
 
+        // Initialize registry.
+        app.init_resource::<GameModeRegistry>();
+
         // Add systems.
         app.add_systems(
             OnEnter(GameState::Initialization),

@@ -11,7 +11,11 @@ impl Plugin for PlayerPlugin {
         // Register components.
         app.register_type::<Player>();
         app.register_type::<DamagePlayerOnContact>();
+        app.register_type::<SelectedMythologyIndex>();
         app.register_type::<SelectedPlayerIndex>();
+
+        // Initialize registry.
+        app.init_resource::<PlayerRegistry>();
 
         // Add systems.
         {

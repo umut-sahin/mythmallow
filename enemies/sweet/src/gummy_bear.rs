@@ -62,9 +62,8 @@ pub struct GummyBearPlugin;
 impl Plugin for GummyBearPlugin {
     fn build(&self, app: &mut App) {
         // Register the enemy.
-        let mut enemy_registry = ENEMY_REGISTRY.lock().unwrap();
+        let mut enemy_registry = app.world.resource_mut::<EnemyRegistry>();
         enemy_registry.register(SweetEnemyPack, GummyBear).add_tag(MELEE_ENEMY_TAG);
-        drop(enemy_registry);
 
         // Register components.
         app.register_type::<GummyBear>();

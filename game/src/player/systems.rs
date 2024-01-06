@@ -6,9 +6,10 @@ use crate::{
 
 /// Spawns the player.
 pub fn spawn_player(world: &mut World) {
-    let player_registry = PLAYER_REGISTRY.lock().unwrap();
-    let selection = world.resource::<SelectedPlayerIndex>();
-    player_registry[*selection].spawn(world);
+    let player_registry = world.resource::<PlayerRegistry>();
+    let selected_mythology_index = world.resource::<SelectedMythologyIndex>();
+    let selected_player_index = world.resource::<SelectedPlayerIndex>();
+    player_registry[*selected_mythology_index][*selected_player_index].clone().spawn(world);
 }
 
 /// Despawns the player.
@@ -116,6 +117,6 @@ pub fn pause(
 
 /// Clears player selection.
 pub fn clear_player_selection(mut commands: Commands) {
+    commands.remove_resource::<SelectedMythologyIndex>();
     commands.remove_resource::<SelectedPlayerIndex>();
-    commands.remove_resource::<SelectedPlayer>();
 }

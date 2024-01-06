@@ -39,9 +39,8 @@ pub struct HadesPlugin;
 impl Plugin for HadesPlugin {
     fn build(&self, app: &mut App) {
         // Register the player.
-        let mut player_registry = PLAYER_REGISTRY.lock().unwrap();
+        let mut player_registry = app.world.resource_mut::<PlayerRegistry>();
         player_registry.register(GreekMythology, Hades);
-        drop(player_registry);
 
         // Register components.
         app.register_type::<Hades>();

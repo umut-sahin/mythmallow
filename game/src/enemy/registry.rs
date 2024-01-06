@@ -1,124 +1,145 @@
 use crate::prelude::*;
 
-/// Registry for enemies.
-pub static ENEMY_REGISTRY: Mutex<EnemyRegistry> = Mutex::new(EnemyRegistry::new());
 
-/// Container for enemy registry.
-#[derive(Default, Deref, DerefMut, Resource)]
-pub struct EnemyRegistry(pub Vec<(Arc<dyn IEnemyPack>, Vec<EnemyRegistryEntry>)>);
+/// Container for the enemy registry.
+#[derive(Debug, Default, Deref, Resource)]
+pub struct EnemyRegistry(Vec<EnemyRegistryEntry>);
 
 impl EnemyRegistry {
-    /// Creates a new enemy registry.
-    pub const fn new() -> EnemyRegistry {
-        EnemyRegistry(Vec::new())
-    }
-}
-
-impl EnemyRegistry {
-    /// Registers an enemy to enemy registry.
-    pub fn register(
-        &mut self,
-        pack: impl IEnemyPack,
-        enemy: impl IEnemy,
-    ) -> &mut EnemyRegistryEntry {
+    /// Registers an enemy to the enemy registry.
+    pub fn register(&mut self, pack: impl IEnemyPack, enemy: impl IEnemy) -> &mut RegisteredEnemy {
         let pack_id = pack.id();
-        let pack_name = pack.name();
+        let pack_index =
+            self.iter().position(|entry| entry.pack.id() == pack_id).unwrap_or_else(|| {
+                let index = self.len();
+                self.0.push(EnemyRegistryEntry::new(pack));
+                index
+            });
 
-        let pack_index = match self.iter_mut().position(|(candidate, _)| candidate.id() == pack_id)
-        {
-            Some(pack_index) => pack_index,
-            None => {
-                let pack_index = self.len();
-                self.push((Arc::new(pack), Vec::new()));
-                pack_index
-            },
-        };
-        let pack_entries = &mut self.0[pack_index].1;
+        let enemies = &mut self.0[pack_index].enemies;
 
         let enemy_id = enemy.id();
-        let enemy_name = enemy.name();
+        let enemy_index = match enemies.iter_mut().position(|enemy| enemy.id() == enemy_id) {
+            Some(index) => {
+                log::warn!(
+                    "tried to register {:?} from {:?} enemy pack to the enemy registry again",
+                    enemy_id,
+                    pack_id,
+                );
+                index
+            },
+            None => {
+                log::info!(
+                    "registered {:?} from {:?} enemy pack to the enemy registry",
+                    enemy_id,
+                    pack_id,
+                );
+                let index = enemies.len();
+                enemies.push(RegisteredEnemy::new(enemy));
+                index
+            },
+        };
 
-        let enemy_index =
-            match pack_entries.iter_mut().position(|candidate| candidate.id() == enemy_id) {
-                Some(enemy_index) => {
-                    log::warn!(
-                        "tried to register {:?} from {:?} enemy pack to enemy registry again",
-                        enemy_name,
-                        pack_name,
-                    );
-
-                    enemy_index
-                },
-                None => {
-                    log::info!(
-                        "registered {:?} from {:?} enemy pack to enemy registry",
-                        enemy_name,
-                        pack_name,
-                    );
-
-                    let enemy_index = pack_entries.len();
-                    pack_entries.push(EnemyRegistryEntry::new(enemy));
-                    enemy_index
-                },
-            };
-
-        &mut pack_entries[enemy_index]
+        &mut enemies[enemy_index]
     }
 }
 
 impl EnemyRegistry {
     /// Gets the number of enemy packs in the enemy registry.
-    pub fn number_of_enemy_packs(&self) -> usize {
+    pub fn number_of_packs(&self) -> usize {
         self.0.len()
     }
 
     /// Gets the number of enemies in the enemy registry.
     pub fn number_of_enemies(&self) -> usize {
-        self.0.iter().map(|(_, enemies)| enemies.len()).sum()
+        self.0.iter().map(|entry| entry.enemies.len()).sum()
     }
 }
 
 impl Index<SelectedEnemyPackIndex> for EnemyRegistry {
-    type Output = (Arc<dyn IEnemyPack>, Vec<EnemyRegistryEntry>);
+    type Output = EnemyRegistryEntry;
 
-    fn index(
-        &self,
-        index: SelectedEnemyPackIndex,
-    ) -> &(Arc<dyn IEnemyPack>, Vec<EnemyRegistryEntry>) {
-        &self.deref()[index.0]
+    fn index(&self, enemy_pack_index: SelectedEnemyPackIndex) -> &EnemyRegistryEntry {
+        &self.0[*enemy_pack_index]
     }
 }
 
-/// Container for enemy registry entries.
-#[derive(Clone, Debug)]
+
+/// Container for the entries of the enemy registry.
+#[derive(Debug)]
 pub struct EnemyRegistryEntry {
+    pub pack: RegisteredEnemyPack,
+    pub enemies: Vec<RegisteredEnemy>,
+}
+
+impl EnemyRegistryEntry {
+    /// Creates a new enemy registry entry.
+    pub fn new(pack: impl IEnemyPack) -> EnemyRegistryEntry {
+        EnemyRegistryEntry { pack: RegisteredEnemyPack::new(pack), enemies: Vec::new() }
+    }
+}
+
+impl Deref for EnemyRegistryEntry {
+    type Target = RegisteredEnemyPack;
+
+    fn deref(&self) -> &RegisteredEnemyPack {
+        &self.pack
+    }
+}
+
+
+/// Container for registered enemy packs.
+#[derive(Debug)]
+pub struct RegisteredEnemyPack {
+    pub pack: Arc<dyn IEnemyPack>,
+}
+
+impl RegisteredEnemyPack {
+    /// Creates a new registered enemy pack.
+    pub fn new(pack: impl IEnemyPack) -> RegisteredEnemyPack {
+        RegisteredEnemyPack { pack: Arc::new(pack) }
+    }
+}
+
+impl Deref for RegisteredEnemyPack {
+    type Target = Arc<dyn IEnemyPack>;
+
+    fn deref(&self) -> &Arc<dyn IEnemyPack> {
+        &self.pack
+    }
+}
+
+
+/// Container for registered enemies.
+#[derive(Debug)]
+pub struct RegisteredEnemy {
     pub enemy: Arc<dyn IEnemy>,
     pub tags: SmallVec<[SmolStr; 3]>,
 }
 
-impl EnemyRegistryEntry {
-    /// Create a new entry for an enemy.
-    pub fn new<E: IEnemy>(enemy: E) -> EnemyRegistryEntry {
-        EnemyRegistryEntry { enemy: Arc::new(enemy), tags: SmallVec::new() }
+impl RegisteredEnemy {
+    /// Creates a new registered enemy.
+    pub fn new(enemy: impl IEnemy) -> RegisteredEnemy {
+        RegisteredEnemy { enemy: Arc::new(enemy), tags: SmallVec::new() }
     }
 }
 
-impl EnemyRegistryEntry {
-    /// Add a tag to the item.
-    pub fn add_tag(&mut self, tag: impl ToString) -> &mut EnemyRegistryEntry {
+impl RegisteredEnemy {
+    /// Adds a tag to the enemy.
+    pub fn add_tag(&mut self, tag: impl ToString) -> &mut RegisteredEnemy {
         self.tags.push(tag.to_string().into());
         self
     }
 }
 
-impl EnemyRegistryEntry {
-    /// Gets if the enemy has the tag.
+impl RegisteredEnemy {
+    /// Gets if the enemy has a tag.
     pub fn has_tag(&self, tag: &str) -> bool {
         self.tags.iter().any(|candidate| candidate == tag)
     }
 }
 
-impl Deref for EnemyRegistryEntry {
+impl Deref for RegisteredEnemy {
     type Target = Arc<dyn IEnemy>;
 
     fn deref(&self) -> &Arc<dyn IEnemy> {
