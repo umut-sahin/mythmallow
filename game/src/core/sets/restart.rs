@@ -3,12 +3,14 @@ use crate::prelude::*;
 /// Systems to run when restarting the game.
 #[derive(Clone, Copy, Debug, EnumIter, Eq, Hash, PartialEq, SystemSet)]
 pub enum RestartSystems {
+    First,
     Enemy,
     Camera,
     GameMode,
     Inventory,
     Map,
     Player,
+    Last,
     Done,
 }
 

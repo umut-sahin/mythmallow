@@ -17,11 +17,11 @@ impl Plugin for ModePlugin {
         // Add systems.
         app.add_systems(
             OnEnter(GameState::Initialization),
-            initialize_game_mode.in_set(InitializationSystems::GameMode),
+            initialize_game_mode.in_set(InitializationSystems::First),
         );
         app.add_systems(
             OnEnter(GameState::Restart),
-            restart_game_mode.in_set(RestartSystems::GameMode),
+            restart_game_mode.in_set(RestartSystems::Last),
         );
         app.add_systems(OnExit(AppState::Game), deinitialize_game_mode);
     }
