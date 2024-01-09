@@ -3,8 +3,10 @@ use crate::prelude::*;
 /// Systems to run when initializing the game.
 #[derive(Clone, Copy, Debug, EnumIter, Eq, Hash, PartialEq, SystemSet)]
 pub enum InitializationSystems {
+    First,
     GameMode,
     Player,
+    Last,
     Done,
 }
 
