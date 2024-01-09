@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 
 /// Finds the enemies in range from a position ordered by their distance.
-pub fn find_enemies_in_range(
+pub fn find_enemies_in_range_sorted_by_distance(
     spatial_query: &SpatialQuery,
     position: &Position,
     area: &Collider,

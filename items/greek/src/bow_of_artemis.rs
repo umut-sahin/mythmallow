@@ -112,7 +112,7 @@ pub fn attack(
     let base_attack_area = Collider::ball(BASE_RANGE);
     for (item_entity, &item_transform) in item_query.iter() {
         let item_position = Position(item_transform.translation().xy());
-        let enemies_in_range = utils::combat::find_enemies_in_range(
+        let enemies_in_range = utils::combat::find_enemies_in_range_sorted_by_distance(
             &spatial_query,
             &item_position,
             &base_attack_area,
