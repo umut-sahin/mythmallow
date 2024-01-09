@@ -109,49 +109,52 @@ pub fn attack(
     enemy_hit_box_query: Query<&Position, With<EnemyHitBox>>,
     spatial_query: SpatialQuery,
 ) {
-    let attack_area = Collider::ball(BASE_RANGE);
+    let base_attack_area = Collider::ball(BASE_RANGE);
     for (item_entity, &item_transform) in item_query.iter() {
         let item_position = Position(item_transform.translation().xy());
         let enemies_in_range = utils::combat::find_enemies_in_range(
             &spatial_query,
             &item_position,
-            &attack_area,
+            &base_attack_area,
             &enemy_hit_box_query,
         );
 
         for (_, enemy_position, enemy_distance) in enemies_in_range {
             let enemy_direction = (enemy_position.xy() - item_position.xy()).normalize();
+
             let obstacle_between_item_and_enemy = utils::map::find_obstacle(
                 &spatial_query,
                 &item_position,
                 &enemy_direction,
                 enemy_distance,
             );
-            if obstacle_between_item_and_enemy.is_none() {
-                let projectile_entity = ProjectileBundle::builder()
-                    .mesh(MaterialMesh2dBundle {
-                        mesh: meshes.add(shape::Circle::new(PROJECTILE_SIZE).into()).into(),
-                        material: materials.add(ColorMaterial::from(PROJECTILE_COLOR)),
-                        transform: Transform::from_translation(
-                            item_position.extend(Depth::Projectile.z()),
-                        ),
-                        ..default()
-                    })
-                    .collider(Collider::ball(PROJECTILE_SIZE))
-                    .position(item_position)
-                    .velocity(LinearVelocity(enemy_direction * BASE_PROJECTILE_SPEED))
-                    .damage(BASE_DAMAGE)
-                    .build()
-                    .spawn_toward_enemies(&mut commands)
-                    .id();
-
-                commands
-                    .entity(item_entity)
-                    .add_child(projectile_entity)
-                    .insert(Cooldown::<Attack>::new(BASE_ATTACK_COOLDOWN));
-
-                break;
+            if obstacle_between_item_and_enemy.is_some() {
+                continue;
             }
+
+            let projectile_entity = ProjectileBundle::builder()
+                .mesh(MaterialMesh2dBundle {
+                    mesh: meshes.add(shape::Circle::new(PROJECTILE_SIZE).into()).into(),
+                    material: materials.add(ColorMaterial::from(PROJECTILE_COLOR)),
+                    transform: Transform::from_translation(
+                        item_position.extend(Depth::Projectile.z()),
+                    ),
+                    ..default()
+                })
+                .collider(Collider::ball(PROJECTILE_SIZE))
+                .position(item_position)
+                .velocity(LinearVelocity(enemy_direction * BASE_PROJECTILE_SPEED))
+                .damage(BASE_DAMAGE)
+                .build()
+                .spawn_toward_enemies(&mut commands)
+                .id();
+
+            commands
+                .entity(item_entity)
+                .add_child(projectile_entity)
+                .insert(Cooldown::<Attack>::new(BASE_ATTACK_COOLDOWN));
+
+            break;
         }
     }
 }
