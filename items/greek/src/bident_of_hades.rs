@@ -52,7 +52,7 @@ pub fn acquire(
 ) -> Entity {
     commands
         .spawn((
-            Name::new(format!("Item {} ({})", inventory.items.len(), item.name().to_string())),
+            Name::new(format!("Item {} [{}]", inventory.items.len(), item.name().to_string())),
             item,
         ))
         .id()

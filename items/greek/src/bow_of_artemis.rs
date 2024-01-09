@@ -81,7 +81,7 @@ pub fn acquire(
 ) -> Entity {
     commands
         .spawn((
-            Name::new(format!("Item {} ({})", inventory.items.len(), item.name().to_string())),
+            Name::new(format!("Item {} [{}]", inventory.items.len(), item.name().to_string())),
             item,
             MaterialMesh2dBundle {
                 mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),
