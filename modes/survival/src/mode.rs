@@ -31,7 +31,7 @@ impl IGameMode for Survival {
         let mut spawns = Vec::new();
         if let Some(enemy) = enemy {
             spawns.push(
-                EnemySpawn::new(Duration::from_millis(500), enemy)
+                EnemySpawn::new_dyn(Duration::from_millis(500), enemy)
                     .count(3)
                     .interval(Duration::from_millis(150))
                     .spread(EnemySpawnSpread::square(100.00))
