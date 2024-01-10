@@ -17,12 +17,9 @@ pub enum RestartSystems {
 impl RestartSystems {
     /// Configure the system set.
     pub fn configure(app: &mut App) {
-        let done = RestartSystems::iter().next_back().unwrap();
-        for set in RestartSystems::iter() {
-            if set != done {
-                app.configure_sets(OnEnter(GameState::Restart), set.before(done));
-                app.configure_sets(OnExit(GameState::Restart), set.before(done));
-            }
-        }
+        RestartSystems::iter().zip(RestartSystems::iter().skip(1)).for_each(|(set1, set2)| {
+            app.configure_sets(OnEnter(GameState::Restart), set1.before(set2));
+            app.configure_sets(OnExit(GameState::Restart), set1.before(set2));
+        });
     }
 }
