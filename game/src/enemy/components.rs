@@ -91,3 +91,8 @@ impl<E: Component + IEnemy> EnemyBundle<E> {
         enemy
     }
 }
+
+
+/// Component for the ideal distance to the player.
+#[derive(Clone, Copy, Component, Debug, Deref, DerefMut, Reflect)]
+pub struct IdealDistanceToPlayer(pub f32);
