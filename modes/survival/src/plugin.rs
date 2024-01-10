@@ -19,6 +19,7 @@ impl Plugin for SurvivalModePlugin {
         app.register_type::<CurrentWave>();
         app.register_type::<GameMode<Survival>>();
         app.register_type::<Survival>();
+        app.register_type::<WaveDurations>();
         app.register_type::<WaveTimer>();
 
         // Add initialization systems.

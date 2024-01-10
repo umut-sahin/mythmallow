@@ -9,13 +9,18 @@ use {
 
 /// Initializes the game mode.
 pub fn initialize(mut commands: Commands) {
-    commands.insert_resource(CurrentWave(1));
+    commands.insert_resource(WaveDurations::new(WAVES));
+    commands.insert_resource(CurrentWave::default());
 }
 
 
 /// Loads the current wave.
-pub fn load(mut commands: Commands) {
-    commands.insert_resource(WaveTimer::new(Duration::from_secs(10)));
+pub fn load(
+    mut commands: Commands,
+    current_wave: Res<CurrentWave>,
+    wave_durations: Res<WaveDurations>,
+) {
+    commands.insert_resource(WaveTimer::new(wave_durations[*current_wave]));
 }
 
 /// Spawns the map.
@@ -78,9 +83,18 @@ pub fn tick(
 
 
 /// Wins the current wave.
-pub fn win(mut commands: Commands, mut next_game_state: ResMut<NextState<GameState>>) {
-    commands.insert_resource(GameResult::Won);
-    next_game_state.set(GameState::Over);
+pub fn win(
+    mut commands: Commands,
+    mut current_wave: ResMut<CurrentWave>,
+    mut next_game_state: ResMut<NextState<GameState>>,
+) {
+    if current_wave.is_last() {
+        commands.insert_resource(GameResult::Won);
+        next_game_state.set(GameState::Over);
+    } else {
+        current_wave.increment();
+        next_game_state.set(GameState::Loading);
+    }
 }
 
 
