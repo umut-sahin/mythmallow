@@ -46,7 +46,7 @@ pub fn select_enemy_pack_when_starting_in_game(
     mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
     enemy_registry: Res<EnemyRegistry>,
 ) {
-    match &args.start_in_game_mode {
+    match &args.start_in_game_enemies {
         Some(specified_enemy_pack_id) => {
             for (index, entry) in enemy_registry.iter().enumerate() {
                 if entry.pack.id() == specified_enemy_pack_id {
