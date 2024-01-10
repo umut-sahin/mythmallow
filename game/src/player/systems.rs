@@ -28,14 +28,10 @@ pub fn turn_player_visibility_off(mut player_query: Query<&mut Visibility, With<
 }
 
 /// Resets the player position.
-pub fn reset_player_position(
-    mut player_query: Query<(&mut Position, &mut Transform), With<Player>>,
-) {
-    if let Ok((mut player_position, mut player_transform)) = player_query.get_single_mut() {
+pub fn reset_player_position(mut player_query: Query<&mut Position, With<Player>>) {
+    if let Ok(mut player_position) = player_query.get_single_mut() {
         player_position.x = 0.00;
         player_position.y = 0.00;
-        player_transform.translation.x = 0.00;
-        player_transform.translation.y = 0.00;
     }
 }
 
