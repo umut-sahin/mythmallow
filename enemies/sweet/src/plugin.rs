@@ -1,5 +1,8 @@
 use {
-    crate::gummy_bear::GummyBearPlugin,
+    crate::{
+        chocolate_bar::ChocolateBarPlugin,
+        gummy_bear::GummyBearPlugin,
+    },
     mythmallow::prelude::*,
 };
 
@@ -9,6 +12,7 @@ pub struct SweetEnemiesPlugin;
 impl Plugin for SweetEnemiesPlugin {
     fn build(&self, app: &mut App) {
         // Add sub-plugins.
+        app.add_plugins(ChocolateBarPlugin);
         app.add_plugins(GummyBearPlugin);
     }
 }
