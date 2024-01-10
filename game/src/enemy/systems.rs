@@ -280,14 +280,20 @@ pub fn clear_enemy_pack_selection(mut commands: Commands) {
 
 
 /// Makes the enemies follow the player.
-pub fn follow_player<T: Component>(
-    mut enemy_query: Query<(&Position, &Speed, &mut LinearVelocity), With<T>>,
-    player_query: Query<&Position, (With<Player>, Without<T>)>,
+pub fn follow_player<E: IEnemy + Component>(
+    mut enemy_query: Query<
+        (&Position, &Speed, &mut LinearVelocity, Option<&IdealDistanceToPlayer>),
+        With<E>,
+    >,
+    player_query: Query<&Position, (With<Player>, Without<E>)>,
 ) {
     if let Ok(player_position) = player_query.get_single() {
-        for (enemy_position, enemy_speed, mut enemy_velocity) in enemy_query.iter_mut() {
+        for (enemy_position, enemy_speed, mut enemy_velocity, ideal_distance) in
+            enemy_query.iter_mut()
+        {
+            let ideal_distance = *ideal_distance.cloned().unwrap_or(IdealDistanceToPlayer(25.00));
             let direction = player_position.0 - enemy_position.0;
-            enemy_velocity.0 = if direction.length() > 25.00 {
+            enemy_velocity.0 = if direction.length() > ideal_distance {
                 direction.normalize() * enemy_speed.0
             } else {
                 Vec2::ZERO
