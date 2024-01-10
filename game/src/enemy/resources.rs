@@ -85,7 +85,24 @@ pub struct EnemySpawn {
 
 impl EnemySpawn {
     /// Creates a new enemy spawn.
-    pub fn new(delay: Duration, enemy: &Arc<dyn IEnemy>) -> EnemySpawn {
+    pub fn new(delay: Duration, enemy: impl IEnemy) -> EnemySpawn {
+        EnemySpawn {
+            delay: Timer::new(delay, TimerMode::Once),
+            enemy: Arc::new(enemy),
+            count: 1,
+            interval: None,
+            position: EnemySpawnPosition::Random,
+            direction: EnemySpawnDirection::any(),
+            spread: EnemySpawnSpread::default(),
+            repeat: None,
+            spawned: 0,
+            remaining: 0,
+            group_position: Position::new(Vector::ZERO),
+        }
+    }
+
+    /// Creates a new enemy spawn from a dyn enemy.
+    pub fn new_dyn(delay: Duration, enemy: &Arc<dyn IEnemy>) -> EnemySpawn {
         EnemySpawn {
             delay: Timer::new(delay, TimerMode::Once),
             enemy: Arc::clone(enemy),
