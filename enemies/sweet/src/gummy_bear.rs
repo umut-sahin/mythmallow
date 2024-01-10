@@ -10,10 +10,10 @@ use {
 pub const SIZE: f32 = 15.00;
 
 /// Health of the enemy.
-pub const HEALTH: f32 = 5.00;
+pub const HEALTH: Health = Health(5.00);
 
 /// Speed of the enemy.
-pub const SPEED: f32 = 100.00;
+pub const SPEED: Speed = Speed(100.00);
 
 /// Contact damage of the enemy.
 pub const CONTACT_DAMAGE: f32 = 3.00;
@@ -40,11 +40,11 @@ impl IEnemy for GummyBear {
     }
 
     fn health(&self) -> Health {
-        Health(HEALTH)
+        HEALTH
     }
 
     fn speed(&self) -> Speed {
-        Speed(SPEED)
+        SPEED
     }
 
     fn collider(&self) -> Collider {
