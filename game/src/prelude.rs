@@ -65,7 +65,6 @@ pub mod utils {
 
 #[doc(inline)]
 pub use {
-    bevy::transform::TransformSystem,
     bevy::{
         app::AppExit,
         diagnostic::{
@@ -88,6 +87,7 @@ pub use {
         prelude::*,
         reflect as bevy_reflect,
         sprite::MaterialMesh2dBundle,
+        transform::TransformSystem,
         window::WindowFocused,
     },
     bevy_persistent::prelude::*,
