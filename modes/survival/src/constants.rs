@@ -24,3 +24,7 @@ pub const MAP_BOUNDS: MapBounds = MapBounds {
     y_min: -(MAP_SIZE / 2.00),
     y_max: (MAP_SIZE / 2.00),
 };
+
+
+/// Number of waves.
+pub const WAVES: u8 = 3;

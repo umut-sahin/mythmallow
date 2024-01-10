@@ -126,6 +126,7 @@ pub use {
             Display,
         },
         marker::PhantomData,
+        num::NonZeroU8,
         ops::{
             Deref,
             DerefMut,
