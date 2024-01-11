@@ -44,6 +44,7 @@ impl Args {
     pub fn parse() -> Args {
         #[derive(Parser)]
         #[command(about, version)]
+        #[clap(name = "mythmallow")]
         struct ArgsParser {
             #[arg(long)]
             pub configuration: Option<PathBuf>,
