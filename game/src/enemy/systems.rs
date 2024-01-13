@@ -293,11 +293,11 @@ pub fn follow_player<E: IEnemy + Component>(
         {
             let ideal_distance = *ideal_distance.cloned().unwrap_or(IdealDistanceToPlayer(25.00));
             let direction = player_position.0 - enemy_position.0;
-            enemy_velocity.0 = if direction.length() > ideal_distance {
-                direction.normalize() * enemy_speed.0
-            } else {
-                Vec2::ZERO
-            };
+
+            enemy_velocity.0 = direction.normalize() * enemy_speed.0;
+            if direction.length() < ideal_distance {
+                enemy_velocity.0 /= -2.00;
+            }
         }
     }
 }
