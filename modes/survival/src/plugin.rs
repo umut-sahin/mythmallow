@@ -19,13 +19,40 @@ impl Plugin for SurvivalModePlugin {
         app.register_type::<CurrentWave>();
         app.register_type::<GameMode<Survival>>();
         app.register_type::<Survival>();
+        app.register_type::<SurvivalModeArgs>();
         app.register_type::<WaveDurations>();
         app.register_type::<WaveTimer>();
+
+        // Insert resources.
+        let args = app.world.resource::<Args>();
+        app.insert_resource(
+            args.start_in_game_mode
+                .as_ref()
+                .and_then(|game_mode_id_and_args| {
+                    let mut split = game_mode_id_and_args.split(' ');
+
+                    let game_mode = split.next().unwrap();
+                    let args = split;
+
+                    if game_mode == Survival.id() {
+                        SurvivalModeArgs::parse(std::iter::once(game_mode).chain(args)).ok()
+                    } else {
+                        Some(SurvivalModeArgs::default())
+                    }
+                })
+                .unwrap_or_default(),
+        );
 
         // Add initialization systems.
         app.add_systems(
             OnEnter(GameState::Initialization),
-            initialize.in_set(InitializationSystems::GameMode).run_if(in_game_mode::<Survival>),
+            (
+                initialize,
+                (apply_deferred, select_wave_when_starting_in_game).chain().run_if(run_once()),
+            )
+                .chain()
+                .in_set(InitializationSystems::GameMode)
+                .run_if(in_game_mode::<Survival>),
         );
 
         // Add loading systems.

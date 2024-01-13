@@ -13,6 +13,19 @@ pub fn initialize(mut commands: Commands) {
     commands.insert_resource(CurrentWave::default());
 }
 
+/// Selects the wave from the arguments of the survival game mode.
+pub fn select_wave_when_starting_in_game(
+    args: Res<Args>,
+    survival_mode_args: Res<SurvivalModeArgs>,
+    mut current_wave: ResMut<CurrentWave>,
+) {
+    if args.start_in_game {
+        if let Some(wave) = &survival_mode_args.start_in_game_waves {
+            *current_wave = CurrentWave(*wave);
+        }
+    }
+}
+
 
 /// Loads the current wave.
 pub fn load(
@@ -20,7 +33,9 @@ pub fn load(
     current_wave: Res<CurrentWave>,
     wave_durations: Res<WaveDurations>,
 ) {
-    commands.insert_resource(WaveTimer::new(wave_durations[*current_wave]));
+    commands.insert_resource(WaveTimer::new(
+        wave_durations.iter().nth(current_wave.index()).copied().unwrap_or(Duration::ZERO),
+    ));
 }
 
 /// Spawns the map.

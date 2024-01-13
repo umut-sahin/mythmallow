@@ -142,6 +142,27 @@ Available Enemies:
 
 If not set manually, random enemies will be selected.
 
+### Arguments for game modes
+
+- In Native:
+  - Arguments are parsed from the "mode" command line argument.
+    ```
+    mythmallow --game --mode "survival --wave 2"
+    ```
+- In WebAssembly:
+  - Arguments are parsed from the "mode" query parameter.
+    ```
+    https://mythmallow.io/?game&mode=|survival?wave=2|
+    ```
+
+#### Survival mode
+
+##### \-\-wave \<WAVE>
+
+Specifies the wave when starting the application in-game.
+
+If not set manually, or set incorrectly, the first wave will be selected.
+
 ## Documentation
 
 ### API Documentation

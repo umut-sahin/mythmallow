@@ -98,7 +98,12 @@ pub use {
         plugins::PhysicsPlugins as XpbdPlugin,
         prelude::*,
     },
-    clap::Parser,
+    clap::{
+        self,
+        CommandFactory,
+        Parser,
+    },
+    core::num::NonZeroU8,
     leafwing_input_manager::{
         action_state::ActionData,
         buttonlike::ButtonState,
@@ -126,7 +131,6 @@ pub use {
             Display,
         },
         marker::PhantomData,
-        num::NonZeroU8,
         ops::{
             Deref,
             DerefMut,
