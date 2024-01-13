@@ -46,7 +46,8 @@ pub fn select_game_mode_when_starting_in_game(
     game_mode_registry: Res<GameModeRegistry>,
 ) {
     match &args.start_in_game_mode {
-        Some(specified_game_mode_id) => {
+        Some(specified_game_mode_id_and_args) => {
+            let specified_game_mode_id = specified_game_mode_id_and_args.split(' ').next().unwrap();
             for (game_mode_index, entry) in game_mode_registry.iter().enumerate() {
                 if entry.game_mode.id() == specified_game_mode_id {
                     log::info!("selected manually specified {:?} game mode", entry.game_mode.id());

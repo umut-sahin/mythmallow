@@ -79,10 +79,10 @@ impl Args {
         impl Display for ArgsParser {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 if let Some(data) = &self.data {
-                    write!(f, " --data {:?}", data)?;
+                    write!(f, " --data \"{}\"", data.display())?;
                 }
                 if let Some(configuration) = &self.configuration {
-                    write!(f, " --configuration {:?}", configuration)?;
+                    write!(f, " --configuration \"{}\"", configuration.display())?;
                 }
                 if let Some(seed) = &self.seed {
                     write!(f, " --seed {}", seed)?;
@@ -91,13 +91,13 @@ impl Args {
                     write!(f, " --game")?;
                 }
                 if let Some(mode) = &self.mode {
-                    write!(f, " --mode {:?}", mode)?;
+                    write!(f, " --mode \"{}\"", mode)?;
                 }
                 if let Some(player) = &self.player {
-                    write!(f, " --player {:?}", player)?;
+                    write!(f, " --player \"{}\"", player)?;
                 }
                 if let Some(enemies) = &self.enemies {
-                    write!(f, " --enemies {:?}", enemies)?;
+                    write!(f, " --enemies \"{}\"", enemies)?;
                 }
                 Ok(())
             }
@@ -105,8 +105,10 @@ impl Args {
 
         impl ArgsParser {
             pub fn canonicalize(self) -> Args {
-                log::info!("version: v{}", env!("CARGO_PKG_VERSION"));
-                log::info!("args:{}", self);
+                let args = format!("{}", self);
+                if !args.is_empty() {
+                    log::info!("args:\n\n{}\n", args.trim());
+                }
 
                 let configuration_directory = self
                     .configuration
@@ -129,7 +131,15 @@ impl Args {
                         }
                     });
 
-                log::info!("configuration directory: {:?}", configuration_directory);
+                let configuration_directory_display =
+                    format!("{}", configuration_directory.display());
+                log::info!(
+                    "configuration directory:\n\n{}\n",
+                    configuration_directory_display
+                        .trim_start_matches("\\\\?\\")
+                        .trim_start_matches("\"\\\\?\\")
+                        .trim_end_matches('"'),
+                );
 
                 let data_directory = self
                     .data
@@ -150,7 +160,14 @@ impl Args {
                         }
                     });
 
-                log::info!("data directory: {:?}", data_directory);
+                let data_directory_display = format!("{}", data_directory.display());
+                log::info!(
+                    "data directory:\n\n{}\n",
+                    data_directory_display
+                        .trim_start_matches("\\\\?\\")
+                        .trim_start_matches("\"\\\\?\\")
+                        .trim_end_matches('"'),
+                );
 
                 let seed = self.seed;
                 let start_in_game = self.game;
@@ -170,6 +187,11 @@ impl Args {
             }
         }
 
+        log::info!("version:\n\nv{}\n", env!("CARGO_PKG_VERSION"));
+
+        let help = format!("{}", <ArgsParser as CommandFactory>::command().render_help());
+        log::info!("usage:\n\n{}\n", help.trim());
+
         #[cfg(feature = "native")]
         {
             ArgsParser::parse().canonicalize()
@@ -183,21 +205,33 @@ impl Args {
             if query.is_empty() {
                 ArgsParser::default().canonicalize()
             } else {
+                log::warn!("{:#?}", query);
+                let args = query.replace(['?', '&'], " --");
+
+                let mut parsed_args = vec![];
+                let mut parsed_arg = String::new();
+
+                let mut block = false;
+                for char in args.trim_start().chars() {
+                    match char {
+                        '|' => {
+                            block = !block;
+                        },
+                        ' ' | '=' if !block => {
+                            parsed_args.push(std::mem::take(&mut parsed_arg));
+                        },
+                        _ => {
+                            parsed_arg.push(char);
+                        },
+                    }
+                }
+                if !parsed_arg.is_empty() {
+                    parsed_args.push(parsed_arg);
+                }
+                log::warn!("{:#?}", parsed_args);
+
                 ArgsParser::try_parse_from(
-                    std::iter::once("mythmallow".to_owned()).chain(
-                        query
-                            .trim_start_matches('?')
-                            .split('&')
-                            .flat_map(|option| {
-                                let mut option = option.split('=');
-
-                                let key = format!("--{}", option.next().unwrap());
-                                let value = option.fold(String::new(), std::ops::Add::add);
-
-                                [key, value]
-                            })
-                            .filter(|arg| !arg.is_empty()),
-                    ),
+                    std::iter::once("mythmallow".to_owned()).chain(parsed_args),
                 )
                 .unwrap_or_else(|error| {
                     let full_error = format!("{}", error);
