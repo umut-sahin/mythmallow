@@ -23,7 +23,16 @@ pub fn acquire_release_items(world: &mut World) {
 
     let mut new_items = Vec::with_capacity(items_to_acquire.len());
     for mut item_to_acquire in items_to_acquire {
-        item_to_acquire.entity = Some(item_to_acquire.acquire(world));
+        let new_item_entity = item_to_acquire.acquire(world);
+
+        let mut new_item_entity_commands = world.entity_mut(new_item_entity);
+        new_item_entity_commands.insert(Item);
+
+        if item_to_acquire.is_weapon() {
+            new_item_entity_commands.insert(Weapon);
+        }
+
+        item_to_acquire.entity = Some(new_item_entity);
         new_items.push(Arc::new(item_to_acquire));
     }
 
@@ -37,6 +46,54 @@ pub fn acquire_release_items(world: &mut World) {
 
     let mut inventory = world.resource_mut::<Inventory>();
     inventory.items.extend(new_items);
+}
+
+
+/// Repositions the weapons around the player.
+pub fn reposition_weapons(
+    player_query: Query<(&GlobalTransform, &Collider), With<Player>>,
+    mut weapon_query: Query<&mut Transform, (With<Weapon>, Without<Player>)>,
+    mut spatial_query: SpatialQuery,
+) {
+    spatial_query.update_pipeline();
+
+    if weapon_query.is_empty() {
+        return;
+    }
+
+    log::info!("repositioning weapons");
+
+    let (player_global_transform, player_collider) = match player_query.get_single() {
+        Ok(query_result) => query_result,
+        Err(_) => return,
+    };
+    let player_position = player_global_transform.translation().xy();
+
+    let player_aabb = player_collider.compute_aabb(player_position.xy(), 0.00);
+    let max_distance = Vec2::from(player_aabb.mins).distance(Vec2::from(player_aabb.maxs));
+
+    let mut direction = Vec2::X;
+    let rotation = Rotation::from_degrees(360.00 / (weapon_query.iter().len() as f32));
+
+    for mut weapon_transform in weapon_query.iter_mut() {
+        let distance = spatial_query
+            .cast_ray(
+                player_position.xy(),
+                direction,
+                max_distance,
+                false,
+                SpatialQueryFilter::new().with_masks([Layer::Player]),
+            )
+            .map(|hit| hit.time_of_impact)
+            .unwrap_or(max_distance);
+
+        let new_weapon_translation = (direction * distance) * 1.05;
+
+        weapon_transform.translation.x = new_weapon_translation.x;
+        weapon_transform.translation.y = new_weapon_translation.y;
+
+        direction = rotation.rotate(direction);
+    }
 }
 
 
