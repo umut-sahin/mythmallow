@@ -8,6 +8,9 @@ pub trait IItem: Debug + Send + Sync + 'static {
     /// Gets the name of the item.
     fn name(&self) -> SmolStr;
 
+    /// Gets if the item is a weapon.
+    fn is_weapon(&self) -> bool;
+
     /// Instantiates the item to add it to the inventory.
     fn instantiate(&self) -> ItemInstance;
     // Acquires the item.
