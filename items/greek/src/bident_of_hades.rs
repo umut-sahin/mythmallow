@@ -17,6 +17,10 @@ impl IItem for BidentOfHades {
         "Bident of Hades".into()
     }
 
+    fn is_weapon(&self) -> bool {
+        true
+    }
+
     fn instantiate(&self) -> ItemInstance {
         ItemInstance::new(self.clone())
     }

@@ -41,6 +41,10 @@ impl IItem for BowOfArtemis {
         "Bow of Artemis".into()
     }
 
+    fn is_weapon(&self) -> bool {
+        true
+    }
+
     fn instantiate(&self) -> ItemInstance {
         ItemInstance::new(self.clone())
     }
