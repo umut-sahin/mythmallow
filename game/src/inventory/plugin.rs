@@ -14,7 +14,15 @@ impl Plugin for InventoryPlugin {
         // Add systems.
         app.add_systems(
             PostUpdate,
-            acquire_release_items.run_if(|inventory: Res<Inventory>| inventory.is_changed()),
+            (
+                acquire_release_items.run_if(|inventory: Res<Inventory>| inventory.is_changed()),
+                reposition_weapons.run_if(
+                    |weapon_query: Query<Entity, Added<Weapon>>,
+                     player_query: Query<&Collider, (With<Player>, Changed<Collider>)>| {
+                        !weapon_query.is_empty() || !player_query.is_empty()
+                    },
+                ),
+            ),
         );
         app.add_systems(OnEnter(GameState::Over), clear_inventory);
         app.add_systems(
