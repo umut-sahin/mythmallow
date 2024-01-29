@@ -221,7 +221,6 @@ impl Args {
             if query.is_empty() {
                 ArgsParser::default().canonicalize()
             } else {
-                log::warn!("{:#?}", query);
                 let args = query.replace(['?', '&'], " --");
 
                 let mut parsed_args = vec![];
@@ -244,7 +243,6 @@ impl Args {
                 if !parsed_arg.is_empty() {
                     parsed_args.push(parsed_arg);
                 }
-                log::warn!("{:#?}", parsed_args);
 
                 ArgsParser::try_parse_from(
                     std::iter::once("mythmallow".to_owned()).chain(parsed_args),
