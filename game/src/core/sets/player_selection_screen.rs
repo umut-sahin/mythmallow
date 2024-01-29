@@ -7,8 +7,11 @@ pub struct PlayerSelectionScreenSystems;
 impl PlayerSelectionScreenSystems {
     /// Configure the system set.
     pub fn configure(app: &mut App) {
-        fn run_condition(app_state: Res<State<AppState>>) -> bool {
-            *app_state == AppState::PlayerSelectionScreen
+        fn run_condition(
+            app_state: Res<State<AppState>>,
+            console_state: Res<ConsoleState>,
+        ) -> bool {
+            *app_state == AppState::PlayerSelectionScreen && !console_state.open
         }
 
         app.configure_sets(PreUpdate, Self.run_if(run_condition));

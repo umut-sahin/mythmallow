@@ -10,8 +10,9 @@ impl PauseMenuSystems {
         fn run_condition(
             app_state: Res<State<AppState>>,
             game_state: Res<State<GameState>>,
+            console_state: Res<ConsoleState>,
         ) -> bool {
-            *app_state == AppState::Game && *game_state == GameState::Paused
+            *app_state == AppState::Game && *game_state == GameState::Paused && !console_state.open
         }
 
         app.configure_sets(PreUpdate, Self.run_if(run_condition));

@@ -36,6 +36,21 @@ fn main() {
     {
         // Add editor plugin in development mode.
         app.add_plugins(EditorPlugin::default());
+
+        // Define editor controls.
+        let mut editor_controls = EditorControls::default_bindings();
+        editor_controls.unbind(EditorAction::PlayPauseEditor);
+        editor_controls.insert(
+            EditorAction::PlayPauseEditor,
+            EditorBinding {
+                input: EditorUserInput::Chord(vec![
+                    EditorButton::Keyboard(KeyCode::ControlLeft),
+                    EditorButton::Keyboard(KeyCode::E),
+                ]),
+                conditions: vec![EditorBindingCondition::ListeningForText(false)],
+            },
+        );
+        app.insert_resource(editor_controls);
     }
 
     // Add the main plugin.

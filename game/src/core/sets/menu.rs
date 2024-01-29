@@ -10,7 +10,11 @@ impl MenuSystems {
         fn run_condition(
             app_state: Res<State<AppState>>,
             game_state: Res<State<GameState>>,
+            console_state: Res<ConsoleState>,
         ) -> bool {
+            if console_state.open {
+                return false;
+            }
             match app_state.get() {
                 AppState::MainMenu => true,
                 AppState::GameModeSelectionScreen => true,
