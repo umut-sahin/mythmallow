@@ -17,18 +17,18 @@ impl SurvivalModeArgs {
     ///
     /// # Native
     ///
-    /// Arguments are parsed from the command line arguments.
+    /// Arguments are parsed from the "mode" command line argument.
     ///
     /// ```shell
-    /// mythmallow --game --wave 3
+    /// mythmallow --game --mode "survival --wave 3"
     /// ```
     ///
     /// # WebAssembly
     ///
-    /// Arguments are parsed from the URL.
+    /// Arguments are parsed from the "mode" query parameter.
     ///
-    /// ```shell
-    /// https://mythmallow.io/?game&wave=3
+    /// ```txt
+    /// https://mythmallow.io/?game&mode=|survival?wave=2|
     /// ```
     pub fn parse<'i>(args: impl Iterator<Item = &'i str>) -> Result<SurvivalModeArgs, clap::Error> {
         #[derive(Parser)]
