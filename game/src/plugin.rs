@@ -2,6 +2,7 @@ use crate::{
     camera::plugin::CameraPlugin,
     combat::plugin::CombatPlugin,
     configuration::plugin::ConfigurationPlugin,
+    console::plugin::ConsolePlugin,
     core::plugin::CorePlugin,
     enemy::plugin::EnemyPlugin,
     input::plugin::InputPlugin,
@@ -27,6 +28,7 @@ impl Plugin for MythmallowPlugin {
         app.add_plugins(ConfigurationPlugin);
         app.add_plugins(CorePlugin);
         app.add_plugins(InputPlugin);
+        app.add_plugins(ConsolePlugin);
         app.add_plugins(CameraPlugin);
         app.add_plugins(UiPlugin);
         app.add_plugins(PhysicsPlugin);

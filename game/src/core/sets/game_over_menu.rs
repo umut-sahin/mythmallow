@@ -10,8 +10,9 @@ impl GameOverMenuSystems {
         fn run_condition(
             app_state: Res<State<AppState>>,
             game_state: Res<State<GameState>>,
+            console_state: Res<ConsoleState>,
         ) -> bool {
-            *app_state == AppState::Game && *game_state == GameState::Over
+            *app_state == AppState::Game && *game_state == GameState::Over && !console_state.open
         }
 
         app.configure_sets(PreUpdate, Self.run_if(run_condition));

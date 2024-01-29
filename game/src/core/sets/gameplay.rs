@@ -20,8 +20,9 @@ impl GameplaySystems {
         fn run_condition(
             app_state: Res<State<AppState>>,
             game_state: Res<State<GameState>>,
+            console_state: Res<ConsoleState>,
         ) -> bool {
-            *app_state == AppState::Game && *game_state == GameState::Playing
+            *app_state == AppState::Game && *game_state == GameState::Playing && !console_state.open
         }
 
         for set in GameplaySystems::iter() {

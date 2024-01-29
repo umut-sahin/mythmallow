@@ -89,7 +89,15 @@ pub use {
         reflect as bevy_reflect,
         sprite::MaterialMesh2dBundle,
         transform::TransformSystem,
-        window::WindowFocused,
+        window::{
+            PrimaryWindow,
+            WindowFocused,
+        },
+    },
+    bevy_console::{
+        ConsoleConfiguration,
+        ConsoleOpen as ConsoleState,
+        ConsolePlugin as BevyConsolePlugin,
     },
     bevy_persistent::prelude::*,
     bevy_prng::ChaCha8Rng,
@@ -154,7 +162,6 @@ pub use {
 pub use {
     bevy::window::{
         ExitCondition,
-        PrimaryWindow,
         WindowMode,
     },
     bevy_persistent_windows::prelude::*,
@@ -170,4 +177,14 @@ pub use {
 
 #[cfg(feature = "bevy_editor_pls")]
 #[doc(inline)]
-pub use bevy_editor_pls::prelude::*;
+pub use bevy_editor_pls::{
+    controls::{
+        Action as EditorAction,
+        Binding as EditorBinding,
+        BindingCondition as EditorBindingCondition,
+        Button as EditorButton,
+        EditorControls,
+        UserInput as EditorUserInput,
+    },
+    prelude::*,
+};
