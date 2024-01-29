@@ -28,6 +28,9 @@ impl Plugin for SurvivalModePlugin {
         app.insert_resource(
             args.start_in_game_mode
                 .as_ref()
+                .filter(|game_mode_id_and_args| {
+                    game_mode_id_and_args.starts_with(Survival.id().as_str())
+                })
                 .and_then(|game_mode_id_and_args| {
                     let mut split = game_mode_id_and_args.split(' ');
 
