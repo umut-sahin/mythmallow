@@ -21,6 +21,8 @@ pub struct Args {
     pub start_in_game_player: Option<String>,
     /// Enemies to pick when starting in game.
     pub start_in_game_enemies: Option<String>,
+    /// Items to add to the inventory when starting in game.
+    pub start_in_game_inventory: Vec<String>,
 }
 
 impl Args {
@@ -38,7 +40,7 @@ impl Args {
     ///
     /// Arguments are parsed from the URL.
     ///
-    /// ```shell
+    /// ```txt
     /// https://mythmallow.io/?seed=42&game
     /// ```
     pub fn parse() -> Args {
@@ -60,6 +62,8 @@ impl Args {
             pub player: Option<String>,
             #[arg(long)]
             pub enemies: Option<String>,
+            #[arg(long)]
+            pub inventory: Option<String>,
         }
 
         impl Default for ArgsParser {
@@ -72,6 +76,7 @@ impl Args {
                     mode: None,
                     player: None,
                     enemies: None,
+                    inventory: None,
                 }
             }
         }
@@ -98,6 +103,9 @@ impl Args {
                 }
                 if let Some(enemies) = &self.enemies {
                     write!(f, " --enemies \"{}\"", enemies)?;
+                }
+                if let Some(inventory) = &self.inventory {
+                    write!(f, " --inventory \"{}\"", inventory)?;
                 }
                 Ok(())
             }
@@ -174,6 +182,13 @@ impl Args {
                 let start_in_game_mode = self.mode;
                 let start_in_game_player = self.player;
                 let start_in_game_enemies = self.enemies;
+                let start_in_game_inventory = self
+                    .inventory
+                    .unwrap_or_default()
+                    .split(',')
+                    .map(|item| item.trim().to_owned())
+                    .filter(|item| !item.is_empty())
+                    .collect();
 
                 Args {
                     data_directory,
@@ -183,6 +198,7 @@ impl Args {
                     start_in_game_mode,
                     start_in_game_player,
                     start_in_game_enemies,
+                    start_in_game_inventory,
                 }
             }
         }

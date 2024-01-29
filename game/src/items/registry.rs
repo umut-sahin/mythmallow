@@ -30,6 +30,16 @@ impl ItemRegistry {
     pub fn number_of_items(&self) -> usize {
         self.0.len()
     }
+
+    /// Finds the item with the specified id.
+    pub fn find_item_by_id(&self, item_id: &str) -> Option<&RegisteredItem> {
+        for entry in self.iter() {
+            if entry.item.id() == item_id {
+                return Some(&entry.item);
+            }
+        }
+        None
+    }
 }
 
 

@@ -1,6 +1,35 @@
 use crate::prelude::*;
 
 
+/// Adds the items specified in the inventory argument to the inventory.
+pub fn load_inventory_when_starting_in_game(
+    args: Res<Args>,
+    item_registry: Res<ItemRegistry>,
+    mut inventory: ResMut<Inventory>,
+) {
+    if !args.start_in_game {
+        return;
+    }
+
+    if !args.start_in_game_inventory.is_empty() {
+        log::info!("initializing the inventory");
+        for item_id in &args.start_in_game_inventory {
+            match item_registry.find_item_by_id(item_id) {
+                Some(item) => {
+                    inventory.add(item.instantiate());
+                },
+                None => {
+                    log::error!(
+                        "unable to add \"{}\" to the inventory as it's registered",
+                        item_id,
+                    );
+                },
+            }
+        }
+    }
+}
+
+
 /// Acquires and releases items.
 pub fn acquire_release_items(world: &mut World) {
     let mut inventory = world.resource_mut::<Inventory>();

@@ -13,6 +13,12 @@ impl Plugin for InventoryPlugin {
 
         // Add systems.
         app.add_systems(
+            OnEnter(GameState::Initialization),
+            load_inventory_when_starting_in_game
+                .in_set(InitializationSystems::Inventory)
+                .run_if(run_once()),
+        );
+        app.add_systems(
             PostUpdate,
             (
                 acquire_release_items.run_if(|inventory: Res<Inventory>| inventory.is_changed()),

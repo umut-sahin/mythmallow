@@ -6,6 +6,7 @@ pub enum InitializationSystems {
     First,
     GameMode,
     Player,
+    Inventory,
     Last,
     Done,
 }

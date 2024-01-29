@@ -142,6 +142,16 @@ Available Enemies:
 
 If not set manually, random enemies will be selected.
 
+### \-\-inventory \<ITEMS>
+
+Specifies the additional starting items, separated with commas, when starting the application in-game.
+
+Available Items:
+- `bow-of-artemis`
+- `bident-of-hades`
+
+If not set, the inventory will only contain the starting item of the selected player.
+
 ### Arguments for game modes
 
 - In Native:
