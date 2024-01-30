@@ -43,3 +43,11 @@ impl Inventory {
         self.items_to_remove.push(item);
     }
 }
+
+impl Deref for Inventory {
+    type Target = Vec<Arc<ItemInstance>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.items
+    }
+}
