@@ -29,6 +29,7 @@ pub fn apply_command(
                             "Failed to add {:?} to the inventory as it doesn't exist.",
                             item,
                         );
+                        reply!(command, "Run \"item list\" to see available items.")
                     },
                 }
             },
