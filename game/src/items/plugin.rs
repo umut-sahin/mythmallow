@@ -1,4 +1,10 @@
-use crate::prelude::*;
+use crate::{
+    items::{
+        commands::*,
+        systems::*,
+    },
+    prelude::*,
+};
 
 /// Plugin for managing items.
 pub struct ItemPlugin;
@@ -11,5 +17,8 @@ impl Plugin for ItemPlugin {
 
         // Initialize registry.
         app.init_resource::<ItemRegistry>();
+
+        // Add console commands.
+        app.add_console_command::<ItemCommand, _>(apply_command);
     }
 }
