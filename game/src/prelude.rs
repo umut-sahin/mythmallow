@@ -95,9 +95,13 @@ pub use {
         },
     },
     bevy_console::{
+        reply,
+        AddConsoleCommand as _,
+        ConsoleCommand,
         ConsoleConfiguration,
         ConsoleOpen as ConsoleState,
         ConsolePlugin as BevyConsolePlugin,
+        ConsoleSet,
     },
     bevy_persistent::prelude::*,
     bevy_prng::ChaCha8Rng,
@@ -111,6 +115,7 @@ pub use {
         self,
         CommandFactory,
         Parser,
+        Subcommand,
     },
     core::num::NonZeroU8,
     leafwing_input_manager::{

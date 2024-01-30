@@ -1,4 +1,41 @@
-use crate::prelude::*;
+use crate::{
+    inventory::commands::*,
+    prelude::*,
+};
+
+
+/// Applies the inventory console commands.
+pub fn apply_command(
+    mut command: ConsoleCommand<InventoryCommand>,
+    mut inventory: ResMut<Inventory>,
+    item_registry: Res<ItemRegistry>,
+) {
+    if let Some(Ok(InventoryCommand { subcommand })) = command.take() {
+        match subcommand {
+            InventoryCommands::List => {
+                for (i, item) in inventory.iter().enumerate() {
+                    reply!(command, "{}) {}", i + 1, item.id());
+                }
+            },
+            InventoryCommands::Add { item } => {
+                match item_registry.find_item_by_id(&item) {
+                    Some(item) => {
+                        inventory.add(item.instantiate());
+                        reply!(command, "Added.");
+                    },
+                    None => {
+                        reply!(
+                            command,
+                            "Failed to add {:?} to the inventory as it doesn't exist.",
+                            item,
+                        );
+                    },
+                }
+            },
+        }
+        reply!(command, "");
+    }
+}
 
 
 /// Adds the items specified in the inventory argument to the inventory.
