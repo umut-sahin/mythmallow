@@ -1,5 +1,8 @@
 use crate::{
-    inventory::systems::*,
+    inventory::{
+        commands::*,
+        systems::*,
+    },
     prelude::*,
 };
 
@@ -10,6 +13,9 @@ impl Plugin for InventoryPlugin {
     fn build(&self, app: &mut App) {
         // Insert resources.
         app.init_resource::<Inventory>();
+
+        // Add console commands.
+        app.add_console_command::<InventoryCommand, _>(apply_command);
 
         // Add systems.
         app.add_systems(
