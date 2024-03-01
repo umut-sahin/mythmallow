@@ -15,15 +15,15 @@ impl GameOverMenuAction {
         app.add_plugins(InputManagerPlugin::<GameOverMenuAction>::default());
 
         // Create the input map.
-        let mut input_map = InputMap::new([(KeyCode::Return, GameOverMenuAction::Select)]);
+        let mut input_map = InputMap::new([(GameOverMenuAction::Select, KeyCode::Enter)]);
 
         // Extend the input map from key bindings.
         let key_bindings = app.world.resource::<Persistent<KeyBindings>>();
         for key_code in key_bindings.up.iter().cloned() {
-            input_map.insert(key_code, GameOverMenuAction::Up);
+            input_map.insert(GameOverMenuAction::Up, key_code);
         }
         for key_code in key_bindings.down.iter().cloned() {
-            input_map.insert(key_code, GameOverMenuAction::Down);
+            input_map.insert(GameOverMenuAction::Down, key_code);
         }
 
         // Insert the input map resource.

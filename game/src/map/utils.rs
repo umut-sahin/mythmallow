@@ -10,9 +10,9 @@ pub fn find_obstacle(
 ) -> Option<RayHitData> {
     spatial_query.cast_ray(
         position.xy(),
-        *direction,
+        Direction2d::new(*direction).ok()?,
         distance,
         false,
-        SpatialQueryFilter::new().with_masks([Layer::MapObstacle]),
+        SpatialQueryFilter::from_mask([Layer::MapObstacle]),
     )
 }

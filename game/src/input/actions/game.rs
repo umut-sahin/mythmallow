@@ -23,22 +23,22 @@ impl GameAction {
         // Extend the input map from key bindings.
         let key_bindings = app.world.resource::<Persistent<KeyBindings>>();
         for key_code in key_bindings.up.iter().cloned() {
-            input_map.insert(key_code, GameAction::MoveUp);
+            input_map.insert(GameAction::MoveUp, key_code);
         }
         for key_code in key_bindings.left.iter().cloned() {
-            input_map.insert(key_code, GameAction::MoveLeft);
+            input_map.insert(GameAction::MoveLeft, key_code);
         }
         for key_code in key_bindings.down.iter().cloned() {
-            input_map.insert(key_code, GameAction::MoveDown);
+            input_map.insert(GameAction::MoveDown, key_code);
         }
         for key_code in key_bindings.right.iter().cloned() {
-            input_map.insert(key_code, GameAction::MoveRight);
+            input_map.insert(GameAction::MoveRight, key_code);
         }
         for key_code in key_bindings.dash.iter().cloned() {
-            input_map.insert(key_code, GameAction::Dash);
+            input_map.insert(GameAction::Dash, key_code);
         }
         for key_code in key_bindings.pause.iter().cloned() {
-            input_map.insert(key_code, GameAction::Pause);
+            input_map.insert(GameAction::Pause, key_code);
         }
 
         // Insert the input map resource.

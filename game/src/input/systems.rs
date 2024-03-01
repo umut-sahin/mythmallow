@@ -22,7 +22,7 @@ pub fn toggle_fullscreen(
     global_action_state: Res<ActionState<GlobalAction>>,
     mut window_state_query: Query<&mut Persistent<WindowState>, With<PrimaryWindow>>,
 ) {
-    if global_action_state.just_pressed(GlobalAction::ToggleFullscreen) {
+    if global_action_state.just_pressed(&GlobalAction::ToggleFullscreen) {
         window_state_query
             .single_mut()
             .update(|window_state| {
@@ -38,7 +38,7 @@ pub fn toggle_fullscreen(
 /// Toggles the window mode of the browser between fullscreen and windowed.
 #[cfg(feature = "wasm")]
 pub fn toggle_fullscreen(global_action_state: Res<ActionState<GlobalAction>>) {
-    if global_action_state.just_pressed(GlobalAction::ToggleFullscreen) {
+    if global_action_state.just_pressed(&GlobalAction::ToggleFullscreen) {
         let window = match web_sys::window() {
             Some(window) => window,
             None => {
@@ -76,7 +76,7 @@ pub fn toggle_diagnostics_overlay(
     global_action_state: Res<ActionState<GlobalAction>>,
     mut next_diagnostics_overlay_state: ResMut<NextState<DiagnosticsOverlayState>>,
 ) {
-    if global_action_state.just_pressed(GlobalAction::ToggleDiagnosticsOverlay) {
+    if global_action_state.just_pressed(&GlobalAction::ToggleDiagnosticsOverlay) {
         next_diagnostics_overlay_state.set(match diagnostics_overlay_state.get() {
             DiagnosticsOverlayState::Enabled => DiagnosticsOverlayState::Disabled,
             DiagnosticsOverlayState::Disabled => DiagnosticsOverlayState::Enabled,
@@ -90,15 +90,16 @@ pub fn toggle_diagnostics_overlay(
 pub fn toggle_physics_debug(
     global_action_state: Res<ActionState<GlobalAction>>,
     mut general_settings: ResMut<Persistent<GeneralSettings>>,
-    mut physics_debug_config: ResMut<PhysicsDebugConfig>,
+    mut gizmo_config_store: ResMut<GizmoConfigStore>,
 ) {
-    if global_action_state.just_pressed(GlobalAction::TogglePhysicsDebug) {
+    if global_action_state.just_pressed(&GlobalAction::TogglePhysicsDebug) {
         general_settings
             .update(|general_settings| {
                 general_settings.debug_physics = !general_settings.debug_physics;
             })
             .ok();
 
-        physics_debug_config.enabled = general_settings.debug_physics;
+        let (physics_gizmos_config, _) = gizmo_config_store.config_mut::<PhysicsGizmos>();
+        physics_gizmos_config.enabled = general_settings.debug_physics;
     }
 }

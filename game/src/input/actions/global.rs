@@ -19,13 +19,13 @@ impl GlobalAction {
         // Create the input map.
         let mut input_map = InputMap::default();
 
-        input_map.insert(KeyCode::F11, GlobalAction::ToggleFullscreen);
-        input_map.insert(KeyCode::F10, GlobalAction::ToggleDiagnosticsOverlay);
+        input_map.insert(GlobalAction::ToggleFullscreen, KeyCode::F11);
+        input_map.insert(GlobalAction::ToggleDiagnosticsOverlay, KeyCode::F10);
 
         #[cfg(feature = "development")]
         input_map.insert(
-            UserInput::chord([KeyCode::ControlLeft, KeyCode::P]),
             GlobalAction::TogglePhysicsDebug,
+            UserInput::chord([KeyCode::ControlLeft, KeyCode::KeyP]),
         );
 
         // Insert the input map resource.

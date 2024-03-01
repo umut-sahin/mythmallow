@@ -17,17 +17,17 @@ impl PlayerSelectionScreenAction {
 
         // Create the input map.
         let mut input_map = InputMap::new([
-            (KeyCode::Escape, PlayerSelectionScreenAction::Back),
-            (KeyCode::Return, PlayerSelectionScreenAction::Select),
+            (PlayerSelectionScreenAction::Back, KeyCode::Escape),
+            (PlayerSelectionScreenAction::Select, KeyCode::Enter),
         ]);
 
         // Extend the input map from key bindings.
         let key_bindings = app.world.resource::<Persistent<KeyBindings>>();
         for key_code in key_bindings.up.iter().cloned() {
-            input_map.insert(key_code, PlayerSelectionScreenAction::Up);
+            input_map.insert(PlayerSelectionScreenAction::Up, key_code);
         }
         for key_code in key_bindings.down.iter().cloned() {
-            input_map.insert(key_code, PlayerSelectionScreenAction::Down);
+            input_map.insert(PlayerSelectionScreenAction::Down, key_code);
         }
 
         // Insert the input map resource.

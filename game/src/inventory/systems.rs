@@ -136,8 +136,8 @@ pub fn reposition_weapons(
     };
     let player_position = player_global_transform.translation().xy();
 
-    let player_aabb = player_collider.compute_aabb(player_position.xy(), 0.00);
-    let max_distance = Vec2::from(player_aabb.mins).distance(Vec2::from(player_aabb.maxs));
+    let player_aabb = player_collider.aabb(player_position.xy(), 0.00);
+    let max_distance = player_aabb.min.distance(player_aabb.max);
 
     let mut direction = Vec2::X;
     let rotation = Rotation::from_degrees(360.00 / (weapon_query.iter().len() as f32));
@@ -146,10 +146,10 @@ pub fn reposition_weapons(
         let distance = spatial_query
             .cast_ray(
                 player_position.xy(),
-                direction,
+                Direction2d::new(direction).unwrap(),
                 max_distance,
                 false,
-                SpatialQueryFilter::new().with_masks([Layer::Player]),
+                SpatialQueryFilter::from_mask([Layer::Player]),
             )
             .map(|hit| hit.time_of_impact)
             .unwrap_or(max_distance);

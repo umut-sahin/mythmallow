@@ -27,7 +27,7 @@ pub fn spawn_map_bounds(
             Name::new("Left Bound"),
             MapBound,
             RigidBody::Static,
-            Collider::cuboid(2.00 * BOUND_THICKNESS, y_length),
+            Collider::rectangle(2.00 * BOUND_THICKNESS, y_length),
             layers,
             Position(Vector::X * (map_bounds.x_min - BOUND_THICKNESS)),
         ));
@@ -35,7 +35,7 @@ pub fn spawn_map_bounds(
             Name::new("Top Bound"),
             MapBound,
             RigidBody::Static,
-            Collider::cuboid(x_length, 2.00 * BOUND_THICKNESS),
+            Collider::rectangle(x_length, 2.00 * BOUND_THICKNESS),
             layers,
             Position(Vector::Y * (map_bounds.y_max + BOUND_THICKNESS)),
         ));
@@ -43,7 +43,7 @@ pub fn spawn_map_bounds(
             Name::new("Right Bound"),
             MapBound,
             RigidBody::Static,
-            Collider::cuboid(2.00 * BOUND_THICKNESS, y_length),
+            Collider::rectangle(2.00 * BOUND_THICKNESS, y_length),
             layers,
             Position(Vector::X * (map_bounds.x_max + BOUND_THICKNESS)),
         ));
@@ -51,7 +51,7 @@ pub fn spawn_map_bounds(
             Name::new("Bottom Bound"),
             MapBound,
             RigidBody::Static,
-            Collider::cuboid(x_length, 2.00 * BOUND_THICKNESS),
+            Collider::rectangle(x_length, 2.00 * BOUND_THICKNESS),
             layers,
             Position(Vector::Y * (map_bounds.y_min - BOUND_THICKNESS)),
         ));

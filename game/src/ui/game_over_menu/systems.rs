@@ -175,13 +175,13 @@ pub fn navigation(
         Err(_) => return,
     };
 
-    if game_over_menu_action_state.just_pressed(GameOverMenuAction::Select) {
+    if game_over_menu_action_state.just_pressed(&GameOverMenuAction::Select) {
         selected_widget.clicked = true;
         return;
     }
 
-    let go_up = game_over_menu_action_state.just_pressed(GameOverMenuAction::Up);
-    let go_down = game_over_menu_action_state.just_pressed(GameOverMenuAction::Down);
+    let go_up = game_over_menu_action_state.just_pressed(&GameOverMenuAction::Up);
+    let go_down = game_over_menu_action_state.just_pressed(&GameOverMenuAction::Down);
 
     if (go_up || go_down) && !(go_up && go_down) {
         if go_down {

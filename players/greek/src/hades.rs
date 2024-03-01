@@ -25,7 +25,7 @@ impl IPlayer for Hades {
     }
 
     fn collider(&self) -> Collider {
-        Collider::ball(SIZE)
+        Collider::circle(SIZE)
     }
 
     fn spawn(&self, world: &mut World) {
@@ -57,7 +57,7 @@ pub fn spawn(
     mut inventory: ResMut<Inventory>,
 ) {
     let mesh = MaterialMesh2dBundle {
-        mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),
+        mesh: meshes.add(Circle::new(SIZE)).into(),
         material: materials.add(ColorMaterial::from(COLOR)),
         transform: Transform::from_translation(Vec3::new(0.00, 0.00, Depth::Player.z())),
         ..default()

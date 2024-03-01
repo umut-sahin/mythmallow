@@ -3,7 +3,12 @@ use crate::prelude::*;
 
 /// Spawns the main camera.
 pub fn spawn_main_camera(mut commands: Commands) {
-    commands.spawn((Name::new("Main Camera"), MainCamera, Camera2dBundle::default()));
+    commands.spawn((
+        Name::new("Main Camera"),
+        MainCamera,
+        Camera2dBundle::default(),
+        IsDefaultUiCamera,
+    ));
 }
 
 
