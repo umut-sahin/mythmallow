@@ -11,7 +11,6 @@ impl Plugin for WidgetPlugin {
         // Register components.
         app.register_type::<Widget>();
         app.register_type::<WidgetColors>();
-        app.register_type::<WidgetSelected>();
         app.register_type::<WidgetUp>();
         app.register_type::<WidgetDown>();
 

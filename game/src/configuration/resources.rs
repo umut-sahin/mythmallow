@@ -360,10 +360,10 @@ impl KeyBindings {
 impl Default for KeyBindings {
     fn default() -> KeyBindings {
         KeyBindings {
-            up: smallvec![KeyCode::W, KeyCode::Up],
-            left: smallvec![KeyCode::A, KeyCode::Left],
-            down: smallvec![KeyCode::S, KeyCode::Down],
-            right: smallvec![KeyCode::D, KeyCode::Right],
+            up: smallvec![KeyCode::KeyW, KeyCode::ArrowUp],
+            left: smallvec![KeyCode::KeyA, KeyCode::ArrowLeft],
+            down: smallvec![KeyCode::KeyS, KeyCode::ArrowDown],
+            right: smallvec![KeyCode::KeyD, KeyCode::ArrowRight],
             dash: smallvec![KeyCode::Space],
             pause: smallvec![KeyCode::Escape],
         }

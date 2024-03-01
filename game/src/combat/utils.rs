@@ -12,7 +12,7 @@ pub fn find_enemies_in_range_sorted_by_distance(
         area,
         position.xy(),
         0.00,
-        SpatialQueryFilter::new().with_masks([Layer::EnemyHitBox]),
+        SpatialQueryFilter::from_mask([Layer::EnemyHitBox]),
     );
 
     let mut enemies_in_range = intersections

@@ -17,17 +17,17 @@ impl PauseMenuAction {
 
         // Create the input map.
         let mut input_map = InputMap::new([
-            (KeyCode::Escape, PauseMenuAction::Resume),
-            (KeyCode::Return, PauseMenuAction::Select),
+            (PauseMenuAction::Resume, KeyCode::Escape),
+            (PauseMenuAction::Select, KeyCode::Enter),
         ]);
 
         // Extend the input map from key bindings.
         let key_bindings = app.world.resource::<Persistent<KeyBindings>>();
         for key_code in key_bindings.up.iter().cloned() {
-            input_map.insert(key_code, PauseMenuAction::Up);
+            input_map.insert(PauseMenuAction::Up, key_code);
         }
         for key_code in key_bindings.down.iter().cloned() {
-            input_map.insert(key_code, PauseMenuAction::Down);
+            input_map.insert(PauseMenuAction::Down, key_code);
         }
 
         // Insert the input map resource.

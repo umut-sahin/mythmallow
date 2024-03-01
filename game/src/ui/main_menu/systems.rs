@@ -109,13 +109,13 @@ pub fn navigation(
         Err(_) => return,
     };
 
-    if main_menu_action_state.just_pressed(MainMenuAction::Select) {
+    if main_menu_action_state.just_pressed(&MainMenuAction::Select) {
         selected_widget.clicked = true;
         return;
     }
 
-    let go_up = main_menu_action_state.just_pressed(MainMenuAction::Up);
-    let go_down = main_menu_action_state.just_pressed(MainMenuAction::Down);
+    let go_up = main_menu_action_state.just_pressed(&MainMenuAction::Up);
+    let go_down = main_menu_action_state.just_pressed(&MainMenuAction::Down);
 
     if (go_up || go_down) && !(go_up && go_down) {
         if go_down {

@@ -27,9 +27,9 @@ impl Plugin for CorePlugin {
         app.register_type::<DiagnosticsOverlayState>();
 
         // Add states to the application.
-        app.add_state::<AppState>();
-        app.add_state::<GameState>();
-        app.add_state::<DiagnosticsOverlayState>();
+        app.init_state::<AppState>();
+        app.init_state::<GameState>();
+        app.init_state::<DiagnosticsOverlayState>();
 
         // Transition to game mode selection screen when starting in game.
         let args = app.world.resource::<Args>();

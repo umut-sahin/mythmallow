@@ -88,7 +88,7 @@ pub fn acquire(
             Name::new(format!("Item {} [{}]", inventory.items.len(), item.name().to_string())),
             item,
             MaterialMesh2dBundle {
-                mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),
+                mesh: meshes.add(Circle::new(SIZE)).into(),
                 material: materials.add(ColorMaterial::from(COLOR)),
                 transform: Transform::from_translation(Vec3::new(0.00, 0.00, Depth::Item.z())),
                 ..default()
@@ -113,7 +113,7 @@ pub fn attack(
     enemy_hit_box_query: Query<&Position, With<EnemyHitBox>>,
     spatial_query: SpatialQuery,
 ) {
-    let base_attack_area = Collider::ball(BASE_RANGE);
+    let base_attack_area = Collider::circle(BASE_RANGE);
     for (item_entity, &item_transform) in item_query.iter() {
         let item_position = Position(item_transform.translation().xy());
         let enemies_in_range = utils::combat::find_enemies_in_range_sorted_by_distance(
@@ -138,14 +138,14 @@ pub fn attack(
 
             let projectile_entity = ProjectileBundle::builder()
                 .mesh(MaterialMesh2dBundle {
-                    mesh: meshes.add(shape::Circle::new(PROJECTILE_SIZE).into()).into(),
+                    mesh: meshes.add(Circle::new(PROJECTILE_SIZE)).into(),
                     material: materials.add(ColorMaterial::from(PROJECTILE_COLOR)),
                     transform: Transform::from_translation(
                         item_position.extend(Depth::Projectile.z()),
                     ),
                     ..default()
                 })
-                .collider(Collider::ball(PROJECTILE_SIZE))
+                .collider(Collider::circle(PROJECTILE_SIZE))
                 .position(item_position)
                 .velocity(LinearVelocity(enemy_direction * BASE_PROJECTILE_SPEED))
                 .damage(BASE_DAMAGE)

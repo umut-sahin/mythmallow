@@ -15,15 +15,15 @@ impl MainMenuAction {
         app.add_plugins(InputManagerPlugin::<MainMenuAction>::default());
 
         // Create the input map.
-        let mut input_map = InputMap::new([(KeyCode::Return, MainMenuAction::Select)]);
+        let mut input_map = InputMap::new([(MainMenuAction::Select, KeyCode::Enter)]);
 
         // Extend the input map from key bindings.
         let key_bindings = app.world.resource::<Persistent<KeyBindings>>();
         for key_code in key_bindings.up.iter().cloned() {
-            input_map.insert(key_code, MainMenuAction::Up);
+            input_map.insert(MainMenuAction::Up, key_code);
         }
         for key_code in key_bindings.down.iter().cloned() {
-            input_map.insert(key_code, MainMenuAction::Down);
+            input_map.insert(MainMenuAction::Down, key_code);
         }
 
         // Insert the input map resource.

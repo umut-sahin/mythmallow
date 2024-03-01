@@ -34,7 +34,7 @@ pub fn load(
     wave_durations: Res<WaveDurations>,
 ) {
     commands.insert_resource(WaveTimer::new(
-        wave_durations.iter().nth(current_wave.index()).copied().unwrap_or(Duration::ZERO),
+        wave_durations.get(current_wave.index()).copied().unwrap_or(Duration::ZERO),
     ));
 }
 
