@@ -37,12 +37,12 @@ pub struct ProjectileBundle {
 
 impl ProjectileBundle {
     /// Spawns the projectile.
-    fn spawn<'w, 's, 'a>(
+    fn spawn<'c>(
         self,
-        commands: &'a mut Commands<'w, 's>,
+        commands: &'c mut Commands,
         layers: CollisionLayers,
         additional_components: impl Bundle,
-    ) -> EntityCommands<'w, 's, 'a> {
+    ) -> EntityCommands<'c> {
         commands.spawn((
             // Tags
             Name::new("Projectile"),
@@ -57,10 +57,7 @@ impl ProjectileBundle {
     }
 
     /// Spawns the projectile toward the player.
-    pub fn spawn_toward_player<'w, 's, 'a>(
-        self,
-        commands: &'a mut Commands<'w, 's>,
-    ) -> EntityCommands<'w, 's, 'a> {
+    pub fn spawn_toward_player<'c>(self, commands: &'c mut Commands) -> EntityCommands<'c> {
         let layers = CollisionLayers::new(
             [Layer::Projectile, Layer::DamagePlayer],
             [Layer::MapBound, Layer::MapObstacle, Layer::PlayerHitBox],
@@ -69,10 +66,7 @@ impl ProjectileBundle {
     }
 
     /// Spawns the projectile toward enemies.
-    pub fn spawn_toward_enemies<'w, 's, 'a>(
-        self,
-        commands: &'a mut Commands<'w, 's>,
-    ) -> EntityCommands<'w, 's, 'a> {
+    pub fn spawn_toward_enemies<'c>(self, commands: &'c mut Commands) -> EntityCommands<'c> {
         let layers = CollisionLayers::new(
             [Layer::Projectile, Layer::DamageEnemies],
             [Layer::MapBound, Layer::MapObstacle, Layer::EnemyHitBox],

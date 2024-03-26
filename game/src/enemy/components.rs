@@ -40,11 +40,11 @@ pub struct EnemyBundle<E: Component + IEnemy> {
 
 impl<E: Component + IEnemy> EnemyBundle<E> {
     /// Spawns the enemy.
-    pub fn spawn<'w, 's, 'a>(
+    pub fn spawn<'c>(
         self,
-        commands: &'a mut Commands<'w, 's>,
+        commands: &'c mut Commands,
         counter: &mut EnemyCounter,
-    ) -> EntityCommands<'w, 's, 'a> {
+    ) -> EntityCommands<'c> {
         counter.increment();
 
         let name = self.enemy.name();
@@ -53,13 +53,15 @@ impl<E: Component + IEnemy> EnemyBundle<E> {
         let speed = self.enemy.speed();
         let collider = self.enemy.collider();
 
-        let mut collision_layers =
-            CollisionLayers::new([Layer::Enemy], [Layer::MapBound, Layer::Enemy]);
+        let mut collision_groups = LayerMask::from([Layer::Enemy]);
+        let mut collision_masks = LayerMask::from([Layer::MapBound, Layer::Enemy]);
 
         if contact_damage.is_some() {
-            collision_layers = collision_layers.add_group(Layer::DamagePlayer);
-            collision_layers = collision_layers.add_mask(Layer::PlayerHitBox);
+            collision_groups.add([Layer::DamagePlayer]);
+            collision_masks.add([Layer::PlayerHitBox]);
         }
+
+        let collision_layers = CollisionLayers::new(collision_groups, collision_masks);
 
         let mut enemy = commands.spawn((
             // Tags

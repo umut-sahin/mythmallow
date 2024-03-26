@@ -148,19 +148,19 @@ pub fn navigation(
         Err(_) => return,
     };
 
-    if player_selection_screen_action_state.just_pressed(PlayerSelectionScreenAction::Back) {
+    if player_selection_screen_action_state.just_pressed(&PlayerSelectionScreenAction::Back) {
         next_app_state.set(AppState::MainMenu);
         return;
     }
 
-    if player_selection_screen_action_state.just_pressed(PlayerSelectionScreenAction::Select) {
+    if player_selection_screen_action_state.just_pressed(&PlayerSelectionScreenAction::Select) {
         selected_widget.clicked = true;
         return;
     }
 
-    let go_up = player_selection_screen_action_state.just_pressed(PlayerSelectionScreenAction::Up);
+    let go_up = player_selection_screen_action_state.just_pressed(&PlayerSelectionScreenAction::Up);
     let go_down =
-        player_selection_screen_action_state.just_pressed(PlayerSelectionScreenAction::Down);
+        player_selection_screen_action_state.just_pressed(&PlayerSelectionScreenAction::Down);
 
     if (go_up || go_down) && !(go_up && go_down) {
         if go_down {

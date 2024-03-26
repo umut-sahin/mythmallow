@@ -126,18 +126,18 @@ pub fn navigation(
         Err(_) => return,
     };
 
-    if pause_menu_action_state.just_pressed(PauseMenuAction::Resume) {
+    if pause_menu_action_state.just_pressed(&PauseMenuAction::Resume) {
         next_game_state.set(GameState::Playing);
         return;
     }
 
-    if pause_menu_action_state.just_pressed(PauseMenuAction::Select) {
+    if pause_menu_action_state.just_pressed(&PauseMenuAction::Select) {
         selected_widget.clicked = true;
         return;
     }
 
-    let go_up = pause_menu_action_state.just_pressed(PauseMenuAction::Up);
-    let go_down = pause_menu_action_state.just_pressed(PauseMenuAction::Down);
+    let go_up = pause_menu_action_state.just_pressed(&PauseMenuAction::Up);
+    let go_down = pause_menu_action_state.just_pressed(&PauseMenuAction::Down);
 
     if (go_up || go_down) && !(go_up && go_down) {
         if go_down {

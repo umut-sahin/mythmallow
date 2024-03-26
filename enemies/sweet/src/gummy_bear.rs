@@ -48,7 +48,7 @@ impl IEnemy for GummyBear {
     }
 
     fn collider(&self) -> Collider {
-        Collider::ball(SIZE)
+        Collider::circle(SIZE)
     }
 
     fn spawn(&self, world: &mut World, position: Position) {
@@ -82,7 +82,7 @@ pub fn spawn(
     mut counter: ResMut<EnemyCounter>,
 ) {
     let mesh = MaterialMesh2dBundle {
-        mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),
+        mesh: meshes.add(Circle::new(SIZE)).into(),
         material: materials.add(ColorMaterial::from(Color::RED)),
         transform: Transform::from_translation(position.extend(Depth::Enemy.z())),
         ..default()

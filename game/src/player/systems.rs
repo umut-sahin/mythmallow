@@ -57,16 +57,16 @@ pub fn movement(
 
     let mut change = Vec2::ZERO;
 
-    if action_state.pressed(GameAction::MoveUp) {
+    if action_state.pressed(&GameAction::MoveUp) {
         change.y += 1.0;
     }
-    if action_state.pressed(GameAction::MoveLeft) {
+    if action_state.pressed(&GameAction::MoveLeft) {
         change.x -= 1.0;
     }
-    if action_state.pressed(GameAction::MoveDown) {
+    if action_state.pressed(&GameAction::MoveDown) {
         change.y -= 1.0;
     }
-    if action_state.pressed(GameAction::MoveRight) {
+    if action_state.pressed(&GameAction::MoveRight) {
         change.x += 1.0;
     }
 
@@ -86,7 +86,7 @@ pub fn dash(
         Err(_) => return,
     };
 
-    if action_state.just_pressed(GameAction::Dash) {
+    if action_state.just_pressed(&GameAction::Dash) {
         if velocity.0 == Vec2::ZERO {
             return;
         }
@@ -104,7 +104,7 @@ pub fn pause(
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(game_action_state) = game_action_state_query.get_single() {
-        if game_action_state.just_pressed(GameAction::Pause) {
+        if game_action_state.just_pressed(&GameAction::Pause) {
             next_game_state.set(GameState::Paused);
         }
     }

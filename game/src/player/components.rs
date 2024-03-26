@@ -45,10 +45,7 @@ pub struct PlayerBundle<P: Component + IPlayer> {
 
 impl<P: Component + IPlayer> PlayerBundle<P> {
     /// Spawns the player.
-    pub fn spawn<'w, 's, 'a>(
-        self,
-        commands: &'a mut Commands<'w, 's>,
-    ) -> EntityCommands<'w, 's, 'a> {
+    pub fn spawn<'c>(self, commands: &'c mut Commands) -> EntityCommands<'c> {
         let name = format!("Player [{}]", self.player.name());
         let health = self.player.health();
         let speed = self.player.speed();

@@ -59,7 +59,7 @@ impl Widget {
                                     color: color.text,
                                 },
                             )],
-                            alignment: TextAlignment::Center,
+                            justify: JustifyText::Center,
                             ..default()
                         },
                         ..default()
@@ -139,7 +139,7 @@ impl WidgetColors {
 
 
 /// Tag component for the selected widget.
-#[derive(Component, Debug, Reflect)]
+#[derive(Component, Debug)]
 #[component(storage = "SparseSet")]
 pub struct WidgetSelected {
     /// The instant at which the widget became selected.

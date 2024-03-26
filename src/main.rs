@@ -45,7 +45,7 @@ fn main() {
             EditorBinding {
                 input: EditorUserInput::Chord(vec![
                     EditorButton::Keyboard(KeyCode::ControlLeft),
-                    EditorButton::Keyboard(KeyCode::E),
+                    EditorButton::Keyboard(KeyCode::KeyE),
                 ]),
                 conditions: vec![EditorBindingCondition::ListeningForText(false)],
             },
@@ -158,11 +158,11 @@ fn initialize(app: &mut App, args: &Args) {
     {
         // Setup exiting the application with CTRL+Q in development mode.
         fn exit_with_ctrl_q(
-            keyboard_input: Res<Input<KeyCode>>,
+            keyboard_input: Res<ButtonInput<KeyCode>>,
             mut app_exit_events: ResMut<Events<AppExit>>,
         ) {
             if keyboard_input.pressed(KeyCode::ControlLeft)
-                && keyboard_input.just_pressed(KeyCode::Q)
+                && keyboard_input.just_pressed(KeyCode::KeyQ)
             {
                 app_exit_events.send(AppExit);
             }
@@ -173,14 +173,6 @@ fn initialize(app: &mut App, args: &Args) {
 
 #[cfg(feature = "wasm")]
 fn initialize(app: &mut App, _args: &Args) {
-    // Add default plugins with "fit canvas to parent" of the primary window set.
-    app.add_plugins(
-        DefaultPlugins
-            .set(WindowPlugin {
-                primary_window: Some(Window { fit_canvas_to_parent: true, ..default() }),
-                ..default()
-            })
-            .build()
-            .disable::<LogPlugin>(),
-    );
+    // Add default plugins.
+    app.add_plugins(DefaultPlugins.build().disable::<LogPlugin>());
 }

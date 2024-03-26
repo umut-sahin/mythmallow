@@ -57,7 +57,7 @@ impl IEnemy for ChocolateBar {
     }
 
     fn collider(&self) -> Collider {
-        Collider::ball(SIZE)
+        Collider::circle(SIZE)
     }
 
     fn spawn(&self, world: &mut World, position: Position) {
@@ -92,7 +92,7 @@ pub fn spawn(
     mut counter: ResMut<EnemyCounter>,
 ) {
     let mesh = MaterialMesh2dBundle {
-        mesh: meshes.add(shape::Circle::new(SIZE).into()).into(),
+        mesh: meshes.add(Circle::new(SIZE)).into(),
         material: materials.add(ColorMaterial::from(COLOR)),
         transform: Transform::from_translation(position.extend(Depth::Enemy.z())),
         ..default()
@@ -141,14 +141,14 @@ pub fn attack(
 
         let projectile_entity = ProjectileBundle::builder()
             .mesh(MaterialMesh2dBundle {
-                mesh: meshes.add(shape::Circle::new(PROJECTILE_SIZE).into()).into(),
+                mesh: meshes.add(Circle::new(PROJECTILE_SIZE)).into(),
                 material: materials.add(ColorMaterial::from(PROJECTILE_COLOR)),
                 transform: Transform::from_translation(
                     enemy_position.extend(Depth::Projectile.z()),
                 ),
                 ..default()
             })
-            .collider(Collider::ball(PROJECTILE_SIZE))
+            .collider(Collider::circle(PROJECTILE_SIZE))
             .position(enemy_position)
             .velocity(LinearVelocity(player_direction * PROJECTILE_SPEED))
             .damage(DAMAGE)

@@ -81,7 +81,7 @@ pub fn update_diagnostics_overlay(
 
     new_diagnostics_overlay_text += "FPS: ";
 
-    let fps = diagnostics.get(FrameTimeDiagnosticsPlugin::FPS).and_then(|fps| fps.smoothed());
+    let fps = diagnostics.get(&FrameTimeDiagnosticsPlugin::FPS).and_then(|fps| fps.smoothed());
     match fps {
         Some(fps) => new_diagnostics_overlay_text += &format!("{fps:.2}"),
         None => new_diagnostics_overlay_text += "N/A",
@@ -90,7 +90,7 @@ pub fn update_diagnostics_overlay(
     new_diagnostics_overlay_text += "\nFrame Time: ";
 
     let frame_time = diagnostics
-        .get(FrameTimeDiagnosticsPlugin::FRAME_TIME)
+        .get(&FrameTimeDiagnosticsPlugin::FRAME_TIME)
         .and_then(|frame_time| frame_time.smoothed());
     match frame_time {
         Some(frame_time) => new_diagnostics_overlay_text += &format!("{frame_time:.3} ms"),

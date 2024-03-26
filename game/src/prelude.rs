@@ -96,7 +96,7 @@ pub use {
     },
     bevy_console::{
         reply,
-        AddConsoleCommand as _,
+        AddConsoleCommand,
         ConsoleCommand,
         ConsoleConfiguration,
         ConsoleOpen as ConsoleState,

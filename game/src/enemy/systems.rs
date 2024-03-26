@@ -118,10 +118,10 @@ pub fn spawn_enemy(world: &mut World, map_bounds: &MapBounds, spawn: &mut EnemyS
                         ) -> Option<f32> {
                             let ray = spatial.cast_ray(
                                 *origin,
-                                direction,
+                                Direction2d::new(direction).ok()?,
                                 max_distance,
                                 false,
-                                SpatialQueryFilter::default().with_masks([Layer::MapBound]),
+                                SpatialQueryFilter::from_mask([Layer::MapBound]),
                             );
                             ray.map(|details| details.time_of_impact)
                         }

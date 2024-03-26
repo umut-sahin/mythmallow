@@ -19,10 +19,10 @@ impl Plugin for PhysicsPlugin {
         #[cfg(feature = "development")]
         {
             let general_settings = app.world.resource::<Persistent<GeneralSettings>>();
-            app.insert_resource(PhysicsDebugConfig {
-                enabled: general_settings.debug_physics,
-                ..default()
-            });
+            app.insert_gizmo_group(
+                PhysicsGizmos::default(),
+                GizmoConfig { enabled: general_settings.debug_physics, ..default() },
+            );
 
             app.add_plugins(PhysicsDebugPlugin::default());
         }
