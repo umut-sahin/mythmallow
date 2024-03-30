@@ -175,4 +175,35 @@ fn initialize(app: &mut App, args: &Args) {
 fn initialize(app: &mut App, _args: &Args) {
     // Add default plugins.
     app.add_plugins(DefaultPlugins.build().disable::<LogPlugin>());
+
+    // Fit canvas to parent.
+    {
+        let window = match web_sys::window() {
+            Some(window) => window,
+            None => {
+                log::error!("unable to get the window to fit canvas to parent");
+                return;
+            },
+        };
+        let document = match window.document() {
+            Some(document) => document,
+            None => {
+                log::error!("unable to get the document to fit canvas to parent");
+                return;
+            },
+        };
+        let canvas = match document.query_selector("canvas") {
+            Ok(Some(canvas)) if canvas.is_instance_of::<HtmlCanvasElement>() => {
+                canvas.unchecked_into::<HtmlCanvasElement>()
+            },
+            _ => {
+                log::error!("unable to get the canvas to fit to parent");
+                return;
+            },
+        };
+
+        let style = canvas.style();
+        style.set_property("width", "100%").unwrap();
+        style.set_property("height", "100%").unwrap();
+    }
 }

@@ -178,6 +178,11 @@ pub use {
 pub use {
     instant::Instant,
     std::path::Path,
+    web_sys::{
+        self,
+        wasm_bindgen::JsCast,
+        HtmlCanvasElement,
+    },
 };
 
 #[cfg(feature = "bevy_editor_pls")]
