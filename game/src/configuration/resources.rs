@@ -83,11 +83,11 @@ impl Args {
 
         impl Display for ArgsParser {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if let Some(data) = &self.data {
-                    write!(f, " --data \"{}\"", data.display())?;
-                }
                 if let Some(configuration) = &self.configuration {
                     write!(f, " --configuration \"{}\"", configuration.display())?;
+                }
+                if let Some(data) = &self.data {
+                    write!(f, " --data \"{}\"", data.display())?;
                 }
                 if let Some(seed) = &self.seed {
                     write!(f, " --seed {}", seed)?;
