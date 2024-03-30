@@ -26,7 +26,7 @@ typed-builder = { version = "0.18" }
 bevy-persistent-windows = { version = "0.5" }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-instant = { version = "0.1" }
+instant = { version = "0.1", features = ["wasm-bindgen"] }
 web-sys = { version = "0.3" }
 
 [features]
