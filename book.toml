@@ -7,3 +7,7 @@ authors = [
     "Umut Şahin <umutsahin@protonmail.com>",
     "Emre Baba <emrebaba0@protonmail.com>",
 ]
+
+[build]
+build-dir = "target/book"
+create-missing = true
