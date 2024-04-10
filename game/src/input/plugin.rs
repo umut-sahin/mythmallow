@@ -24,7 +24,7 @@ impl Plugin for InputPlugin {
             app.add_systems(Update, toggle_diagnostics_overlay);
 
             #[cfg(feature = "development")]
-            app.add_systems(Update, toggle_physics_debug);
+            app.add_systems(Update, toggle_physics_gizmos);
         }
     }
 }
