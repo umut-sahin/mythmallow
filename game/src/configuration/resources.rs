@@ -271,7 +271,7 @@ pub struct GeneralSettings {
     pub show_diagnostics_overlay: bool,
 
     #[cfg(feature = "development")]
-    pub debug_physics: bool,
+    pub enable_physics_gizmos: bool,
 }
 
 impl GeneralSettings {
@@ -307,7 +307,7 @@ impl Default for GeneralSettings {
             show_diagnostics_overlay: false,
 
             #[cfg(feature = "development")]
-            debug_physics: false,
+            enable_physics_gizmos: false,
         }
     }
 }

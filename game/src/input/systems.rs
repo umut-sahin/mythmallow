@@ -85,21 +85,21 @@ pub fn toggle_diagnostics_overlay(
 }
 
 
-/// Toggles physics debug.
+/// Toggles physics gizmos.
 #[cfg(feature = "development")]
-pub fn toggle_physics_debug(
+pub fn toggle_physics_gizmos(
     global_action_state: Res<ActionState<GlobalAction>>,
     mut general_settings: ResMut<Persistent<GeneralSettings>>,
     mut gizmo_config_store: ResMut<GizmoConfigStore>,
 ) {
-    if global_action_state.just_pressed(&GlobalAction::TogglePhysicsDebug) {
+    if global_action_state.just_pressed(&GlobalAction::TogglePhysicsGizmos) {
         general_settings
             .update(|general_settings| {
-                general_settings.debug_physics = !general_settings.debug_physics;
+                general_settings.enable_physics_gizmos = !general_settings.enable_physics_gizmos;
             })
             .ok();
 
         let (physics_gizmos_config, _) = gizmo_config_store.config_mut::<PhysicsGizmos>();
-        physics_gizmos_config.enabled = general_settings.debug_physics;
+        physics_gizmos_config.enabled = general_settings.enable_physics_gizmos;
     }
 }

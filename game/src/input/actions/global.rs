@@ -7,7 +7,7 @@ pub enum GlobalAction {
     ToggleDiagnosticsOverlay,
 
     #[cfg(feature = "development")]
-    TogglePhysicsDebug,
+    TogglePhysicsGizmos,
 }
 
 impl GlobalAction {
@@ -24,7 +24,7 @@ impl GlobalAction {
 
         #[cfg(feature = "development")]
         input_map.insert(
-            GlobalAction::TogglePhysicsDebug,
+            GlobalAction::TogglePhysicsGizmos,
             UserInput::chord([KeyCode::ControlLeft, KeyCode::KeyP]),
         );
 

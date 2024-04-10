@@ -15,13 +15,13 @@ impl Plugin for PhysicsPlugin {
         app.insert_resource(Gravity::ZERO);
         app.add_plugins(XpbdPlugin::default());
 
-        // Setup physics debug in development mode.
+        // Setup physics gizmos in development mode.
         #[cfg(feature = "development")]
         {
             let general_settings = app.world.resource::<Persistent<GeneralSettings>>();
             app.insert_gizmo_group(
                 PhysicsGizmos::default(),
-                GizmoConfig { enabled: general_settings.debug_physics, ..default() },
+                GizmoConfig { enabled: general_settings.enable_physics_gizmos, ..default() },
             );
 
             app.add_plugins(PhysicsDebugPlugin::default());
