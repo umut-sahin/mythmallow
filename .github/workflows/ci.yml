@@ -155,31 +155,3 @@ jobs:
         with:
           command: build
           args: --all-targets --target wasm32-unknown-unknown --no-default-features --features wasm-development
-
-  publish:
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: [conformance, build-native, build-wasm]
-
-    name: Publish
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Install Platform Dependencies
-        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
-
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          override: true
-
-      - name: Publish
-        uses: actions-rs/cargo@v1
-        with:
-          command: publish
-          args: --token ${REGISTRY_TOKEN}
-        env:
-          REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
