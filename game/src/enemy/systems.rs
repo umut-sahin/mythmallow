@@ -273,6 +273,11 @@ pub fn clear_enemy_counter(mut commands: Commands) {
     commands.remove_resource::<EnemyCounter>();
 }
 
+/// Clears the enemy spawn pattern.
+pub fn clear_enemy_spawn_pattern(mut commands: Commands) {
+    commands.remove_resource::<EnemySpawnPattern>();
+}
+
 /// Clears the enemy pack selection.
 pub fn clear_enemy_pack_selection(mut commands: Commands) {
     commands.remove_resource::<SelectedEnemyPackIndex>();
