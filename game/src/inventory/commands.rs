@@ -9,6 +9,7 @@ pub struct InventoryCommand {
     pub subcommand: InventoryCommands,
 }
 
+/// Inventory commands.
 #[derive(Debug, Subcommand)]
 pub enum InventoryCommands {
     /// Lists the items in the inventory.

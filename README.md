@@ -152,6 +152,30 @@ Available Items:
 
 If not set, the inventory will only contain the starting item of the selected player.
 
+### \-\-level \<LEVEL>
+
+Specifies the level of the player when starting the application
+in-game.
+
+- Should be between [1, 65535]
+
+If not set, level of the player will be set to `1`.
+
+### \-\-experience \<EXPERIENCE>
+
+Specifies the experience of the player when starting the application
+in-game.
+
+- Works together with [--level](#--level-level):
+  - if specified experience is smaller than the experience required to reach the specified level
+    - level would be set to the specified level
+    - experience would be set to the experience required to reach the specified level
+  - otherwise
+    - experience would be set to the specified experience
+    - level would be set to the same level as if you leveled up by gaining the specified experience in game
+
+If not set, experience of the player will be set to `0.00`.
+
 ### Arguments for game modes
 
 - In Native:

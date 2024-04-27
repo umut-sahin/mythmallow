@@ -22,3 +22,58 @@ pub fn keep_dashing(
         }
     }
 }
+
+
+/// Attracts objects to each other.
+pub fn attraction(
+    time: Res<Time>,
+    mut attracted_query: Query<(
+        &Position,
+        &AttractedTo,
+        &mut AttractionSpeed,
+        Option<&IdealAttractionDistance>,
+        Option<&SlowdownOfGoingBackwardsDuringAttraction>,
+        &mut LinearVelocity,
+    )>,
+    target_query: Query<&Position>,
+) {
+    for (
+        position,
+        attracted_to,
+        mut attraction_speed,
+        ideal_distance,
+        backwards_slowdown,
+        mut velocity,
+    ) in attracted_query.iter_mut()
+    {
+        if let Ok(target_position) = target_query.get(attracted_to.0) {
+            let ideal_distance = *ideal_distance.cloned().unwrap_or_default();
+            let direction = target_position.0 - position.0;
+
+            let speed = match attraction_speed.deref_mut() {
+                AttractionSpeed::Constant(speed) => *speed,
+                AttractionSpeed::Accelerating {
+                    min_speed,
+                    acceleration_per_second,
+                    current_speed,
+                    max_speed,
+                } => {
+                    let previous_speed = *current_speed;
+
+                    if current_speed.0 != max_speed.0 {
+                        let new_speed =
+                            current_speed.0 + (acceleration_per_second.0 * time.delta_seconds());
+                        *current_speed = Speed(new_speed.clamp(min_speed.0, max_speed.0));
+                    }
+
+                    previous_speed
+                },
+            };
+
+            velocity.0 = direction.normalize() * speed.0;
+            if direction.length() < ideal_distance {
+                velocity.0 *= -backwards_slowdown.cloned().unwrap_or_default().0;
+            }
+        }
+    }
+}

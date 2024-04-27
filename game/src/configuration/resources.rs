@@ -23,6 +23,10 @@ pub struct Args {
     pub start_in_game_enemies: Option<String>,
     /// Items to add to the inventory when starting in game.
     pub start_in_game_inventory: Vec<String>,
+    /// Level to set when starting in game.
+    pub start_in_game_level: Option<NonZeroU16>,
+    /// Experience to set when starting in game.
+    pub start_in_game_experience: Option<f64>,
 }
 
 impl Args {
@@ -64,6 +68,10 @@ impl Args {
             pub enemies: Option<String>,
             #[arg(long)]
             pub inventory: Option<String>,
+            #[arg(long)]
+            pub level: Option<NonZeroU16>,
+            #[arg(long)]
+            pub experience: Option<f64>,
         }
 
         impl Default for ArgsParser {
@@ -77,6 +85,8 @@ impl Args {
                     player: None,
                     enemies: None,
                     inventory: None,
+                    level: None,
+                    experience: None,
                 }
             }
         }
@@ -106,6 +116,12 @@ impl Args {
                 }
                 if let Some(inventory) = &self.inventory {
                     write!(f, " --inventory \"{}\"", inventory)?;
+                }
+                if let Some(level) = &self.level {
+                    write!(f, " --level {}", level)?;
+                }
+                if let Some(experience) = &self.experience {
+                    write!(f, " --experience {}", Experience(*experience))?;
                 }
                 Ok(())
             }
@@ -189,6 +205,8 @@ impl Args {
                     .map(|item| item.trim().to_owned())
                     .filter(|item| !item.is_empty())
                     .collect();
+                let start_in_game_level = self.level;
+                let start_in_game_experience = self.experience;
 
                 Args {
                     data_directory,
@@ -199,6 +217,8 @@ impl Args {
                     start_in_game_player,
                     start_in_game_enemies,
                     start_in_game_inventory,
+                    start_in_game_level,
+                    start_in_game_experience,
                 }
             }
         }

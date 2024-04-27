@@ -5,7 +5,7 @@ use crate::{
 
 
 /// Applies the inventory console commands.
-pub fn apply_command(
+pub fn apply_inventory_command(
     mut command: ConsoleCommand<InventoryCommand>,
     mut inventory: ResMut<Inventory>,
     item_registry: Res<ItemRegistry>,

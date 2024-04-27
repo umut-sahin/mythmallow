@@ -4,6 +4,7 @@ pub enum Depth {
     Bottom = 0,
 
     Map,
+    ExperiencePoint,
     Enemy,
     Player,
     Item,

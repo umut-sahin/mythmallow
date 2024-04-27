@@ -7,6 +7,7 @@ pub mod enemy;
 pub mod input;
 pub mod inventory;
 pub mod items;
+pub mod leveling;
 pub mod map;
 pub mod mode;
 pub mod movement;

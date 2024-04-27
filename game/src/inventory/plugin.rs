@@ -15,7 +15,7 @@ impl Plugin for InventoryPlugin {
         app.init_resource::<Inventory>();
 
         // Add console commands.
-        app.add_console_command::<InventoryCommand, _>(apply_command);
+        app.add_console_command::<InventoryCommand, _>(apply_inventory_command);
 
         // Add systems.
         app.add_systems(

@@ -88,6 +88,15 @@ impl IGameMode for Survival {
         EnemySpawnPattern::new(spawns)
     }
 
+    fn player_level_structure(&self) -> PlayerLevelStructure {
+        PlayerLevelStructure {
+            max_level: None,
+            required_experience_calculator: |_world, level| {
+                ExperienceRequiredToLevelUp(Experience(20.00 * level.get() as f64))
+            },
+        }
+    }
+
     fn initialize(&self, world: &mut World) {
         world.init_resource::<GameMode<Survival>>();
     }

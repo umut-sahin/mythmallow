@@ -11,6 +11,7 @@ pub struct Player;
 pub struct PlayerHitBox;
 
 impl PlayerHitBox {
+    /// Creates a bundle for the player hit box.
     pub fn bundle(collider: Collider) -> impl Bundle {
         (
             // Tags
@@ -19,6 +20,26 @@ impl PlayerHitBox {
             // Physics
             collider,
             CollisionLayers::new([Layer::PlayerHitBox], [Layer::DamagePlayer]),
+            Sensor,
+        )
+    }
+}
+
+
+/// Tag component for the pickup area of the player.
+#[derive(Component, Debug, Default, Reflect)]
+pub struct PlayerPickupArea;
+
+impl PlayerPickupArea {
+    /// Creates a bundle for the player pickup area.
+    pub fn bundle(collider: Collider) -> impl Bundle {
+        (
+            // Tags
+            Name::new("Pickup Area"),
+            PlayerPickupArea,
+            // Physics
+            collider,
+            CollisionLayers::new([Layer::PlayerPickupArea], [Layer::ExperiencePoint]),
             Sensor,
         )
     }
@@ -48,6 +69,7 @@ impl<P: Component + IPlayer> PlayerBundle<P> {
     pub fn spawn<'c>(self, commands: &'c mut Commands) -> EntityCommands<'c> {
         let name = format!("Player [{}]", self.player.name());
         let health = self.player.health();
+        let pickup_range = self.player.pickup_range();
         let speed = self.player.speed();
         let collider = self.player.collider();
 
@@ -58,20 +80,25 @@ impl<P: Component + IPlayer> PlayerBundle<P> {
             // Player
             self,
             health,
+            pickup_range,
             speed,
             // Combat
             RemainingHealth(*health),
+            // Leveling
+            Level::default(),
+            Experience::default(),
             // Physics
             RigidBody::Dynamic,
             LinearVelocity::ZERO,
             Restitution::PERFECTLY_INELASTIC,
             LockedAxes::ROTATION_LOCKED,
             collider.clone(),
-            CollisionLayers::new([Layer::Player], [Layer::MapBound]),
+            CollisionLayers::new([Layer::Player], [Layer::MapBound, Layer::ExperiencePoint]),
         ));
 
         player.with_children(|parent| {
             parent.spawn(PlayerHitBox::bundle(collider));
+            parent.spawn(PlayerPickupArea::bundle(Collider::circle(*pickup_range)));
         });
 
         player

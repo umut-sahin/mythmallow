@@ -48,9 +48,15 @@ impl<E: Component + IEnemy> EnemyBundle<E> {
         counter.increment();
 
         let name = self.enemy.name();
+
         let contact_damage = self.enemy.contact_damage();
         let health = self.enemy.health();
         let speed = self.enemy.speed();
+
+        let experience_reward = self.enemy.experience_reward();
+        let experience_point_visuals = self.enemy.experience_point_visuals();
+        let experience_point_attraction_speed = self.enemy.experience_point_attraction_speed();
+
         let collider = self.enemy.collider();
 
         let mut collision_groups = LayerMask::from([Layer::Enemy]);
@@ -70,9 +76,13 @@ impl<E: Component + IEnemy> EnemyBundle<E> {
             // Properties
             self,
             health,
-            speed,
+            AttractionSpeed::Constant(speed),
             // Combat
             RemainingHealth(*health),
+            // Leveling
+            experience_reward,
+            experience_point_visuals,
+            experience_point_attraction_speed,
             // Physics
             RigidBody::Dynamic,
             LinearVelocity::ZERO,
@@ -93,8 +103,3 @@ impl<E: Component + IEnemy> EnemyBundle<E> {
         enemy
     }
 }
-
-
-/// Component for the ideal distance to the player.
-#[derive(Clone, Copy, Component, Debug, Deref, DerefMut, Reflect)]
-pub struct IdealDistanceToPlayer(pub f32);
