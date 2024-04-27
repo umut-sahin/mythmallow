@@ -34,6 +34,9 @@ pub const PROJECTILE_COLOR: Color =
 /// Speed of the projectiles of the enemy.
 pub const PROJECTILE_SPEED: f32 = 200.00;
 
+/// Experience for defeating the enemy.
+pub const EXPERIENCE_REWARD: Experience = Experience(3.00);
+
 /// Component for the enemy "Chocolate Bar".
 #[derive(Clone, Component, Debug, Default, Reflect)]
 #[reflect(Component)]
@@ -46,6 +49,10 @@ impl IEnemy for ChocolateBar {
 
     fn name(&self) -> SmolStr {
         "Chocolate Bar".into()
+    }
+
+    fn experience_reward(&self) -> Experience {
+        EXPERIENCE_REWARD
     }
 
     fn health(&self) -> Health {
@@ -78,7 +85,6 @@ impl Plugin for ChocolateBarPlugin {
         app.register_type::<ChocolateBar>();
 
         // Add systems.
-        app.add_systems(Update, follow_player::<ChocolateBar>.in_set(GameplaySystems::Enemy));
         app.add_systems(Update, attack.in_set(GameplaySystems::Enemy));
     }
 }
@@ -87,6 +93,7 @@ impl Plugin for ChocolateBarPlugin {
 pub fn spawn(
     In((enemy, position)): In<(ChocolateBar, Position)>,
     mut commands: Commands,
+    player_query: Query<Entity, With<Player>>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut counter: ResMut<EnemyCounter>,
@@ -98,13 +105,19 @@ pub fn spawn(
         ..default()
     };
 
+    let player_entity = player_query.get_single().unwrap();
     EnemyBundle::builder()
         .enemy(enemy)
         .position(position)
         .mesh(mesh)
         .build()
         .spawn(&mut commands, &mut counter)
-        .insert((IdealDistanceToPlayer(100.00), Cooldown::<Attack>::new(ATTACK_COOLDOWN / 2)));
+        .insert((
+            AttractedTo(player_entity),
+            IdealAttractionDistance(100.00),
+            SlowdownOfGoingBackwardsDuringAttraction(0.75),
+            Cooldown::<Attack>::new(ATTACK_COOLDOWN / 2),
+        ));
 }
 
 /// Attacks to the player.

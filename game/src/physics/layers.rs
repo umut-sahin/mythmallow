@@ -26,4 +26,9 @@ pub enum Layer {
 
     /// Layer for projectiles.
     Projectile,
+
+    /// Layer for the pickup area of the player.
+    PlayerPickupArea,
+    /// Layer for experience points.
+    ExperiencePoint,
 }

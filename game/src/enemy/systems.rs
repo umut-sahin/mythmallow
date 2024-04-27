@@ -282,27 +282,3 @@ pub fn clear_enemy_spawn_pattern(mut commands: Commands) {
 pub fn clear_enemy_pack_selection(mut commands: Commands) {
     commands.remove_resource::<SelectedEnemyPackIndex>();
 }
-
-
-/// Makes the enemies follow the player.
-pub fn follow_player<E: IEnemy + Component>(
-    mut enemy_query: Query<
-        (&Position, &Speed, &mut LinearVelocity, Option<&IdealDistanceToPlayer>),
-        With<E>,
-    >,
-    player_query: Query<&Position, (With<Player>, Without<E>)>,
-) {
-    if let Ok(player_position) = player_query.get_single() {
-        for (enemy_position, enemy_speed, mut enemy_velocity, ideal_distance) in
-            enemy_query.iter_mut()
-        {
-            let ideal_distance = *ideal_distance.cloned().unwrap_or(IdealDistanceToPlayer(25.00));
-            let direction = player_position.0 - enemy_position.0;
-
-            enemy_velocity.0 = direction.normalize() * enemy_speed.0;
-            if direction.length() < ideal_distance {
-                enemy_velocity.0 /= -2.00;
-            }
-        }
-    }
-}

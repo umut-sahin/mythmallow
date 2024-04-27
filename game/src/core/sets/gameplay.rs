@@ -12,6 +12,7 @@ pub enum GameplaySystems {
     Movement,
     Physics,
     Player,
+    Leveling,
 }
 
 impl GameplaySystems {

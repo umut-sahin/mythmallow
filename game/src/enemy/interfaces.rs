@@ -30,6 +30,17 @@ pub trait IEnemy: Debug + Send + Sync + 'static {
     /// Gets the speed of the enemy.
     fn speed(&self) -> Speed;
 
+    /// Gets the experience reward for defeating the enemy.
+    fn experience_reward(&self) -> Experience;
+    /// Gets the visuals of experience points dropped from the enemy.
+    fn experience_point_visuals(&self) -> ExperiencePointVisuals {
+        ExperiencePointVisuals::default()
+    }
+    /// Gets the speed of the experience points dropped from the enemy when they are attracted.
+    fn experience_point_attraction_speed(&self) -> ExperiencePointAttractionSpeed {
+        ExperiencePointAttractionSpeed::default()
+    }
+
     /// Gets the collider of the enemy.
     fn collider(&self) -> Collider;
     /// Spawns the enemy.

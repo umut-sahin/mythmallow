@@ -8,6 +8,7 @@ use crate::{
     input::plugin::InputPlugin,
     inventory::plugin::InventoryPlugin,
     items::plugin::ItemPlugin,
+    leveling::plugin::LevelingPlugin,
     map::plugin::MapPlugin,
     mode::plugin::ModePlugin,
     movement::plugin::MovementPlugin,
@@ -37,6 +38,7 @@ impl Plugin for MythmallowPlugin {
         app.add_plugins(InventoryPlugin);
         app.add_plugins(MapPlugin);
         app.add_plugins(PropertyPlugin);
+        app.add_plugins(LevelingPlugin);
         app.add_plugins(StatusEffectPlugin);
         app.add_plugins(MovementPlugin);
         app.add_plugins(PlayerPlugin);

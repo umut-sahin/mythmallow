@@ -95,10 +95,52 @@ pub fn player_death(
 /// Handles enemy death.
 pub fn enemy_death(
     mut commands: Commands,
-    enemy_query: Query<(Entity, &RemainingHealth), With<Enemy>>,
+    enemy_query: Query<
+        (
+            Entity,
+            &RemainingHealth,
+            &Experience,
+            &Position,
+            &ExperiencePointVisuals,
+            &ExperiencePointAttractionSpeed,
+        ),
+        With<Enemy>,
+    >,
+    map_query: Query<Entity, With<Map>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+    mut experience_point_counter: ResMut<ExperiencePointCounter>,
 ) {
-    for (enemy_entity, enemy_remaining_health) in enemy_query.iter() {
+    for (
+        enemy_entity,
+        enemy_remaining_health,
+        enemy_experience_reward,
+        enemy_position,
+        experience_point_visuals,
+        experience_point_attraction_speed,
+    ) in enemy_query.iter()
+    {
         if enemy_remaining_health.0 <= 0.00 {
+            if enemy_experience_reward.0 >= 0.00 {
+                let mesh = MaterialMesh2dBundle {
+                    mesh: meshes.add(Circle::new(experience_point_visuals.size)).into(),
+                    material: materials.add(ColorMaterial::from(experience_point_visuals.color)),
+                    transform: Transform::from_translation(
+                        enemy_position.extend(Depth::ExperiencePoint.z()),
+                    ),
+                    ..default()
+                };
+                let experience_point_bundle = ExperiencePointBundle {
+                    position: *enemy_position,
+                    attraction_speed: experience_point_attraction_speed.0.clone(),
+                    mesh,
+                    collider: Collider::circle(experience_point_visuals.size),
+                    experience: *enemy_experience_reward,
+                };
+                let mut experience_point_entity =
+                    experience_point_bundle.spawn(&mut commands, &mut experience_point_counter);
+                experience_point_entity.set_parent(map_query.get_single().unwrap());
+            }
             commands.entity(enemy_entity).despawn_recursive();
         }
     }

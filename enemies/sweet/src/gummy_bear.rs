@@ -21,6 +21,9 @@ pub const CONTACT_DAMAGE: f32 = 3.00;
 /// Cooldown of contact damage of the enemy.
 pub const CONTACT_DAMAGE_COOLDOWN: Duration = Duration::from_millis(1000);
 
+/// Experience for defeating the enemy.
+pub const EXPERIENCE_REWARD: Experience = Experience(5.00);
+
 /// Component for the enemy "Gummy Bear".
 #[derive(Clone, Component, Debug, Default, Reflect)]
 #[reflect(Component)]
@@ -37,6 +40,10 @@ impl IEnemy for GummyBear {
 
     fn contact_damage(&self) -> Option<(Damage, DamageCooldown)> {
         Some((Damage(CONTACT_DAMAGE), DamageCooldown::new(CONTACT_DAMAGE_COOLDOWN)))
+    }
+
+    fn experience_reward(&self) -> Experience {
+        EXPERIENCE_REWARD
     }
 
     fn health(&self) -> Health {
@@ -67,9 +74,6 @@ impl Plugin for GummyBearPlugin {
 
         // Register components.
         app.register_type::<GummyBear>();
-
-        // Add systems.
-        app.add_systems(Update, follow_player::<GummyBear>.in_set(GameplaySystems::Enemy));
     }
 }
 
@@ -77,6 +81,7 @@ impl Plugin for GummyBearPlugin {
 pub fn spawn(
     In((enemy, position)): In<(GummyBear, Position)>,
     mut commands: Commands,
+    player_query: Query<Entity, With<Player>>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut counter: ResMut<EnemyCounter>,
@@ -88,10 +93,12 @@ pub fn spawn(
         ..default()
     };
 
+    let player_entity = player_query.get_single().unwrap();
     EnemyBundle::builder()
         .enemy(enemy)
         .position(position)
         .mesh(mesh)
         .build()
-        .spawn(&mut commands, &mut counter);
+        .spawn(&mut commands, &mut counter)
+        .insert((AttractedTo(player_entity), IdealAttractionDistance(25.00)));
 }

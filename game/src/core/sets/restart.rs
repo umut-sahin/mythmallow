@@ -10,6 +10,7 @@ pub enum RestartSystems {
     Inventory,
     Map,
     Player,
+    Leveling,
     Last,
     Done,
 }

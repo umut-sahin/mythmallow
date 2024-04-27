@@ -5,6 +5,7 @@ use crate::prelude::*;
 pub enum LoadingSystems {
     GameMode,
     Player,
+    Leveling,
     Map,
     Camera,
     Enemy,
