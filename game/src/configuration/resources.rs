@@ -27,6 +27,8 @@ pub struct Args {
     pub start_in_game_level: Option<NonZeroU16>,
     /// Experience to set when starting in game.
     pub start_in_game_experience: Option<f64>,
+    /// Flag to enable god mode.
+    pub enable_god_mode: bool,
 }
 
 impl Args {
@@ -72,6 +74,8 @@ impl Args {
             pub level: Option<NonZeroU16>,
             #[arg(long)]
             pub experience: Option<f64>,
+            #[arg(long)]
+            pub god_mode: bool,
         }
 
         impl Default for ArgsParser {
@@ -87,6 +91,7 @@ impl Args {
                     inventory: None,
                     level: None,
                     experience: None,
+                    god_mode: false,
                 }
             }
         }
@@ -122,6 +127,9 @@ impl Args {
                 }
                 if let Some(experience) = &self.experience {
                     write!(f, " --experience {}", Experience(*experience))?;
+                }
+                if self.god_mode {
+                    write!(f, " --god-mode")?;
                 }
                 Ok(())
             }
@@ -207,6 +215,7 @@ impl Args {
                     .collect();
                 let start_in_game_level = self.level;
                 let start_in_game_experience = self.experience;
+                let enable_god_mode = self.god_mode;
 
                 Args {
                     data_directory,
@@ -219,6 +228,7 @@ impl Args {
                     start_in_game_inventory,
                     start_in_game_level,
                     start_in_game_experience,
+                    enable_god_mode,
                 }
             }
         }
