@@ -176,6 +176,12 @@ in-game.
 
 If not set, experience of the player will be set to `0.00`.
 
+#### \-\-god-mode
+
+Enables god mode.
+
+- You still take damage when god mode is enabled, you just can't die, even if your health is lower than zero.
+
 ### Arguments for game modes
 
 - In Native:

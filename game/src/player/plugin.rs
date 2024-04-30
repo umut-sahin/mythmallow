@@ -1,5 +1,8 @@
 use crate::{
-    player::systems::*,
+    player::{
+        commands::*,
+        systems::*,
+    },
     prelude::*,
 };
 
@@ -14,8 +17,18 @@ impl Plugin for PlayerPlugin {
         app.register_type::<SelectedMythologyIndex>();
         app.register_type::<SelectedPlayerIndex>();
 
+        // Register Resources.
+        app.register_type::<GodMode>();
+
+        // Insert resources.
+        let args = app.world.resource::<Args>();
+        app.insert_resource(GodMode { is_enabled: args.enable_god_mode });
+
         // Initialize registry.
         app.init_resource::<PlayerRegistry>();
+
+        // Add console commands.
+        app.add_console_command::<PlayerCommand, _>(apply_player_command);
 
         // Add systems.
         {

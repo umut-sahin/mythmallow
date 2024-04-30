@@ -1,7 +1,47 @@
 use crate::{
-    player::constants::*,
+    player::{
+        commands::*,
+        constants::*,
+    },
     prelude::*,
 };
+
+
+/// Applies the inventory console commands.
+pub fn apply_player_command(
+    mut command: ConsoleCommand<PlayerCommand>,
+    mut god_mode: ResMut<GodMode>,
+) {
+    if let Some(Ok(PlayerCommand { subcommand })) = command.take() {
+        match subcommand {
+            PlayerCommands::GodMode { subcommand } => {
+                match subcommand {
+                    GodModeCommands::Status => {
+                        let status = if god_mode.is_enabled { "Enabled" } else { "Disabled" };
+                        reply!(command, "{}.", status);
+                    },
+                    GodModeCommands::Enable => {
+                        if god_mode.is_enabled {
+                            reply!(command, "Already enabled.");
+                        } else {
+                            god_mode.is_enabled = true;
+                            reply!(command, "Enabled.");
+                        }
+                    },
+                    GodModeCommands::Disable => {
+                        if god_mode.is_enabled {
+                            god_mode.is_enabled = false;
+                            reply!(command, "Disabled.");
+                        } else {
+                            reply!(command, "Already disabled.");
+                        }
+                    },
+                }
+            },
+        }
+        reply!(command, "");
+    }
+}
 
 
 /// Spawns the player.

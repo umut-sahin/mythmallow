@@ -16,6 +16,7 @@ pub fn apply_experience_command(
             query_result
         } else {
             reply!(command, "Not available outside the game.");
+            reply!(command, "");
             return;
         };
 
@@ -49,6 +50,7 @@ pub fn apply_level_command(
             query_result
         } else {
             reply!(command, "Not available outside the game.");
+            reply!(command, "");
             return;
         };
 

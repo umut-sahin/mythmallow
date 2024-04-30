@@ -41,6 +41,7 @@ pub use crate::{
     physics::layers::*,
     player::{
         components::*,
+        conditions::*,
         interfaces::*,
         registry::*,
         resources::*,
