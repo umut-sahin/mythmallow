@@ -42,16 +42,16 @@ impl IEnemy for GummyBear {
         Some((Damage(CONTACT_DAMAGE), DamageCooldown::new(CONTACT_DAMAGE_COOLDOWN)))
     }
 
-    fn experience_reward(&self) -> Experience {
-        EXPERIENCE_REWARD
-    }
-
     fn health(&self) -> Health {
         HEALTH
     }
 
     fn speed(&self) -> Speed {
         SPEED
+    }
+
+    fn experience_reward(&self) -> Experience {
+        EXPERIENCE_REWARD
     }
 
     fn collider(&self) -> Collider {
