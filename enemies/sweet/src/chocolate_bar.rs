@@ -51,16 +51,16 @@ impl IEnemy for ChocolateBar {
         "Chocolate Bar".into()
     }
 
-    fn experience_reward(&self) -> Experience {
-        EXPERIENCE_REWARD
-    }
-
     fn health(&self) -> Health {
         HEALTH
     }
 
     fn speed(&self) -> Speed {
         SPEED
+    }
+
+    fn experience_reward(&self) -> Experience {
+        EXPERIENCE_REWARD
     }
 
     fn collider(&self) -> Collider {
