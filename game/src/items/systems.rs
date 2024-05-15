@@ -5,7 +5,7 @@ use crate::{
 
 
 /// Applies the item console commands.
-pub fn apply_command(mut command: ConsoleCommand<ItemCommand>, item_registry: Res<ItemRegistry>) {
+pub fn apply_command(item_registry: Res<ItemRegistry>, mut command: ConsoleCommand<ItemCommand>) {
     if let Some(Ok(ItemCommand { subcommand })) = command.take() {
         match subcommand {
             ItemCommands::List => {

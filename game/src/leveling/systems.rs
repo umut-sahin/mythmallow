@@ -6,9 +6,9 @@ use crate::{
 
 /// Applies the inventory console commands.
 pub fn apply_experience_command(
-    mut command: ConsoleCommand<ExperienceCommand>,
     player_query: Query<(Entity, &Experience), With<Player>>,
     mut experience_gained_event_writer: EventWriter<ExperienceGainedEvent>,
+    mut command: ConsoleCommand<ExperienceCommand>,
 ) {
     if let Some(Ok(ExperienceCommand { subcommand })) = command.take() {
         let (player_entity, player_experience) = if let Ok(query_result) = player_query.get_single()
@@ -41,9 +41,9 @@ pub fn apply_experience_command(
 /// Applies the level console commands.
 pub fn apply_level_command(
     mut commands: Commands,
-    mut command: ConsoleCommand<LevelCommand>,
     mut player_query: Query<&Level, With<Player>>,
     set_level_system_id: Res<SetLevelSystemId>,
+    mut command: ConsoleCommand<LevelCommand>,
 ) {
     if let Some(Ok(LevelCommand { subcommand })) = command.take() {
         let player_level = if let Ok(query_result) = player_query.get_single_mut() {
