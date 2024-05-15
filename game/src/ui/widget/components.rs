@@ -26,6 +26,27 @@ impl Widget {
 }
 
 impl Widget {
+    /// Spawns a container widget.
+    pub fn container(
+        commands: &mut Commands,
+        bundle: impl Bundle,
+        style: &Style,
+        color: WidgetColors,
+    ) -> Entity {
+        commands
+            .spawn((
+                bundle,
+                NodeBundle {
+                    style: style.clone(),
+                    background_color: color.normal.into(),
+                    ..default()
+                },
+                Interaction::None,
+                color,
+            ))
+            .id()
+    }
+
     /// Spawns a button widget.
     pub fn button(
         commands: &mut Commands,
@@ -96,6 +117,8 @@ impl Default for Widget {
 pub struct WidgetColors {
     /// Color of the text within the widget.
     pub text: Color,
+    /// Color of the text within the widget when the widget is disabled.
+    pub disabled_text: Color,
     /// Background color of the widget.
     pub normal: Color,
     /// Background color of the widget when the widget is selected.
@@ -105,6 +128,11 @@ pub struct WidgetColors {
 }
 
 impl WidgetColors {
+    /// Gets the default container widget colors.
+    pub fn container() -> WidgetColors {
+        DEFAULT_CONTAINER_COLORS
+    }
+
     /// Gets the default button widget colors.
     pub fn button() -> WidgetColors {
         DEFAULT_BUTTON_COLORS
@@ -138,6 +166,12 @@ impl WidgetColors {
 }
 
 
+/// Tag component for disabled widgets.
+#[derive(Component, Debug, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct WidgetDisabled;
+
+
 /// Tag component for the selected widget.
 #[derive(Component, Debug)]
 #[component(storage = "SparseSet")]
@@ -164,3 +198,15 @@ pub struct WidgetUp(pub Entity);
 #[derive(Component, Debug, Reflect)]
 #[component(storage = "SparseSet")]
 pub struct WidgetDown(pub Entity);
+
+
+/// Component for indicating the widget left of the attached widget.
+#[derive(Component, Debug, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct WidgetLeft(pub Entity);
+
+
+/// Component for indicating the widget right of the attached widget.
+#[derive(Component, Debug, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct WidgetRight(pub Entity);

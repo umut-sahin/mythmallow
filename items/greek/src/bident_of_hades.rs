@@ -3,6 +3,9 @@ use {
     mythmallow::prelude::*,
 };
 
+/// Price of the item.
+pub const PRICE: Experience = Experience(20.00);
+
 /// Tag component for the item "Bident of Hades".
 #[derive(Clone, Component, Debug, Default, Reflect)]
 #[reflect(Component)]
@@ -19,6 +22,10 @@ impl IItem for BidentOfHades {
 
     fn is_weapon(&self) -> bool {
         true
+    }
+
+    fn price(&self) -> Experience {
+        PRICE
     }
 
     fn instantiate(&self) -> ItemInstance {

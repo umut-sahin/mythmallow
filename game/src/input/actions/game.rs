@@ -9,6 +9,7 @@ pub enum GameAction {
     MoveDown,
     MoveRight,
     Dash,
+    OpenMarket,
 }
 
 impl GameAction {
@@ -39,6 +40,9 @@ impl GameAction {
         }
         for key_code in key_bindings.pause.iter().cloned() {
             input_map.insert(GameAction::Pause, key_code);
+        }
+        for key_code in key_bindings.market.iter().cloned() {
+            input_map.insert(GameAction::OpenMarket, key_code);
         }
 
         // Insert the input map resource.

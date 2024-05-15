@@ -5,12 +5,11 @@ use crate::prelude::*;
 pub fn control_physics_time(
     mut physics_time: ResMut<Time<Physics>>,
     console_state: Res<ConsoleState>,
-    mut previously_paused: Local<bool>,
+    game_state: Res<State<GameState>>,
 ) {
     if console_state.open {
-        *previously_paused = physics_time.is_paused();
         physics_time.pause();
-    } else if !(*previously_paused) {
+    } else if game_state.physics_enabled() {
         physics_time.unpause();
     }
 }

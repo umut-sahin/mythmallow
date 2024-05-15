@@ -52,6 +52,7 @@ impl Plugin for CorePlugin {
         InitializationSystems::configure(app);
         LoadingSystems::configure(app);
         GameplaySystems::configure(app);
+        MarketSystems::configure(app);
         PauseMenuSystems::configure(app);
         RestartSystems::configure(app);
         GameOverMenuSystems::configure(app);

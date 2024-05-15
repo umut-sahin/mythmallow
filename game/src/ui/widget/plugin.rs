@@ -11,8 +11,11 @@ impl Plugin for WidgetPlugin {
         // Register components.
         app.register_type::<Widget>();
         app.register_type::<WidgetColors>();
+        app.register_type::<WidgetDisabled>();
         app.register_type::<WidgetUp>();
         app.register_type::<WidgetDown>();
+        app.register_type::<WidgetLeft>();
+        app.register_type::<WidgetRight>();
 
         // Add systems.
         app.add_systems(
@@ -27,6 +30,10 @@ impl Plugin for WidgetPlugin {
             )
                 .chain()
                 .in_set(MenuSystems),
+        );
+        app.add_systems(
+            PostUpdate,
+            (change_text_color_when_disabled, change_text_color_when_enabled),
         );
     }
 }

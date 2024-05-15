@@ -23,6 +23,10 @@ impl IGameMode for Survival {
         "Survival".into()
     }
 
+    fn market_can_be_opened_by_player(&self) -> bool {
+        true
+    }
+
     fn default_enemy_spawn_pattern(&self, world: &World) -> EnemySpawnPattern {
         let enemy_registry = world.resource::<EnemyRegistry>();
 
