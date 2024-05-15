@@ -6,6 +6,7 @@ use crate::{
         game_mode_selection_screen::plugin::GameModeSelectionScreenPlugin,
         game_over_menu::plugin::GameOverMenuPlugin,
         main_menu::plugin::MainMenuPlugin,
+        market::plugin::MarketPlugin,
         pause_menu::plugin::PauseMenuPlugin,
         player_selection_screen::plugin::PlayerSelectionScreenPlugin,
         widget::plugin::WidgetPlugin,
@@ -23,6 +24,7 @@ impl Plugin for UiPlugin {
         app.add_plugins(GameModeSelectionScreenPlugin);
         app.add_plugins(PlayerSelectionScreenPlugin);
         app.add_plugins(EnemySelectionScreenPlugin);
+        app.add_plugins(MarketPlugin);
         app.add_plugins(PauseMenuPlugin);
         app.add_plugins(GameOverMenuPlugin);
         app.add_plugins(DiagnosticsOverlayPlugin);

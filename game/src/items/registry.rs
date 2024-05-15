@@ -58,7 +58,7 @@ impl ItemRegistryEntry {
 
 
 /// Container for registered items.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct RegisteredItem {
     pub item: Arc<dyn IItem>,
     pub tags: SmallVec<[SmolStr; 3]>,

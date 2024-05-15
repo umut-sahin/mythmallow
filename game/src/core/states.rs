@@ -21,10 +21,18 @@ pub enum GameState {
     Initialization,
     Loading,
     Playing,
+    Market,
     Paused,
     Restart,
     Won,
     Over,
+}
+
+impl GameState {
+    /// Gets whether the physics is enabled in the state.
+    pub fn physics_enabled(&self) -> bool {
+        *self == GameState::Playing
+    }
 }
 
 

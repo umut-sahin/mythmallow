@@ -5,6 +5,7 @@ mod gameplay;
 mod initialization;
 mod loading;
 mod main_menu;
+mod market;
 mod menu;
 mod pause_menu;
 mod player_selection_screen;
@@ -18,6 +19,7 @@ pub use self::{
     initialization::InitializationSystems,
     loading::LoadingSystems,
     main_menu::MainMenuSystems,
+    market::MarketSystems,
     menu::MenuSystems,
     pause_menu::PauseMenuSystems,
     player_selection_screen::PlayerSelectionScreenSystems,

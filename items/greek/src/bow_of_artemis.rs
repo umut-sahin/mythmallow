@@ -27,6 +27,9 @@ pub const PROJECTILE_COLOR: Color = Color::DARK_GRAY;
 /// Base speed for the projectiles of the item.
 pub const BASE_PROJECTILE_SPEED: f32 = 200.00;
 
+/// Price of the item.
+pub const PRICE: Experience = Experience(23.00);
+
 /// Tag component for the item "Bow of Artemis".
 #[derive(Clone, Component, Debug, Default, Reflect)]
 #[reflect(Component)]
@@ -43,6 +46,10 @@ impl IItem for BowOfArtemis {
 
     fn is_weapon(&self) -> bool {
         true
+    }
+
+    fn price(&self) -> Experience {
+        PRICE
     }
 
     fn instantiate(&self) -> ItemInstance {

@@ -359,6 +359,8 @@ pub struct KeyBindings {
     pub dash: SmallVec<[KeyCode; 1]>,
     /// Keys to pause the game.
     pub pause: SmallVec<[KeyCode; 1]>,
+    /// Keys to open the market, when the game mode allows it.
+    pub market: SmallVec<[KeyCode; 1]>,
 }
 
 impl KeyBindings {
@@ -396,6 +398,7 @@ impl Default for KeyBindings {
             right: smallvec![KeyCode::KeyD, KeyCode::ArrowRight],
             dash: smallvec![KeyCode::Space],
             pause: smallvec![KeyCode::Escape],
+            market: smallvec![KeyCode::KeyB],
         }
     }
 }

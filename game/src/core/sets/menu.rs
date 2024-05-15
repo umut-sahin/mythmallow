@@ -26,6 +26,7 @@ impl MenuSystems {
                         GameState::Initialization => false,
                         GameState::Loading => false,
                         GameState::Playing => false,
+                        GameState::Market => true,
                         GameState::Paused => true,
                         GameState::Won => false,
                         GameState::Over => true,

@@ -28,9 +28,17 @@ impl Default for Level {
 
 
 /// Component for experience.
-#[derive(Clone, Copy, Component, Debug, Default, Deref, DerefMut, Reflect)]
+#[derive(Clone, Copy, Component, Debug, Default, Deref, DerefMut, PartialOrd, PartialEq, Reflect)]
 #[reflect(Component)]
 pub struct Experience(pub f64);
+
+impl Experience {
+    /// Zero experience.
+    pub const ZERO: Experience = Experience(0.00);
+
+    /// One experience.
+    pub const ONE: Experience = Experience(1.00);
+}
 
 impl Display for Experience {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

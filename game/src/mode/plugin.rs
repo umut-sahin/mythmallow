@@ -10,6 +10,7 @@ impl Plugin for ModePlugin {
     fn build(&self, app: &mut App) {
         // Register resources.
         app.register_type::<SelectedGameModeIndex>();
+        app.register_type::<SelectedGameModeId>();
 
         // Initialize registry.
         app.init_resource::<GameModeRegistry>();

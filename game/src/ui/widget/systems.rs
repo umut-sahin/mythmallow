@@ -107,3 +107,36 @@ pub fn update_widget_colors_on_state_change(
         *background_color = new_background_color;
     }
 }
+
+
+/// Changes the text color of the widget to disabled text color when widget is disabled.
+pub fn change_text_color_when_disabled(
+    mut text_query: Query<(&Parent, &mut Text)>,
+    widget_query: Query<&WidgetColors, (With<Widget>, Added<WidgetDisabled>)>,
+) {
+    for (parent, mut text) in text_query.iter_mut() {
+        if let Ok(widget_colors) = widget_query.get(parent.get()) {
+            text.sections[0].style.color = widget_colors.disabled_text;
+        }
+    }
+}
+
+/// Changes the text color of the widget to regular text color when widget is enabled.
+pub fn change_text_color_when_enabled(
+    mut removed_components: RemovedComponents<WidgetDisabled>,
+    mut text_query: Query<(&Parent, &mut Text)>,
+    widget_query: Query<&WidgetColors, With<Widget>>,
+) {
+    for widget_entity in removed_components.read() {
+        let widget_colors = match widget_query.get(widget_entity) {
+            Ok(query_result) => query_result,
+            Err(_) => continue,
+        };
+        for (parent, mut text) in text_query.iter_mut() {
+            if parent.get() == widget_entity {
+                text.sections[0].style.color = widget_colors.text;
+                break;
+            }
+        }
+    }
+}

@@ -8,6 +8,8 @@ pub trait IGameMode: Debug + Send + Sync + 'static {
     /// Gets the name of the game mode.
     fn name(&self) -> SmolStr;
 
+    /// Gets whether the market can be opened by the player in the game mode.
+    fn market_can_be_opened_by_player(&self) -> bool;
     /// Gets the default enemy spawn pattern of the game mode.
     fn default_enemy_spawn_pattern(&self, world: &World) -> EnemySpawnPattern;
     /// Gets the player level structure of the game mode.

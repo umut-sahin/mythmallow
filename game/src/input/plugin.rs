@@ -13,6 +13,7 @@ impl Plugin for InputPlugin {
         MainMenuAction::setup(app);
         PlayerSelectionScreenAction::setup(app);
         GameAction::setup(app);
+        MarketAction::setup(app);
         PauseMenuAction::setup(app);
         GameOverMenuAction::setup(app);
 

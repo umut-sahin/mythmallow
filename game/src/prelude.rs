@@ -31,6 +31,7 @@ pub use crate::{
         components::*,
         resources::*,
     },
+    market::resources::*,
     mode::{
         conditions::in_game_mode,
         interfaces::*,
@@ -56,6 +57,10 @@ pub use crate::{
         game_mode_selection_screen::components::*,
         game_over_menu::components::*,
         main_menu::components::*,
+        market::{
+            components::*,
+            resources::*,
+        },
         pause_menu::components::*,
         player_selection_screen::components::*,
         widget::components::*,
@@ -97,6 +102,7 @@ pub use {
         sprite::MaterialMesh2dBundle,
         transform::TransformSystem,
         utils::HashMap,
+        utils::HashSet,
         window::{
             PrimaryWindow,
             WindowFocused,
@@ -131,6 +137,10 @@ pub use {
         buttonlike::ButtonState,
         prelude::*,
     },
+    prettytable::{
+        row,
+        Table,
+    },
     rand::prelude::*,
     serde::{
         Deserialize,
@@ -153,7 +163,10 @@ pub use {
             Display,
         },
         marker::PhantomData,
-        num::NonZeroU16,
+        num::{
+            NonZeroU16,
+            NonZeroUsize,
+        },
         ops::{
             Deref,
             DerefMut,

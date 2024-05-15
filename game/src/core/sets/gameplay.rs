@@ -13,6 +13,7 @@ pub enum GameplaySystems {
     Physics,
     Player,
     Leveling,
+    Market,
 }
 
 impl GameplaySystems {
