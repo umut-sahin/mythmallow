@@ -13,8 +13,12 @@ pub fn apply_inventory_command(
     if let Some(Ok(InventoryCommand { subcommand })) = command.take() {
         match subcommand {
             InventoryCommands::List => {
-                for (i, item) in inventory.iter().enumerate() {
-                    reply!(command, "{}) {}", i + 1, item.id());
+                if inventory.is_empty() {
+                    reply!(command, "Inventory is empty.");
+                } else {
+                    for (i, item) in inventory.iter().enumerate() {
+                        reply!(command, "{}) {}", i + 1, item.id());
+                    }
                 }
             },
             InventoryCommands::Add { item } => {
