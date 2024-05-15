@@ -296,6 +296,8 @@ pub fn level_player_up(world: &mut World) {
         if let Ok((player_entity, player_experience, mut player_level)) =
             player_query.get_single_mut()
         {
+            log::info!("trying to level up the player");
+
             if player_experience.0 < *experience_required_to_level_up.0 {
                 log::info!(
                     "player required {} experience to level up but has {} experience",
