@@ -20,12 +20,6 @@ impl Plugin for MarketPlugin {
         app.init_resource::<MarketSpending>();
         app.init_resource::<MarketState>();
 
-        // Register systems.
-        let refresh_market_system_id = app.world.register_system(refresh_market);
-
-        // Save registered systems.
-        app.insert_resource(RefreshMarketSystemId(refresh_market_system_id));
-
         // Add console commands.
         app.add_console_command::<MarketCommand, _>(apply_market_command);
 

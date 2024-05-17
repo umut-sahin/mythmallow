@@ -42,7 +42,7 @@ pub fn apply_experience_command(
 pub fn apply_level_command(
     mut commands: Commands,
     mut player_query: Query<&Level, With<Player>>,
-    set_level_system_id: Res<SetLevelSystemId>,
+    registered_systems: Res<RegisteredSystems>,
     mut command: ConsoleCommand<LevelCommand>,
 ) {
     if let Some(Ok(LevelCommand { subcommand })) = command.take() {
@@ -59,7 +59,7 @@ pub fn apply_level_command(
                 reply!(command, "{}", player_level.get());
             },
             LevelCommands::Set { level } => {
-                commands.run_system_with_input(set_level_system_id.0, Level(level));
+                commands.run_system_with_input(registered_systems.leveling.set_level, Level(level));
                 reply!(command, "Set.");
             },
         }

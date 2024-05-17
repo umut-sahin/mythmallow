@@ -722,7 +722,7 @@ pub fn refresh_button_interaction(
     mut market_configuration: ResMut<MarketConfiguration>,
     mut market_spending: ResMut<MarketSpending>,
     market_state: ResMut<MarketState>,
-    refresh_market_system_id: Res<RefreshMarketSystemId>,
+    registered_systems: Res<RegisteredSystems>,
 ) {
     if let Ok((mut button, metadata)) = refresh_button_query.get_single_mut() {
         button.on_click(|| {
@@ -744,7 +744,7 @@ pub fn refresh_button_interaction(
             }
 
             market_spending.record(refresh_cost, "refresh the market");
-            commands.run_system(refresh_market_system_id.0);
+            commands.run_system(registered_systems.market.refresh_market);
 
             let refresh_was_free_as_no_item_is_available =
                 market_configuration.refresh_is_free_as_no_item_is_available(&market_state);

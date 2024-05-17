@@ -27,12 +27,6 @@ impl Plugin for LevelingPlugin {
         app.add_event::<ExperienceGainedEvent>();
         app.add_event::<LeveledUpEvent>();
 
-        // Register systems.
-        let set_level_system_id = app.world.register_system(set_level);
-
-        // Save registered systems.
-        app.insert_resource(SetLevelSystemId(set_level_system_id));
-
         // Add console commands.
         app.add_console_command::<ExperienceCommand, _>(apply_experience_command);
         app.add_console_command::<LevelCommand, _>(apply_level_command);

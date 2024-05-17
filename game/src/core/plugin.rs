@@ -60,6 +60,10 @@ impl Plugin for CorePlugin {
         // Register resources.
         app.register_type::<GameResult>();
 
+        // Register systems.
+        let registered_systems = RegisteredSystems::new(app);
+        app.insert_resource(registered_systems);
+
         // Add systems.
         app.add_systems(
             OnEnter(GameState::Initialization),

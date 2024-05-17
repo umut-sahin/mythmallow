@@ -1,9 +1,19 @@
 use crate::prelude::*;
 
 
-/// System id of set level system.
+/// Database of registered leveling systems.
 #[derive(Clone, Copy, Debug, Deref, DerefMut, Resource)]
-pub struct SetLevelSystemId(pub SystemId<Level>);
+pub struct RegisteredLevelingSystems {
+    pub set_level: SystemId<Level>,
+}
+
+impl RegisteredLevelingSystems {
+    /// Creates the database.
+    pub fn new(app: &mut App) -> RegisteredLevelingSystems {
+        use super::systems::*;
+        RegisteredLevelingSystems { set_level: app.world.register_system(set_level) }
+    }
+}
 
 
 /// Resource for counting spawned experience points.
