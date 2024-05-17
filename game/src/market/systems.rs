@@ -318,7 +318,7 @@ pub fn process_acquirements(
             market_state.acquired_item_indices[market_state.processed_acquirements];
 
         let item_id_to_acquire = &market_state.offered_item_ids[index_of_item_to_acquire];
-        if let Some(item_to_acquire) = item_registry.find_item_by_id(&item_id_to_acquire) {
+        if let Some(item_to_acquire) = item_registry.find_item_by_id(item_id_to_acquire) {
             inventory.add(item_to_acquire.instantiate());
         }
 
