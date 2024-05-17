@@ -255,12 +255,20 @@ pub fn gain_balance(
     mut event_reader: EventReader<ExperienceGainedEvent>,
     player_query: Query<&Player>,
     mut balance: ResMut<Balance>,
+    experience_to_balance_ratio: Res<ExperienceToBalanceRatio>,
 ) {
     for event in event_reader.read() {
         if player_query.contains(event.entity) {
-            let amount = Balance(event.experience.0);
-            balance
-                .gain(amount, format!("gaining {} experience by {}", event.experience, event.by));
+            let amount = Balance(event.experience.0 * experience_to_balance_ratio.0);
+            balance.gain(
+                amount,
+                format!(
+                    "gaining {} experience by {} (1.00 experience = {})",
+                    event.experience,
+                    event.by,
+                    Balance(experience_to_balance_ratio.0),
+                ),
+            );
         }
     }
 }
@@ -497,6 +505,7 @@ pub fn open_market(
 /// Resets the market.
 pub fn reset_market(mut commands: Commands) {
     commands.insert_resource(Balance::default());
+    commands.insert_resource(ExperienceToBalanceRatio::default());
     commands.insert_resource(MarketConfiguration::default());
     commands.insert_resource(MarketState::default());
 }

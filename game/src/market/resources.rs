@@ -61,6 +61,17 @@ impl Display for Balance {
 }
 
 
+/// Resource for experience to balance ratio.
+#[derive(Debug, Reflect, Resource)]
+pub struct ExperienceToBalanceRatio(pub f64);
+
+impl Default for ExperienceToBalanceRatio {
+    fn default() -> ExperienceToBalanceRatio {
+        ExperienceToBalanceRatio(1.00)
+    }
+}
+
+
 /// Resource for the configuration of the market.
 ///
 /// Configures the number of items offered in the market and which items can be offered.

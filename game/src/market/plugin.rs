@@ -13,10 +13,12 @@ impl Plugin for MarketPlugin {
     fn build(&self, app: &mut App) {
         // Register resources.
         app.register_type::<Balance>();
+        app.register_type::<ExperienceToBalanceRatio>();
         app.register_type::<MarketConfiguration>();
 
         // Insert resources.
         app.init_resource::<Balance>();
+        app.init_resource::<ExperienceToBalanceRatio>();
         app.init_resource::<MarketConfiguration>();
         app.init_resource::<MarketState>();
 
