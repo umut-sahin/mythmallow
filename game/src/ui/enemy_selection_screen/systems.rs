@@ -32,10 +32,12 @@ pub fn despawn_enemy_selection_screen(
 /// Starts the game.
 pub fn enemy_pack_selected(
     mut next_app_state: ResMut<NextState<AppState>>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
+    game_state_stack.push(GameState::Initialization);
+    next_game_state.set(GameState::Transition);
     next_app_state.set(AppState::Game);
-    next_game_state.set(GameState::Initialization);
 }
 
 

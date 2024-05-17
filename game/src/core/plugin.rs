@@ -58,7 +58,11 @@ impl Plugin for CorePlugin {
         GameOverMenuSystems::configure(app);
 
         // Register resources.
+        app.register_type::<GameStateStack>();
         app.register_type::<GameResult>();
+
+        // Insert resources.
+        app.init_resource::<GameStateStack>();
 
         // Register systems.
         let registered_systems = RegisteredSystems::new(app);
@@ -71,5 +75,12 @@ impl Plugin for CorePlugin {
         );
         app.add_systems(OnEnter(GameState::Loading), start_playing.in_set(LoadingSystems::Done));
         app.add_systems(OnEnter(GameState::Restart), restart.in_set(RestartSystems::Done));
+        app.add_systems(
+            Update,
+            game_state_transition
+                .run_if(in_state(AppState::Game))
+                .run_if(in_state(GameState::Transition)),
+        );
+        app.add_systems(OnExit(AppState::Game), reset_game_state_stack);
     }
 }

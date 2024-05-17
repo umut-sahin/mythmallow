@@ -12,6 +12,7 @@ pub fn apply_market_command(
     mut market_state: ResMut<MarketState>,
     app_state: Res<State<AppState>>,
     game_state: Res<State<GameState>>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
     registered_systems: Res<RegisteredSystems>,
     mut command: ConsoleCommand<MarketCommand>,
@@ -103,13 +104,17 @@ pub fn apply_market_command(
             },
             MarketCommands::Open => {
                 match game_state.get() {
-                    GameState::Playing | GameState::Paused => {
+                    GameState::Playing => {
                         log::info!("opening the market");
-                        next_game_state.set(GameState::Market);
+                        game_state_stack.push(GameState::Market);
+                        next_game_state.set(GameState::Transition);
                         reply!(command, "Opened.");
                     },
                     GameState::Market => {
                         reply!(command, "Failed to open the market as it's already opened.");
+                    },
+                    GameState::Paused => {
+                        reply!(command, "Not available when paused.");
                     },
                     _ => {
                         reply!(command, "How did you time this, seriously?");
@@ -120,11 +125,15 @@ pub fn apply_market_command(
                 match game_state.get() {
                     GameState::Market => {
                         log::info!("closing the market");
-                        next_game_state.set(GameState::Playing);
+                        game_state_stack.pop();
+                        next_game_state.set(GameState::Transition);
                         reply!(command, "Closed.");
                     },
-                    GameState::Playing | GameState::Paused => {
+                    GameState::Playing => {
                         reply!(command, "Failed to close the market as it's already closed.");
+                    },
+                    GameState::Paused => {
+                        reply!(command, "Not available when paused.");
                     },
                     _ => {
                         reply!(command, "How did you time this, seriously?");
@@ -484,13 +493,15 @@ pub fn open_market(
     game_action_state_query: Query<&ActionState<GameAction>, With<Player>>,
     selected_game_mode_id: Res<SelectedGameModeId>,
     market_configuration: Res<MarketConfiguration>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(game_action_state) = game_action_state_query.get_single() {
         if game_action_state.just_pressed(&GameAction::OpenMarket) {
             if market_configuration.can_be_opened_by_player {
                 log::info!("opening the market");
-                next_game_state.set(GameState::Market);
+                game_state_stack.push(GameState::Market);
+                next_game_state.set(GameState::Transition);
             } else {
                 log::warn!(
                     "unable to open the market: cannot be opened by the player in {:?} mode",
