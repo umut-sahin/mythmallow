@@ -1,6 +1,9 @@
 use {
     crate::constants::*,
-    mythmallow::prelude::*,
+    mythmallow::{
+        items::constants::RANGED_ITEM_TAG,
+        prelude::*,
+    },
 };
 
 /// Size of the item.
@@ -27,8 +30,8 @@ pub const PROJECTILE_COLOR: Color = Color::DARK_GRAY;
 /// Base speed for the projectiles of the item.
 pub const BASE_PROJECTILE_SPEED: f32 = 200.00;
 
-/// Price of the item.
-pub const PRICE: Experience = Experience(23.00);
+/// Base price of the item.
+pub const BASE_PRICE: Experience = Experience(23.00);
 
 /// Tag component for the item "Bow of Artemis".
 #[derive(Clone, Component, Debug, Default, Reflect)]
@@ -48,8 +51,8 @@ impl IItem for BowOfArtemis {
         true
     }
 
-    fn price(&self) -> Experience {
-        PRICE
+    fn base_price(&self) -> Experience {
+        BASE_PRICE
     }
 
     fn instantiate(&self) -> ItemInstance {
@@ -72,7 +75,7 @@ impl Plugin for BowOfArtemisPlugin {
     fn build(&self, app: &mut App) {
         // Register the item.
         let mut item_registry = app.world.resource_mut::<ItemRegistry>();
-        item_registry.register(BowOfArtemis).add_tag(GREEK_ITEM_TAG);
+        item_registry.register(BowOfArtemis).add_tag(RANGED_ITEM_TAG).add_tag(GREEK_ITEM_TAG);
 
         // Register resources.
         app.register_type::<BowOfArtemis>();

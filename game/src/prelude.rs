@@ -132,10 +132,15 @@ pub use {
         Subcommand,
     },
     core::num::NonZeroU8,
+    itertools::Itertools,
     leafwing_input_manager::{
         action_state::ActionData,
         buttonlike::ButtonState,
         prelude::*,
+    },
+    num_format::{
+        Locale,
+        ToFormattedString,
     },
     prettytable::{
         row,

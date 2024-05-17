@@ -23,7 +23,7 @@ pub trait IItem: Debug + Send + Sync + 'static {
         DEFAULT_ITEM_COMMONNESS
     }
     /// Gets the base price of the item in the market.
-    fn price(&self) -> Experience;
+    fn base_price(&self) -> Experience;
 
     /// Instantiates the item to add it to the inventory.
     fn instantiate(&self) -> ItemInstance;

@@ -160,7 +160,7 @@ pub fn spawn_market(
                 } else {
                     market_configuration.refresh_cost.get()
                 };
-                let market_is_initialized = market_state.offered_items.len()
+                let market_is_initialized = market_state.offered_item_ids.len()
                     == (market_configuration.number_of_items as usize);
 
                 if (!market_is_initialized && available_balance < raw_refresh_cost)
@@ -303,6 +303,7 @@ pub fn update_offered_items(
     market_spending: Res<MarketSpending>,
     market_state: Res<MarketState>,
     mut market_widgets: ResMut<MarketWidgets>,
+    item_registry: Res<ItemRegistry>,
 ) {
     let market_items_container_entity = match market_items_container_query.get_single() {
         Ok(query_result) => query_result,
@@ -333,7 +334,7 @@ pub fn update_offered_items(
     let mut buy_widgets = Vec::new();
     let mut lock_widgets = Vec::new();
 
-    for (item_index, item) in market_state.offered_items.iter().enumerate() {
+    for (item_index, item_id) in market_state.offered_item_ids.iter().enumerate() {
         let item_position = NonZeroUsize::new(item_index + 1).unwrap();
 
         let item_container = commands
@@ -349,6 +350,13 @@ pub fn update_offered_items(
         if market_state.is_acquired(item_position) {
             continue;
         }
+
+        let item = match item_registry.find_item_by_id(item_id) {
+            Some(item) => item,
+            None => {
+                continue;
+            },
+        };
 
         let item_details = {
             let item_details = commands
@@ -387,7 +395,7 @@ pub fn update_offered_items(
                 ))
                 .id();
 
-            let price = item.price();
+            let price = item.base_price;
             let buy_button_label = format!("{} $", price);
 
             let buy_button = Widget::button(

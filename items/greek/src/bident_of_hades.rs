@@ -1,10 +1,13 @@
 use {
     crate::constants::*,
-    mythmallow::prelude::*,
+    mythmallow::{
+        items::constants::MELEE_ITEM_TAG,
+        prelude::*,
+    },
 };
 
-/// Price of the item.
-pub const PRICE: Experience = Experience(20.00);
+/// Base price of the item.
+pub const BASE_PRICE: Experience = Experience(20.00);
 
 /// Tag component for the item "Bident of Hades".
 #[derive(Clone, Component, Debug, Default, Reflect)]
@@ -24,8 +27,8 @@ impl IItem for BidentOfHades {
         true
     }
 
-    fn price(&self) -> Experience {
-        PRICE
+    fn base_price(&self) -> Experience {
+        BASE_PRICE
     }
 
     fn instantiate(&self) -> ItemInstance {
@@ -48,7 +51,7 @@ impl Plugin for BidentOfHadesPlugin {
     fn build(&self, app: &mut App) {
         // Register the item.
         let mut item_registry = app.world.resource_mut::<ItemRegistry>();
-        item_registry.register(BidentOfHades).add_tag(GREEK_ITEM_TAG);
+        item_registry.register(BidentOfHades).add_tag(MELEE_ITEM_TAG).add_tag(GREEK_ITEM_TAG);
 
         // Register components.
         app.register_type::<BidentOfHades>();

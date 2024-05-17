@@ -13,8 +13,10 @@ bevy_rand = { version = "0.6" }
 bevy_xpbd_2d = { version = "0.4" }
 clap = { version = "4.5", features = ["derive"] }
 dirs = { version = "5.0" }
+itertools = { version = "0.12" }
 leafwing-input-manager = { version = "0.13" }
 prettytable = { version = "0.10" }
+num-format = { version = "0.4" }
 rand = { version = "0.8" }
 serde = { version = "1.0", features = ["derive"] }
 smallvec = { version = "1.13", features = ["serde"] }
