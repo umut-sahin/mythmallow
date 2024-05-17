@@ -24,7 +24,7 @@ impl IGameMode for Survival {
     }
 
     fn market_can_be_opened_by_player(&self) -> bool {
-        true
+        false
     }
 
     fn default_enemy_spawn_pattern(&self, world: &World) -> EnemySpawnPattern {
