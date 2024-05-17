@@ -7,7 +7,7 @@ use {
 };
 
 /// Base price of the item.
-pub const BASE_PRICE: Experience = Experience(20.00);
+pub const BASE_PRICE: Balance = Balance(20.00);
 
 /// Tag component for the item "Bident of Hades".
 #[derive(Clone, Component, Debug, Default, Reflect)]
@@ -27,7 +27,7 @@ impl IItem for BidentOfHades {
         true
     }
 
-    fn base_price(&self) -> Experience {
+    fn base_price(&self) -> Balance {
         BASE_PRICE
     }
 

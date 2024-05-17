@@ -10,17 +10,12 @@ use crate::{
 /// Spawns the market.
 pub fn spawn_market(
     mut commands: Commands,
-    player_query: Query<&Experience, With<Player>>,
     asset_server: Res<AssetServer>,
+    balance: Res<Balance>,
     market_action_input_map: Res<InputMap<MarketAction>>,
     market_configuration: Res<MarketConfiguration>,
-    market_spending: Res<MarketSpending>,
     market_state: Res<MarketState>,
 ) {
-    // Calculate available balance.
-    let player_experience = player_query.get_single().cloned().unwrap_or(Experience(f64::NAN));
-    let available_balance = market_spending.available_balance(player_experience);
-
     // Create market action state.
     let mut action_state = ActionState::default();
     {
@@ -111,7 +106,7 @@ pub fn spawn_market(
                         TextBundle {
                             text: Text {
                                 sections: vec![TextSection::new(
-                                    format!("{:.0} $", available_balance),
+                                    format!("{:.0}", *balance),
                                     TextStyle {
                                         font: text_font.clone(),
                                         font_size: text_size,
@@ -152,19 +147,19 @@ pub fn spawn_market(
                     refresh_button_colors,
                     &refresh_button_font,
                     refresh_button_size,
-                    format!("Refresh - {} $", market_configuration.refresh_cost(&market_state)),
+                    format!("Refresh - {}", market_configuration.refresh_cost(&market_state)),
                 );
 
                 let raw_refresh_cost = if market_configuration.free_refreshes > 0 {
-                    Experience::ZERO
+                    Balance::ZERO
                 } else {
                     market_configuration.refresh_cost.get()
                 };
                 let market_is_initialized = market_state.offered_item_ids.len()
                     == (market_configuration.number_of_items as usize);
 
-                if (!market_is_initialized && available_balance < raw_refresh_cost)
-                    || (market_is_initialized && available_balance < refresh_cost)
+                if (!market_is_initialized && *balance < raw_refresh_cost)
+                    || (market_is_initialized && *balance < refresh_cost)
                 {
                     commands.entity(refresh_button).insert(WidgetDisabled);
                 }
@@ -242,29 +237,24 @@ pub fn despawn_market(mut commands: Commands, market_query: Query<Entity, With<M
 
 /// Updates balance text.
 pub fn update_balance_text(
-    player_query: Query<&Experience, With<Player>>,
     mut balance_text_query: Query<&mut Text, With<MarketBalanceText>>,
-    market_spending: Res<MarketSpending>,
+    balance: Res<Balance>,
 ) {
     let mut balance_text = match balance_text_query.get_single_mut() {
         Ok(query_result) => query_result,
         Err(_) => return,
     };
 
-    let player_experience = player_query.get_single().cloned().unwrap_or(Experience(f64::NAN));
-    let available_balance = market_spending.available_balance(player_experience);
-
-    balance_text.sections[0].value = format!("{} $", available_balance);
+    balance_text.sections[0].value = format!("{}", *balance);
 }
 
 /// Updates refresh button.
 pub fn update_refresh_button(
     mut commands: Commands,
-    player_query: Query<&Experience, With<Player>>,
     mut refresh_button_query: Query<(Entity, &mut MarketRefreshButton)>,
     mut text_query: Query<(&Parent, &mut Text)>,
+    balance: Res<Balance>,
     market_configuration: Res<MarketConfiguration>,
-    market_spending: Res<MarketSpending>,
     market_state: Res<MarketState>,
 ) {
     let (refresh_button_entity, mut refresh_button) = match refresh_button_query.get_single_mut() {
@@ -277,15 +267,12 @@ pub fn update_refresh_button(
 
     for (parent_entity, mut refresh_button_text) in text_query.iter_mut() {
         if parent_entity.get() == refresh_button_entity {
-            refresh_button_text.sections[0].value = format!("Refresh - {} $", refresh_cost);
+            refresh_button_text.sections[0].value = format!("Refresh - {}", refresh_cost);
             break;
         }
     }
 
-    let player_experience = player_query.get_single().cloned().unwrap_or(Experience(f64::NAN));
-    let available_balance = market_spending.available_balance(player_experience);
-
-    if available_balance < refresh_cost {
+    if *balance < refresh_cost {
         commands.entity(refresh_button_entity).insert(WidgetDisabled);
     } else {
         commands.entity(refresh_button_entity).remove::<WidgetDisabled>();
@@ -296,11 +283,10 @@ pub fn update_refresh_button(
 /// Updates offered items container with offered item containers.
 pub fn update_offered_items(
     mut commands: Commands,
-    player_query: Query<&Experience, With<Player>>,
     market_items_container_query: Query<Entity, With<MarketItemsContainer>>,
     selected_widget_query: Query<Entity, With<WidgetSelected>>,
     asset_server: Res<AssetServer>,
-    market_spending: Res<MarketSpending>,
+    balance: Res<Balance>,
     market_state: Res<MarketState>,
     mut market_widgets: ResMut<MarketWidgets>,
     item_registry: Res<ItemRegistry>,
@@ -396,7 +382,7 @@ pub fn update_offered_items(
                 .id();
 
             let price = item.base_price;
-            let buy_button_label = format!("{} $", price);
+            let buy_button_label = format!("{}", price);
 
             let buy_button = Widget::button(
                 &mut commands,
@@ -410,11 +396,7 @@ pub fn update_offered_items(
 
             buy_widgets.push(buy_button);
 
-            let player_experience =
-                player_query.get_single().cloned().unwrap_or(Experience(f64::NAN));
-            let available_balance = market_spending.available_balance(player_experience);
-
-            if available_balance < price {
+            if *balance < price {
                 commands.entity(buy_button).insert(WidgetDisabled);
             } else {
                 commands.entity(buy_button).remove::<WidgetDisabled>();
@@ -674,32 +656,27 @@ pub fn navigation(
 
 /// Buys an item.
 pub fn buy_button_interaction(
-    player_query: Query<&Experience, With<Player>>,
     mut buy_button_query: Query<(&mut Widget, &MarketBuyButton), Changed<Widget>>,
+    mut balance: ResMut<Balance>,
     mut market_state: ResMut<MarketState>,
-    mut market_spending: ResMut<MarketSpending>,
 ) {
     for (mut button, metadata) in buy_button_query.iter_mut() {
         button.on_click(|| {
             let item_position = NonZeroUsize::new(metadata.item_index + 1).unwrap();
             let item_cost = metadata.price;
 
-            let player_experience =
-                player_query.get_single().cloned().unwrap_or(Experience(f64::NAN));
-            let available_balance = market_spending.available_balance(player_experience);
-
-            if available_balance < item_cost {
+            if *balance < item_cost {
                 log::error!(
                     "unable to buy item {} in the market, which required {} experience, \
                     but only {} experience was available",
                     item_position,
                     item_cost,
-                    available_balance,
+                    *balance,
                 );
                 return;
             }
 
-            market_spending.record(item_cost, format!("buy item {} in the market", item_position));
+            balance.spend(item_cost, format!("buy item {} in the market", item_position));
             market_state.acquire(item_position);
         });
     }
@@ -725,10 +702,9 @@ pub fn lock_button_interaction(
 /// Refreshes the market.
 pub fn refresh_button_interaction(
     mut commands: Commands,
-    player_query: Query<&Experience, With<Player>>,
     mut refresh_button_query: Query<(&mut Widget, &MarketRefreshButton), Changed<Widget>>,
     mut market_configuration: ResMut<MarketConfiguration>,
-    mut market_spending: ResMut<MarketSpending>,
+    mut balance: ResMut<Balance>,
     market_state: ResMut<MarketState>,
     registered_systems: Res<RegisteredSystems>,
 ) {
@@ -736,22 +712,18 @@ pub fn refresh_button_interaction(
         button.on_click(|| {
             log::info!("refresh button is clicked");
 
-            let player_experience =
-                player_query.get_single().cloned().unwrap_or(Experience(f64::NAN));
-            let available_balance = market_spending.available_balance(player_experience);
-
             let refresh_cost = metadata.cost;
-            if available_balance < refresh_cost {
+            if *balance < refresh_cost {
                 log::error!(
                     "unable to refresh the market, which required {} experience, \
                     but only {} experience was available",
                     refresh_cost,
-                    available_balance,
+                    *balance,
                 );
                 return;
             }
 
-            market_spending.record(refresh_cost, "refresh the market");
+            balance.spend(refresh_cost, "refresh the market");
             commands.run_system(registered_systems.market.refresh_market);
 
             let refresh_was_free_as_no_item_is_available =

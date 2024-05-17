@@ -26,6 +26,11 @@ pub enum MarketCommands {
     Open,
     /// Closes the market.
     Close,
+    /// Controls the balance.
+    Balance {
+        #[clap(subcommand)]
+        subcommand: BalanceCommands,
+    },
     /// Controls the number of items in the market.
     NumberOfItems {
         #[clap(subcommand)]
@@ -41,6 +46,19 @@ pub enum MarketCommands {
         #[clap(subcommand)]
         subcommand: FreeRefreshesCommands,
     },
+}
+
+/// Balance commands.
+#[derive(Debug, Subcommand)]
+pub enum BalanceCommands {
+    /// Shows the balance.
+    Show,
+    /// Sets the balance.
+    Set { amount: f64 },
+    /// Increases the balance.
+    Add { amount: f64 },
+    /// Decreases the balance.
+    Remove { amount: f64 },
 }
 
 /// Number of items commands.
