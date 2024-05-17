@@ -154,8 +154,7 @@ If not set, the inventory will only contain the starting item of the selected pl
 
 ### \-\-level \<LEVEL>
 
-Specifies the level of the player when starting the application
-in-game.
+Specifies the level of the player when starting the application in-game.
 
 - Should be between [1, 65535]
 
@@ -163,8 +162,7 @@ If not set, level of the player will be set to `1`.
 
 ### \-\-experience \<EXPERIENCE>
 
-Specifies the experience of the player when starting the application
-in-game.
+Specifies the experience of the player when starting the application in-game.
 
 - Works together with [--level](#--level-level):
   - if specified experience is smaller than the experience required to reach the specified level
@@ -175,6 +173,18 @@ in-game.
     - level would be set to the same level as if you leveled up by gaining the specified experience in game
 
 If not set, experience of the player will be set to `0.00`.
+
+### \-\-balance \<BALANCE>
+
+Specifies the balance of the player when starting the application in-game.
+
+If not set, balance of the player will be set to `0.00`.
+
+### \-\-free-refreshes \<FREE_REFRESHES>
+
+Specifies the number of free refreshes to give to the player when starting the application in-game.
+
+If not set, player won't have any free refreshes.
 
 #### \-\-god-mode
 

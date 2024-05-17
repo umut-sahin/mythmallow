@@ -259,6 +259,30 @@ pub fn apply_market_command(
 }
 
 
+/// Sets the balance and number of free refreshes during initialization.
+pub fn set_balance_and_free_refreshes(
+    args: Res<Args>,
+    mut args_applied: Local<bool>,
+    mut balance: ResMut<Balance>,
+    mut market_configuration: ResMut<MarketConfiguration>,
+) {
+    if !(*args_applied) {
+        if let Some(specified_balance) = args.start_in_game_balance {
+            balance.0 = specified_balance;
+        }
+        if let Some(specified_free_refreshes) = args.start_in_game_free_refreshes {
+            market_configuration.free_refreshes = specified_free_refreshes;
+        }
+        *args_applied = true;
+    }
+    log::info!(
+        "player has {} and {} free refreshes",
+        *balance,
+        market_configuration.free_refreshes
+    );
+}
+
+
 /// Gains balance when player earns experience.
 pub fn gain_balance(
     mut event_reader: EventReader<ExperienceGainedEvent>,
