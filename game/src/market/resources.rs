@@ -16,6 +16,51 @@ impl RegisteredMarketSystems {
 }
 
 
+/// Resource for available balance to spend in the market.
+#[derive(Clone, Copy, Debug, Default, Deref, DerefMut, PartialOrd, PartialEq, Reflect, Resource)]
+pub struct Balance(pub f64);
+
+impl Balance {
+    /// Zero balance.
+    pub const ZERO: Balance = Balance(0.00);
+}
+
+impl Balance {
+    /// Sets balance.
+    pub fn set(&mut self, amount: Balance) {
+        *self = amount;
+        log::info!("setting the balance to {}", self);
+    }
+
+    /// Records gains.
+    pub fn gain(&mut self, amount: Balance, reason: impl AsRef<str>) {
+        log::info!("gaining {} from {}", amount, reason.as_ref());
+        self.0 += amount.0;
+        log::info!("new balance is {}", self);
+    }
+
+    /// Records losses.
+    pub fn spend(&mut self, amount: Balance, reason: impl AsRef<str>) {
+        log::info!("spending {} to {}", amount, reason.as_ref());
+        self.0 -= amount.0;
+        log::info!("new balance is {}", self);
+    }
+}
+
+impl Display for Balance {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.is_nan() {
+            return write!(f, "?");
+        }
+        if self.is_infinite() {
+            write!(f, "{}∞", if self.is_sign_positive() { "" } else { "-" })
+        } else {
+            write!(f, "{:.2} $", self.0)
+        }
+    }
+}
+
+
 /// Resource for the configuration of the market.
 ///
 /// Configures the number of items offered in the market and which items can be offered.
@@ -152,9 +197,9 @@ impl MarketConfiguration {
     }
 
     /// Gets the refresh cost.
-    pub fn refresh_cost(&self, state: &MarketState) -> Experience {
+    pub fn refresh_cost(&self, state: &MarketState) -> Balance {
         if self.refresh_is_free_as_no_item_is_available(state) || self.free_refreshes > 0 {
-            Experience::ZERO
+            Balance::ZERO
         } else {
             self.refresh_cost.get()
         }
@@ -241,16 +286,16 @@ impl Default for MarketConfiguration {
 
 /// Custom refresh cost function for the market.
 #[derive(Clone, Copy, Debug, Deref, DerefMut)]
-pub struct CustomRefreshCostInStepFunction(pub fn(usize) -> Experience);
+pub struct CustomRefreshCostInStepFunction(pub fn(usize) -> Balance);
 
 impl Default for CustomRefreshCostInStepFunction {
     fn default() -> CustomRefreshCostInStepFunction {
-        CustomRefreshCostInStepFunction(|_| Experience::ONE)
+        CustomRefreshCostInStepFunction(|_| Balance(1.00))
     }
 }
 
-impl From<fn(usize) -> Experience> for CustomRefreshCostInStepFunction {
-    fn from(function: fn(usize) -> Experience) -> CustomRefreshCostInStepFunction {
+impl From<fn(usize) -> Balance> for CustomRefreshCostInStepFunction {
+    fn from(function: fn(usize) -> Balance) -> CustomRefreshCostInStepFunction {
         CustomRefreshCostInStepFunction(function)
     }
 }
@@ -260,41 +305,41 @@ impl From<fn(usize) -> Experience> for CustomRefreshCostInStepFunction {
 #[derive(Debug, Reflect)]
 pub enum MarketRefreshCost {
     Constant {
-        cost: Experience,
+        cost: Balance,
     },
     Linear {
-        base_cost: Experience,
-        increase_per_step: Experience,
+        base_cost: Balance,
+        increase_per_step: Balance,
         current_step: usize,
-        current_cost: Experience,
-        max_cost: Option<Experience>,
+        current_cost: Balance,
+        max_cost: Option<Balance>,
     },
     Exponential {
-        base_cost: Experience,
+        base_cost: Balance,
         increase_factor_per_step: f64,
         current_step: usize,
-        current_cost: Experience,
-        max_cost: Option<Experience>,
+        current_cost: Balance,
+        max_cost: Option<Balance>,
     },
     Custom {
         #[reflect(ignore)]
         cost_in_step: CustomRefreshCostInStepFunction,
         current_step: usize,
-        current_cost: Experience,
+        current_cost: Balance,
     },
 }
 
 impl MarketRefreshCost {
     /// Creates a constant refresh cost.
-    pub fn constant(cost: Experience) -> MarketRefreshCost {
+    pub fn constant(cost: Balance) -> MarketRefreshCost {
         MarketRefreshCost::Constant { cost }
     }
 
     /// Creates a linearly increasing refresh cost.
     pub fn linear(
-        base_cost: Experience,
-        increase_per_step: Experience,
-        max_cost: Option<Experience>,
+        base_cost: Balance,
+        increase_per_step: Balance,
+        max_cost: Option<Balance>,
     ) -> MarketRefreshCost {
         MarketRefreshCost::Linear {
             base_cost,
@@ -307,9 +352,9 @@ impl MarketRefreshCost {
 
     /// Creates an exponentially increasing refresh cost.
     pub fn exponential(
-        base_cost: Experience,
+        base_cost: Balance,
         increase_factor_per_step: f64,
-        max_cost: Option<Experience>,
+        max_cost: Option<Balance>,
     ) -> MarketRefreshCost {
         if increase_factor_per_step < 1.00 {
             panic!("exponential refresh market cost factor cannot be smaller than 1.00");
@@ -324,7 +369,7 @@ impl MarketRefreshCost {
     }
 
     /// Creates a custom refresh cost.
-    pub fn custom(cost_in_step: fn(usize) -> Experience) -> MarketRefreshCost {
+    pub fn custom(cost_in_step: fn(usize) -> Balance) -> MarketRefreshCost {
         MarketRefreshCost::Custom {
             cost_in_step: cost_in_step.into(),
             current_step: 0,
@@ -335,7 +380,7 @@ impl MarketRefreshCost {
 
 impl MarketRefreshCost {
     /// Gets the current refresh cost.
-    pub fn get(&self) -> Experience {
+    pub fn get(&self) -> Balance {
         match self {
             MarketRefreshCost::Constant { cost } => *cost,
             MarketRefreshCost::Linear { current_cost, .. } => *current_cost,
@@ -358,7 +403,7 @@ impl MarketRefreshCost {
                 ..
             } => {
                 *current_step += 1;
-                *current_cost = Experience(current_cost.0 + increase_per_step.0);
+                *current_cost = Balance(current_cost.0 + increase_per_step.0);
                 if let Some(max_cost) = max_cost {
                     if *current_cost > *max_cost {
                         *current_cost = *max_cost;
@@ -373,7 +418,7 @@ impl MarketRefreshCost {
                 ..
             } => {
                 *current_step += 1;
-                *current_cost = Experience(current_cost.0 * *increase_factor_per_step);
+                *current_cost = Balance(current_cost.0 * *increase_factor_per_step);
                 if let Some(max_cost) = max_cost {
                     if *current_cost > *max_cost {
                         *current_cost = *max_cost;
@@ -417,14 +462,14 @@ impl MarketRefreshCost {
 
 impl Default for MarketRefreshCost {
     fn default() -> MarketRefreshCost {
-        MarketRefreshCost::constant(Experience::ONE)
+        MarketRefreshCost::constant(Balance(1.00))
     }
 }
 
 impl Display for MarketRefreshCost {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            MarketRefreshCost::Constant { cost } => write!(f, "constant {} $", cost),
+            MarketRefreshCost::Constant { cost } => write!(f, "constant {}", cost),
             MarketRefreshCost::Linear {
                 base_cost,
                 increase_per_step,
@@ -434,11 +479,11 @@ impl Display for MarketRefreshCost {
             } => {
                 write!(
                     f,
-                    "starting with {} $ increased by {} $ on every refresh{} \
-                    (currently on step {} at {} $)",
+                    "starting with {} increased by {} on every refresh{} \
+                    (currently on step {} at {})",
                     base_cost,
                     increase_per_step,
-                    max_cost.map(|cost| format!(" up to {} $", cost)).unwrap_or_default(),
+                    max_cost.map(|cost| format!(" up to {}", cost)).unwrap_or_default(),
                     current_step,
                     current_cost,
                 )
@@ -452,38 +497,17 @@ impl Display for MarketRefreshCost {
             } => {
                 write!(
                     f,
-                    "starting with {} $ increased by {:.2} % on every refresh{} \
-                    (currently on step {} at {} $)",
+                    "starting with {} increased by {:.2} % on every refresh{} \
+                    (currently on step {} at {})",
                     base_cost,
                     (increase_factor_per_step - 1.00) * 100.00,
-                    max_cost.map(|cost| format!(" up to {} $", cost)).unwrap_or_default(),
+                    max_cost.map(|cost| format!(" up to {}", cost)).unwrap_or_default(),
                     current_step,
                     current_cost,
                 )
             },
             MarketRefreshCost::Custom { .. } => write!(f, "custom"),
         }
-    }
-}
-
-
-/// Resource for the spending at the market.
-#[derive(Clone, Copy, Debug, Default, Deref, DerefMut, Reflect, Resource)]
-#[reflect(Resource)]
-pub struct MarketSpending(pub Experience);
-
-impl MarketSpending {
-    /// Calculates the available balance to shop with.
-    pub fn available_balance(&self, total_experience: Experience) -> Experience {
-        Experience(total_experience.0 - *self.0)
-    }
-}
-
-impl MarketSpending {
-    /// Records spending at the market.
-    pub fn record(&mut self, amount: Experience, reason: impl AsRef<str>) {
-        log::info!("spending {} experience to {}", amount, reason.as_ref());
-        *self.0 += amount.0;
     }
 }
 

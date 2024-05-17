@@ -24,7 +24,7 @@ pub struct MarketBalanceText;
 /// Tag component for the refresh button in the market.
 #[derive(Component, Debug, Reflect)]
 pub struct MarketRefreshButton {
-    pub cost: Experience,
+    pub cost: Balance,
 }
 
 
@@ -52,7 +52,7 @@ pub struct MarketItemNameText;
 #[derive(Component, Debug, Reflect)]
 pub struct MarketBuyButton {
     pub item_index: usize,
-    pub price: Experience,
+    pub price: Balance,
 }
 
 

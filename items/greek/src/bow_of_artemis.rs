@@ -31,7 +31,7 @@ pub const PROJECTILE_COLOR: Color = Color::DARK_GRAY;
 pub const BASE_PROJECTILE_SPEED: f32 = 200.00;
 
 /// Base price of the item.
-pub const BASE_PRICE: Experience = Experience(23.00);
+pub const BASE_PRICE: Balance = Balance(23.00);
 
 /// Tag component for the item "Bow of Artemis".
 #[derive(Clone, Component, Debug, Default, Reflect)]
@@ -51,7 +51,7 @@ impl IItem for BowOfArtemis {
         true
     }
 
-    fn base_price(&self) -> Experience {
+    fn base_price(&self) -> Balance {
         BASE_PRICE
     }
 

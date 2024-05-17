@@ -16,7 +16,7 @@ pub fn apply_command(
                     let item = &entry.item;
                     reply!(command, "{}) {}", i + 1, item.id());
                     reply!(command, "    - tags: {}", item.tags.iter().join(", "));
-                    reply!(command, "    - base price: {} $", item.base_price);
+                    reply!(command, "    - base price: {}", item.base_price);
                     reply!(
                         command,
                         "    - commonness: {:}",
@@ -29,7 +29,7 @@ pub fn apply_command(
                     ItemBasePriceCommands::Show { item } => {
                         match item_registry.find_item_by_id(&item) {
                             Some(item) => {
-                                reply!(command, "{} $", item.base_price);
+                                reply!(command, "{}", item.base_price);
                             },
                             None => {
                                 reply!(command, "Item doesn't exist.");
@@ -40,11 +40,11 @@ pub fn apply_command(
                         match item_registry.find_item_mut_by_id(&item) {
                             Some(item) => {
                                 log::info!(
-                                    "setting the base price of {:?} to {} $",
+                                    "setting the base price of {:?} to {}",
                                     item.id(),
                                     base_price,
                                 );
-                                item.base_price = Experience(base_price);
+                                item.base_price = Balance(base_price);
                                 reply!(command, "Done.");
                             },
                             None => {

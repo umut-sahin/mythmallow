@@ -41,21 +41,14 @@ impl Plugin for MarketPlugin {
                         false
                     },
                 ),
-                update_balance_text.run_if(
-                    |player_query: Query<&Player, Changed<Experience>>,
-                     market_spending: Res<MarketSpending>| {
-                        market_spending.is_changed() || !player_query.is_empty()
-                    },
-                ),
+                update_balance_text.run_if(|balance: Res<Balance>| balance.is_changed()),
                 update_refresh_button.run_if(
-                    |player_query: Query<&Player, Changed<Experience>>,
-                     market_spending: Res<MarketSpending>,
+                    |balance: Res<Balance>,
                      market_configuration: Res<MarketConfiguration>,
                      market_state: Res<MarketState>| {
                         market_state.is_changed()
                             || market_configuration.is_changed()
-                            || market_spending.is_changed()
-                            || !player_query.is_empty()
+                            || balance.is_changed()
                     },
                 ),
             ),
@@ -63,16 +56,14 @@ impl Plugin for MarketPlugin {
         app.add_systems(
             PreUpdate,
             update_offered_items.run_if(
-                |player_query: Query<&Player, Changed<Experience>>,
-                 market_spending: Res<MarketSpending>,
+                |balance: Res<Balance>,
                  market_state: Res<MarketState>,
                  market_widgets: Option<Res<MarketWidgets>>,
                  item_registry: Res<ItemRegistry>| {
-                    let balance_changed = market_spending.is_changed() || !player_query.is_empty();
                     market_widgets.is_some()
                         && (market_widgets.unwrap().is_added()
+                            || balance.is_changed()
                             || market_state.is_changed()
-                            || balance_changed
                             || item_registry.is_changed())
                 },
             ),

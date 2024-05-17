@@ -12,18 +12,19 @@ pub struct MarketPlugin;
 impl Plugin for MarketPlugin {
     fn build(&self, app: &mut App) {
         // Register resources.
+        app.register_type::<Balance>();
         app.register_type::<MarketConfiguration>();
-        app.register_type::<MarketSpending>();
 
         // Insert resources.
+        app.init_resource::<Balance>();
         app.init_resource::<MarketConfiguration>();
-        app.init_resource::<MarketSpending>();
         app.init_resource::<MarketState>();
 
         // Add console commands.
         app.add_console_command::<MarketCommand, _>(apply_market_command);
 
         // Add systems.
+        app.add_systems(PreUpdate, gain_balance);
         app.add_systems(PreUpdate, process_acquirements.run_if(in_state(AppState::Game)));
         app.add_systems(
             Update,

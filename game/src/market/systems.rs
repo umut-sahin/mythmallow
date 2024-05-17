@@ -7,6 +7,7 @@ use crate::{
 /// Applies the market console commands.
 pub fn apply_market_command(
     mut commands: Commands,
+    mut balance: ResMut<Balance>,
     mut market_configuration: ResMut<MarketConfiguration>,
     mut market_state: ResMut<MarketState>,
     app_state: Res<State<AppState>>,
@@ -130,6 +131,25 @@ pub fn apply_market_command(
                     },
                 }
             },
+            MarketCommands::Balance { subcommand } => {
+                match subcommand {
+                    BalanceCommands::Show => {
+                        reply!(command, "{}", *balance);
+                    },
+                    BalanceCommands::Set { amount } => {
+                        balance.set(Balance(amount));
+                        reply!(command, "Done.");
+                    },
+                    BalanceCommands::Add { amount } => {
+                        balance.gain(Balance(amount), "cheating :)");
+                        reply!(command, "Done.");
+                    },
+                    BalanceCommands::Remove { amount } => {
+                        balance.spend(Balance(amount), "cheat :|");
+                        reply!(command, "Done.");
+                    },
+                }
+            },
             MarketCommands::NumberOfItems { subcommand } => {
                 match subcommand {
                     NumberOfItemsCommands::Show => {
@@ -148,7 +168,7 @@ pub fn apply_market_command(
             MarketCommands::RefreshCost { subcommand } => {
                 match subcommand {
                     RefreshCostCommands::Show => {
-                        reply!(command, "{} $", market_configuration.refresh_cost(&market_state));
+                        reply!(command, "{}", market_configuration.refresh_cost(&market_state));
                     },
                     RefreshCostCommands::Model { subcommand } => {
                         match subcommand {
@@ -159,7 +179,7 @@ pub fn apply_market_command(
                                 match subcommand {
                                     RefreshCostModelSetCommands::Constant { cost } => {
                                         market_configuration.refresh_cost =
-                                            MarketRefreshCost::constant(Experience(cost));
+                                            MarketRefreshCost::constant(Balance(cost));
                                     },
                                     RefreshCostModelSetCommands::Linear {
                                         base,
@@ -169,9 +189,9 @@ pub fn apply_market_command(
                                     } => {
                                         market_configuration.refresh_cost =
                                             MarketRefreshCost::linear(
-                                                Experience(base),
-                                                Experience(increase),
-                                                max.map(Experience),
+                                                Balance(base),
+                                                Balance(increase),
+                                                max.map(Balance),
                                             );
                                         if let Some(step) = step {
                                             market_configuration.refresh_cost.set_step(step);
@@ -190,9 +210,9 @@ pub fn apply_market_command(
                                         }
                                         market_configuration.refresh_cost =
                                             MarketRefreshCost::exponential(
-                                                Experience(base),
+                                                Balance(base),
                                                 factor,
-                                                max.map(Experience),
+                                                max.map(Balance),
                                             );
                                         if let Some(step) = step {
                                             market_configuration.refresh_cost.set_step(step);
@@ -226,6 +246,22 @@ pub fn apply_market_command(
             },
         }
         reply!(command, "");
+    }
+}
+
+
+/// Gains balance when player earns experience.
+pub fn gain_balance(
+    mut event_reader: EventReader<ExperienceGainedEvent>,
+    player_query: Query<&Player>,
+    mut balance: ResMut<Balance>,
+) {
+    for event in event_reader.read() {
+        if player_query.contains(event.entity) {
+            let amount = Balance(event.experience.0);
+            balance
+                .gain(amount, format!("gaining {} experience by {}", event.experience, event.by));
+        }
     }
 }
 
@@ -304,10 +340,15 @@ pub fn refresh_market(
             seen_locked_item_indices.insert(locked_item_index);
 
             if new_offered_item_ids.len() < (market_configuration.number_of_items as usize) {
+                let price = item_registry
+                    .find_item_by_id(previously_offered_item_id)
+                    .map(|item| item.base_price)
+                    .unwrap_or(Balance(f64::NAN));
                 log::info!(
-                    "re-offering locked \"{}\" at position {} in the market",
+                    "re-offering locked \"{}\" at position {} in the market for {}",
                     previously_offered_item_id,
                     locked_item_position,
+                    price,
                 );
                 new_offered_item_ids.push(previously_offered_item_id.clone());
             } else {
@@ -335,16 +376,22 @@ pub fn refresh_market(
         for entry in item_registry.iter() {
             let commonness = market_configuration.commonness_of(&entry.item);
             if commonness != 0 {
-                commonness_of_items_that_can_be_offered.push((entry.item.id(), commonness));
+                commonness_of_items_that_can_be_offered.push((
+                    entry.item.id(),
+                    entry.item.base_price,
+                    commonness,
+                ));
             }
         }
-        commonness_of_items_that_can_be_offered.sort_by(|(id1, commonness1), (id2, commonness)| {
-            if commonness1 == commonness {
-                id1.cmp(id2)
-            } else {
-                commonness1.cmp(commonness).reverse()
-            }
-        });
+        commonness_of_items_that_can_be_offered.sort_by(
+            |(id1, _, commonness1), (id2, _, commonness)| {
+                if commonness1 == commonness {
+                    id1.cmp(id2)
+                } else {
+                    commonness1.cmp(commonness).reverse()
+                }
+            },
+        );
 
         let number_of_items_to_offer_randomly =
             (market_configuration.number_of_items as usize) - new_offered_item_ids.len();
@@ -358,12 +405,12 @@ pub fn refresh_market(
         } else {
             let total_commonness = commonness_of_items_that_can_be_offered
                 .iter()
-                .map(|(_, commonness)| commonness)
+                .map(|(_, _, commonness)| commonness)
                 .sum::<u64>();
 
             let mut probability_table = Table::new();
             probability_table.add_row(row![c -> "Item", c -> "Chance", c -> "Probability"]);
-            for (id, commonness) in commonness_of_items_that_can_be_offered.iter() {
+            for (id, _, commonness) in commonness_of_items_that_can_be_offered.iter() {
                 probability_table.add_row(row![
                     l -> id,
                     r -> format!("({} / {})", commonness, total_commonness),
@@ -388,15 +435,17 @@ pub fn refresh_market(
 
             while new_offered_item_ids.len() != (market_configuration.number_of_items as usize) {
                 match commonness_of_items_that_can_be_offered
-                    .choose_weighted(rng.deref_mut(), |(_, commonness)| *commonness)
+                    .choose_weighted(rng.deref_mut(), |(_, _, commonness)| *commonness)
                 {
-                    Ok((id, commonness)) => {
+                    Ok((id, price, commonness)) => {
                         log::info!(
-                            "offering randomly selected \"{}\" with {:.6}% probability ({} / {})",
+                            "offering randomly selected \"{}\" \
+                            with {:.6}% probability ({} / {}) for {}",
                             id,
                             ((*commonness as f64) / (total_commonness as f64)) * 100.00,
                             commonness,
                             total_commonness,
+                            price,
                         );
                         new_offered_item_ids.push((*id).clone())
                     },
@@ -447,7 +496,7 @@ pub fn open_market(
 
 /// Resets the market.
 pub fn reset_market(mut commands: Commands) {
+    commands.insert_resource(Balance::default());
     commands.insert_resource(MarketConfiguration::default());
-    commands.insert_resource(MarketSpending::default());
     commands.insert_resource(MarketState::default());
 }

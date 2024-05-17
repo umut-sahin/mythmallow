@@ -72,7 +72,7 @@ impl ItemRegistryEntry {
 pub struct RegisteredItem {
     pub item: Arc<dyn IItem>,
     pub tags: SmallVec<[SmolStr; 3]>,
-    pub base_price: Experience,
+    pub base_price: Balance,
     pub commonness: u64,
 }
 
