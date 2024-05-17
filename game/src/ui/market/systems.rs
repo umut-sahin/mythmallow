@@ -10,17 +10,28 @@ use crate::{
 /// Spawns the market.
 pub fn spawn_market(
     mut commands: Commands,
+    market_query: Query<&mut Visibility, With<Market>>,
     asset_server: Res<AssetServer>,
     balance: Res<Balance>,
     market_action_input_map: Res<InputMap<MarketAction>>,
     market_configuration: Res<MarketConfiguration>,
     market_state: Res<MarketState>,
+    previously_selected_widget: Option<Res<PreviouslySelectedWidget>>,
 ) {
+    if !market_query.is_empty() {
+        if let Some(previously_selected_widget) = previously_selected_widget {
+            commands.entity(previously_selected_widget.0).insert(WidgetSelected::now());
+            commands.remove_resource::<PreviouslySelectedWidget>();
+        }
+        return;
+    }
+
     // Create market action state.
     let mut action_state = ActionState::default();
     {
         let pressed = ActionData { state: ButtonState::Pressed, ..default() };
 
+        action_state.set_action_data(MarketAction::Pause, pressed.clone());
         action_state.set_action_data(MarketAction::Close, pressed.clone());
         action_state.set_action_data(MarketAction::Up, pressed.clone());
         action_state.set_action_data(MarketAction::Down, pressed.clone());
@@ -227,7 +238,23 @@ pub fn spawn_market(
 }
 
 /// Despawns the market.
-pub fn despawn_market(mut commands: Commands, market_query: Query<Entity, With<Market>>) {
+pub fn despawn_market(
+    mut commands: Commands,
+    market_query: Query<Entity, With<Market>>,
+    widget_query: Query<Entity, With<WidgetSelected>>,
+    game_state_stack: Res<GameStateStack>,
+    app_state: Res<State<AppState>>,
+) {
+    if app_state.get() == &AppState::Game {
+        if game_state_stack.contains(&GameState::Market) {
+            if let Ok(widget) = widget_query.get_single() {
+                commands.insert_resource(PreviouslySelectedWidget(widget));
+            }
+            return;
+        }
+    } else {
+        commands.remove_resource::<PreviouslySelectedWidget>();
+    }
     if let Ok(entity) = market_query.get_single() {
         commands.entity(entity).despawn_recursive();
     }
@@ -606,6 +633,7 @@ pub fn navigation(
         (&mut Widget, &WidgetUp, &WidgetDown, &WidgetLeft, &WidgetRight),
         With<WidgetSelected>,
     >,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     let market_action_state = match market_query.get_single_mut() {
@@ -613,9 +641,16 @@ pub fn navigation(
         Err(_) => return,
     };
 
+    if market_action_state.just_pressed(&MarketAction::Pause) {
+        game_state_stack.push(GameState::Paused);
+        next_game_state.set(GameState::Transition);
+        return;
+    }
+
     if market_action_state.just_pressed(&MarketAction::Close) {
         log::info!("closing the market");
-        next_game_state.set(GameState::Playing);
+        game_state_stack.pop();
+        next_game_state.set(GameState::Transition);
         return;
     }
 
@@ -745,12 +780,14 @@ pub fn refresh_button_interaction(
 /// Closes the market.
 pub fn continue_button_interaction(
     mut continue_button_query: Query<&mut Widget, (Changed<Widget>, With<MarketContinueButton>)>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(mut button) = continue_button_query.get_single_mut() {
         button.on_click(|| {
             log::info!("closing the market");
-            next_game_state.set(GameState::Playing);
+            game_state_stack.pop();
+            next_game_state.set(GameState::Transition);
         });
     }
 }

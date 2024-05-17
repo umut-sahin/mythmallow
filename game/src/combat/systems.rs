@@ -80,6 +80,7 @@ pub fn damage_enemies(
 pub fn player_death(
     mut commands: Commands,
     player_query: Query<&RemainingHealth, With<Player>>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     let remaining_health = match player_query.get_single() {
@@ -88,7 +89,8 @@ pub fn player_death(
     };
     if remaining_health.0 <= 0.00 {
         commands.insert_resource(GameResult::Lost);
-        next_game_state.set(GameState::Over);
+        game_state_stack.transition(GameState::Over);
+        next_game_state.set(GameState::Transition);
     }
 }
 

@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 
 /// Background color of the market.
-pub const BACKGROUND_COLOR: Color = Color::rgba(0.00, 0.00, 0.00, 0.60);
+pub const BACKGROUND_COLOR: Color = Color::rgba(0.00, 0.00, 0.00, 0.50);
 
 /// Gap between the widgets in the market in percent of the available space.
 pub const ROW_GAP_PERCENT: f32 = 7.00;

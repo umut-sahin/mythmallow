@@ -19,6 +19,20 @@ impl RegisteredSystems {
 }
 
 
+/// State stack for the game state.
+#[derive(Debug, Default, Deref, DerefMut, Reflect, Resource)]
+#[reflect(Resource)]
+pub struct GameStateStack(pub Vec<GameState>);
+
+impl GameStateStack {
+    /// Transitions to a new game state.
+    pub fn transition(&mut self, state: GameState) {
+        self.0.pop();
+        self.0.push(state);
+    }
+}
+
+
 /// Result of the game.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Reflect, Resource)]
 pub enum GameResult {

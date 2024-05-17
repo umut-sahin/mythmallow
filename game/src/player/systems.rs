@@ -141,11 +141,13 @@ pub fn dash(
 /// Pauses the game.
 pub fn pause(
     game_action_state_query: Query<&ActionState<GameAction>, With<Player>>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(game_action_state) = game_action_state_query.get_single() {
         if game_action_state.just_pressed(&GameAction::Pause) {
-            next_game_state.set(GameState::Paused);
+            game_state_stack.push(GameState::Paused);
+            next_game_state.set(GameState::Transition);
         }
     }
 }

@@ -12,3 +12,8 @@ pub struct MarketWidgets(
     /// - Refresh button
     pub [Vec<Entity>; 4],
 );
+
+
+/// Resource for the previously selected widget in the market.
+#[derive(Debug, Deref, DerefMut, Reflect, Resource)]
+pub struct PreviouslySelectedWidget(pub Entity);

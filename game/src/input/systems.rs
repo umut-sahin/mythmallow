@@ -5,11 +5,17 @@ use crate::prelude::*;
 pub fn pause_on_losing_focus(
     mut window_focused_reader: EventReader<WindowFocused>,
     general_settings: Res<Persistent<GeneralSettings>>,
+    game_state: Res<State<GameState>>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     for event in window_focused_reader.read() {
-        if !event.focused && general_settings.pause_on_losing_focus {
-            next_game_state.set(GameState::Paused);
+        if !event.focused
+            && general_settings.pause_on_losing_focus
+            && game_state.get() == &GameState::Playing
+        {
+            game_state_stack.push(GameState::Paused);
+            next_game_state.set(GameState::Transition);
             break;
         }
     }

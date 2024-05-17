@@ -88,11 +88,13 @@ pub fn spawn_map(mut commands: Commands) {
 pub fn tick(
     time: Res<Time>,
     mut wave_timer: ResMut<WaveTimer>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     wave_timer.tick(time.delta());
     if wave_timer.just_finished() {
-        next_game_state.set(GameState::Won);
+        game_state_stack.transition(GameState::Won);
+        next_game_state.set(GameState::Transition);
     }
 }
 
@@ -101,14 +103,17 @@ pub fn tick(
 pub fn win(
     mut commands: Commands,
     mut current_wave: ResMut<CurrentWave>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if current_wave.is_last() {
         commands.insert_resource(GameResult::Won);
-        next_game_state.set(GameState::Over);
+        game_state_stack.transition(GameState::Over);
+        next_game_state.set(GameState::Transition);
     } else {
         current_wave.increment();
-        next_game_state.set(GameState::Loading);
+        game_state_stack.transition(GameState::Loading);
+        next_game_state.set(GameState::Transition);
     }
 }
 

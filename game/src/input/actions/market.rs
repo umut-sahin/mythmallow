@@ -3,6 +3,7 @@ use crate::prelude::*;
 /// Actions that can be performed in the market.
 #[derive(Actionlike, Clone, Copy, Debug, Eq, Hash, PartialEq, Reflect)]
 pub enum MarketAction {
+    Pause,
     Close,
     Up,
     Down,
@@ -22,6 +23,9 @@ impl MarketAction {
 
         // Extend the input map from key bindings.
         let key_bindings = app.world.resource::<Persistent<KeyBindings>>();
+        for key_code in key_bindings.pause.iter().cloned() {
+            input_map.insert(MarketAction::Pause, key_code);
+        }
         for key_code in key_bindings.market.iter().cloned() {
             input_map.insert(MarketAction::Close, key_code);
         }

@@ -1,3 +1,9 @@
+use crate::prelude::*;
+
+
+/// Background color of the market.
+pub const BACKGROUND_COLOR: Color = Color::rgba(0.00, 0.00, 0.00, 1.00);
+
 /// Gap between the widgets in the pause menu in pixels.
 pub const ROW_GAP: f32 = 10.0;
 

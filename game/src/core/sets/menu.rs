@@ -22,7 +22,7 @@ impl MenuSystems {
                 AppState::EnemySelectionScreen => true,
                 AppState::Game => {
                     match game_state.get() {
-                        GameState::None => false,
+                        GameState::Transition => false,
                         GameState::Initialization => false,
                         GameState::Loading => false,
                         GameState::Playing => false,

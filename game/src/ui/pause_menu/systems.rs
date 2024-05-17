@@ -89,6 +89,8 @@ pub fn spawn_pause_menu(
                 row_gap: Val::Px(ROW_GAP),
                 ..default()
             },
+            background_color: BackgroundColor(BACKGROUND_COLOR),
+            z_index: ZIndex::Global(1),
             ..default()
         },
     ));
@@ -114,6 +116,7 @@ pub fn navigation(
     mut commands: Commands,
     mut pause_menu_query: Query<&ActionState<PauseMenuAction>, With<PauseMenu>>,
     mut selected_widget_query: Query<(&mut Widget, &WidgetUp, &WidgetDown), With<WidgetSelected>>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     let pause_menu_action_state = match pause_menu_query.get_single_mut() {
@@ -127,7 +130,8 @@ pub fn navigation(
     };
 
     if pause_menu_action_state.just_pressed(&PauseMenuAction::Resume) {
-        next_game_state.set(GameState::Playing);
+        game_state_stack.pop();
+        next_game_state.set(GameState::Transition);
         return;
     }
 
@@ -152,11 +156,13 @@ pub fn navigation(
 /// Resumes the game.
 pub fn resume_button_interaction(
     mut resume_button_query: Query<&mut Widget, (Changed<Widget>, With<PauseMenuResumeButton>)>,
+    mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(mut button) = resume_button_query.get_single_mut() {
         button.on_click(|| {
-            next_game_state.set(GameState::Playing);
+            game_state_stack.pop();
+            next_game_state.set(GameState::Transition);
         });
     }
 }
@@ -168,12 +174,10 @@ pub fn return_to_main_menu_button_interaction(
         (Changed<Widget>, With<PauseMenuReturnToMainMenuButton>),
     >,
     mut next_app_state: ResMut<NextState<AppState>>,
-    mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     if let Ok(mut button) = return_to_main_menu_button_query.get_single_mut() {
         button.on_click(|| {
             next_app_state.set(AppState::MainMenu);
-            next_game_state.set(GameState::None);
         });
     }
 }
