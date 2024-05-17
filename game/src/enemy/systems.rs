@@ -19,7 +19,7 @@ pub fn initialize_enemy_spawn_pattern(world: &mut World) {
             let selected_game_mode_index = world.resource::<SelectedGameModeIndex>();
             game_mode_registry[*selected_game_mode_index].default_enemy_spawn_pattern(world)
         });
-    log::info!("enemy spawn pattern for the level:\n{:#?}", spawn_pattern);
+    log::info!("enemy spawn pattern:\n{:#?}", spawn_pattern);
     world.insert_resource(spawn_pattern);
 }
 

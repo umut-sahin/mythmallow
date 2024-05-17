@@ -758,20 +758,34 @@ pub fn refresh_button_interaction(
                 return;
             }
 
-            balance.spend(refresh_cost, "refresh the market");
-            commands.run_system(registered_systems.market.refresh_market);
-
-            let refresh_was_free_as_no_item_is_available =
+            let refresh_was_free_as_no_item_was_available =
                 market_configuration.refresh_is_free_as_no_item_is_available(&market_state);
             let free_refresh_used = (market_configuration.free_refreshes > 0)
-                && !refresh_was_free_as_no_item_is_available;
+                && !refresh_was_free_as_no_item_was_available;
+
+            if *refresh_cost != 0.00 {
+                balance.spend(refresh_cost, "refresh the market");
+            } else if free_refresh_used {
+                if market_configuration.free_refreshes == 1 {
+                    log::info!("using the last free refresh");
+                } else {
+                    log::info!(
+                        "using 1 of {} available free refreshes",
+                        market_configuration.free_refreshes,
+                    );
+                }
+            } else {
+                log::info!("refreshing for free as no item is available to purchase in the market");
+            }
+            commands.run_system(registered_systems.market.refresh_market);
 
             if free_refresh_used {
                 market_configuration.free_refreshes -= 1;
             }
 
-            if !(refresh_was_free_as_no_item_is_available || free_refresh_used) {
-                market_configuration.refresh_cost.step()
+            if !(refresh_was_free_as_no_item_was_available || free_refresh_used) {
+                market_configuration.refresh_cost.step();
+                log::info!("new refresh cost is {}", market_configuration.refresh_cost.get());
             }
         });
     }
