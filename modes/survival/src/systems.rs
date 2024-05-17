@@ -33,9 +33,11 @@ pub fn load(
     current_wave: Res<CurrentWave>,
     wave_durations: Res<WaveDurations>,
 ) {
-    commands.insert_resource(WaveTimer::new(
-        wave_durations.get(current_wave.index()).copied().unwrap_or(Duration::ZERO),
-    ));
+    log::info!("starting wave {}", current_wave.0);
+
+    let wave_duration = wave_durations.get(current_wave.index()).copied().unwrap_or(Duration::ZERO);
+    log::info!("wave duration: {:?}", wave_duration);
+    commands.insert_resource(WaveTimer::new(wave_duration));
 }
 
 /// Spawns the map.
@@ -103,17 +105,33 @@ pub fn tick(
 pub fn win(
     mut commands: Commands,
     mut current_wave: ResMut<CurrentWave>,
+    mut market_configuration: ResMut<MarketConfiguration>,
     mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
+    registered_systems: Res<RegisteredSystems>,
 ) {
     if current_wave.is_last() {
+        log::info!("game won!");
         commands.insert_resource(GameResult::Won);
+
         game_state_stack.transition(GameState::Over);
         next_game_state.set(GameState::Transition);
     } else {
-        current_wave.increment();
-        game_state_stack.transition(GameState::Loading);
+        log::info!("wave {} won", current_wave.0);
+
+        commands.run_system(registered_systems.market.refresh_market);
+
+        let refresh_cost =
+            MarketRefreshCost::exponential(Balance(current_wave.get() as f64), 1.50, None);
+        log::info!("setting the refresh cost model of the market to {}", refresh_cost);
+        market_configuration.refresh_cost = refresh_cost;
+
+        game_state_stack.pop();
+        game_state_stack.push(GameState::Loading);
+        game_state_stack.push(GameState::Market);
         next_game_state.set(GameState::Transition);
+
+        current_wave.increment();
     }
 }
 
