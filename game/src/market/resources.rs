@@ -1,9 +1,19 @@
 use crate::prelude::*;
 
 
-/// System id of refresh market system.
+/// Database of registered market systems.
 #[derive(Clone, Copy, Debug, Deref, DerefMut, Resource)]
-pub struct RefreshMarketSystemId(pub SystemId);
+pub struct RegisteredMarketSystems {
+    pub refresh_market: SystemId,
+}
+
+impl RegisteredMarketSystems {
+    /// Creates the database.
+    pub fn new(app: &mut App) -> RegisteredMarketSystems {
+        use super::systems::*;
+        RegisteredMarketSystems { refresh_market: app.world.register_system(refresh_market) }
+    }
+}
 
 
 /// Resource for the configuration of the market.

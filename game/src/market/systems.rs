@@ -9,10 +9,10 @@ pub fn apply_market_command(
     mut commands: Commands,
     mut market_configuration: ResMut<MarketConfiguration>,
     mut market_state: ResMut<MarketState>,
-    refresh_market_system_id: Res<RefreshMarketSystemId>,
     app_state: Res<State<AppState>>,
     game_state: Res<State<GameState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
+    registered_systems: Res<RegisteredSystems>,
     mut command: ConsoleCommand<MarketCommand>,
 ) {
     if let Some(Ok(MarketCommand { subcommand })) = command.take() {
@@ -46,7 +46,7 @@ pub fn apply_market_command(
                 }
             },
             MarketCommands::Refresh => {
-                commands.run_system(refresh_market_system_id.0);
+                commands.run_system(registered_systems.market.refresh_market);
                 reply!(command, "Refreshed.");
             },
             MarketCommands::Lock { position } => {
