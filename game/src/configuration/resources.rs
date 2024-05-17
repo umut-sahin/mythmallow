@@ -27,6 +27,10 @@ pub struct Args {
     pub start_in_game_level: Option<NonZeroU16>,
     /// Experience to set when starting in game.
     pub start_in_game_experience: Option<f64>,
+    /// Balance to set when starting in game.
+    pub start_in_game_balance: Option<f64>,
+    /// Number of free refreshes to grant when starting in game.
+    pub start_in_game_free_refreshes: Option<usize>,
     /// Flag to enable god mode.
     pub enable_god_mode: bool,
 }
@@ -75,6 +79,10 @@ impl Args {
             #[arg(long)]
             pub experience: Option<f64>,
             #[arg(long)]
+            pub balance: Option<f64>,
+            #[arg(long)]
+            pub free_refreshes: Option<usize>,
+            #[arg(long)]
             pub god_mode: bool,
         }
 
@@ -91,6 +99,8 @@ impl Args {
                     inventory: None,
                     level: None,
                     experience: None,
+                    balance: None,
+                    free_refreshes: None,
                     god_mode: false,
                 }
             }
@@ -127,6 +137,16 @@ impl Args {
                 }
                 if let Some(experience) = &self.experience {
                     write!(f, " --experience {}", Experience(*experience))?;
+                }
+                if let Some(balance) = &self.balance {
+                    write!(
+                        f,
+                        " --balance {}",
+                        format!("{}", Balance(*balance)).trim_end_matches("$").trim_end(),
+                    )?;
+                }
+                if let Some(free_refreshes) = &self.free_refreshes {
+                    write!(f, " --free-refreshes {}", free_refreshes)?;
                 }
                 if self.god_mode {
                     write!(f, " --god-mode")?;
@@ -215,6 +235,8 @@ impl Args {
                     .collect();
                 let start_in_game_level = self.level;
                 let start_in_game_experience = self.experience;
+                let start_in_game_balance = self.balance;
+                let start_in_game_free_refreshes = self.free_refreshes;
                 let enable_god_mode = self.god_mode;
 
                 Args {
@@ -228,6 +250,8 @@ impl Args {
                     start_in_game_inventory,
                     start_in_game_level,
                     start_in_game_experience,
+                    start_in_game_balance,
+                    start_in_game_free_refreshes,
                     enable_god_mode,
                 }
             }

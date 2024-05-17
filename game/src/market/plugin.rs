@@ -26,6 +26,10 @@ impl Plugin for MarketPlugin {
         app.add_console_command::<MarketCommand, _>(apply_market_command);
 
         // Add systems.
+        app.add_systems(
+            OnEnter(GameState::Initialization),
+            set_balance_and_free_refreshes.in_set(InitializationSystems::Market),
+        );
         app.add_systems(PreUpdate, gain_balance);
         app.add_systems(PreUpdate, process_acquirements.run_if(in_state(AppState::Game)));
         app.add_systems(
