@@ -156,6 +156,8 @@ pub use {
         SmallVec,
     },
     smol_str::SmolStr,
+    std::sync::atomic::AtomicBool,
+    std::sync::atomic::Ordering as AtomicOrdering,
     std::{
         any::{
             Any,

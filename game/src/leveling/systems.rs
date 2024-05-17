@@ -134,8 +134,19 @@ pub fn initialize_player_level_structure(world: &mut World) {
 
     let args = world.resource::<Args>();
 
-    let mut specified_level = args.start_in_game_level.map(Level).unwrap_or_default();
-    let specified_experience = args.start_in_game_experience.map(Experience).unwrap_or_default();
+    let mut specified_level = Level::default();
+    let mut specified_experience = Experience::default();
+
+    static FIRST_RUN: AtomicBool = AtomicBool::new(true);
+    if FIRST_RUN.load(AtomicOrdering::SeqCst) {
+        FIRST_RUN.store(false, AtomicOrdering::SeqCst);
+        if let Some(level) = args.start_in_game_level {
+            specified_level = Level(level);
+        }
+        if let Some(experience) = args.start_in_game_experience {
+            specified_experience = Experience(experience);
+        }
+    }
 
     let max_level = player_level_structure.max_level.unwrap_or(Level(NonZeroU16::MAX));
     if specified_level.0 > max_level.0 {
