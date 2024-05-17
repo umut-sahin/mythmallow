@@ -66,12 +66,14 @@ impl Plugin for MarketPlugin {
                 |player_query: Query<&Player, Changed<Experience>>,
                  market_spending: Res<MarketSpending>,
                  market_state: Res<MarketState>,
-                 market_widgets: Option<Res<MarketWidgets>>| {
+                 market_widgets: Option<Res<MarketWidgets>>,
+                 item_registry: Res<ItemRegistry>| {
                     let balance_changed = market_spending.is_changed() || !player_query.is_empty();
                     market_widgets.is_some()
                         && (market_widgets.unwrap().is_added()
                             || market_state.is_changed()
-                            || balance_changed)
+                            || balance_changed
+                            || item_registry.is_changed())
                 },
             ),
         );

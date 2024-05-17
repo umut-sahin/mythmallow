@@ -142,7 +142,7 @@ impl MarketConfiguration {
     /// Gets whether the refresh is free because no item is available.
     pub fn refresh_is_free_as_no_item_is_available(&self, state: &MarketState) -> bool {
         if self.free_refresh_when_no_item_is_available {
-            let number_of_offered_items = state.offered_items.len();
+            let number_of_offered_items = state.offered_item_ids.len();
             let number_of_acquired_items = state.acquired_item_indices.len();
             if number_of_acquired_items == number_of_offered_items {
                 return true;
@@ -169,7 +169,7 @@ impl MarketConfiguration {
         }
 
         if self.whitelisted_items.contains(&id) {
-            return item.commonness();
+            return item.commonness;
         }
 
         if item.needs_to_be_whitelisted_to_appear_in_market() {
@@ -192,7 +192,7 @@ impl MarketConfiguration {
             }
         }
 
-        if is_included { item.commonness() } else { 0 }
+        if is_included { item.commonness } else { 0 }
     }
 }
 
@@ -491,7 +491,7 @@ impl MarketSpending {
 /// Resource for the state of the market.
 #[derive(Debug, Default, Resource)]
 pub struct MarketState {
-    pub offered_items: Vec<RegisteredItem>,
+    pub offered_item_ids: Vec<SmolStr>,
     pub locked_item_indices: Vec<usize>,
     pub acquired_item_indices: Vec<usize>,
     pub processed_acquirements: usize,
@@ -513,7 +513,7 @@ impl MarketState {
     /// Locks the item in the given position.
     pub fn lock(&mut self, position: NonZeroUsize) -> LockUnlockStatus {
         let index = position.get() - 1;
-        if index >= self.offered_items.len() {
+        if index >= self.offered_item_ids.len() {
             log::error!("unable to lock item {} in the market as it doesn't exist", position);
             return LockUnlockStatus::NotExist;
         }
@@ -535,7 +535,7 @@ impl MarketState {
     /// Unlocks the item in the given position.
     pub fn unlock(&mut self, position: NonZeroUsize) -> LockUnlockStatus {
         let index = position.get() - 1;
-        if index >= self.offered_items.len() {
+        if index >= self.offered_item_ids.len() {
             log::error!("unable to unlock item {} in the market as it doesn't exist", position);
             return LockUnlockStatus::NotExist;
         }
@@ -557,7 +557,7 @@ impl MarketState {
     /// Locks the item in the given position.
     pub fn acquire(&mut self, position: NonZeroUsize) -> AcquireStatus {
         let index = position.get() - 1;
-        if index >= self.offered_items.len() {
+        if index >= self.offered_item_ids.len() {
             log::error!("unable to acquire item {} in the market as it doesn't exist", position);
             return AcquireStatus::NotExist;
         }

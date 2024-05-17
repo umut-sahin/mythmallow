@@ -24,16 +24,16 @@ pub fn apply_market_command(
 
         match subcommand {
             MarketCommands::Show => {
-                if market_state.offered_items.is_empty() {
+                if market_state.offered_item_ids.is_empty() {
                     reply!(command, "Market is empty.");
                 } else {
-                    for (index, item) in market_state.offered_items.iter().enumerate() {
+                    for (index, id) in market_state.offered_item_ids.iter().enumerate() {
                         let position = NonZeroUsize::new(index + 1).unwrap();
                         reply!(
                             command,
                             "{}) {} {}",
                             position,
-                            item.id(),
+                            id,
                             if market_state.is_acquired(position) {
                                 "(acquired)"
                             } else if market_state.is_locked(position) {
@@ -234,13 +234,16 @@ pub fn apply_market_command(
 pub fn process_acquirements(
     mut market_state: ResMut<MarketState>,
     mut inventory: ResMut<Inventory>,
+    item_registry: Res<ItemRegistry>,
 ) {
     while market_state.processed_acquirements < market_state.acquired_item_indices.len() {
         let index_of_item_to_acquire =
             market_state.acquired_item_indices[market_state.processed_acquirements];
 
-        let item_to_acquire = &market_state.offered_items[index_of_item_to_acquire];
-        inventory.add(item_to_acquire.instantiate());
+        let item_id_to_acquire = &market_state.offered_item_ids[index_of_item_to_acquire];
+        if let Some(item_to_acquire) = item_registry.find_item_by_id(&item_id_to_acquire) {
+            inventory.add(item_to_acquire.instantiate());
+        }
 
         market_state.processed_acquirements += 1;
     }
@@ -255,7 +258,7 @@ pub fn refresh_market_automatically(world: &mut World) {
     let mut market_state = world.resource_mut::<MarketState>();
     let mut previous_locked_item_count = 0;
 
-    for item_index in 0..market_state.offered_items.len() {
+    for item_index in 0..market_state.offered_item_ids.len() {
         let item_position = NonZeroUsize::new(item_index + 1).unwrap();
         if market_state.is_locked(item_position) {
             if !market_state.is_acquired(item_position) {
@@ -282,7 +285,8 @@ pub fn refresh_market(
 ) {
     log::info!("refreshing the market to offer {} items", market_configuration.number_of_items);
 
-    let mut new_offered_items = Vec::with_capacity(market_configuration.number_of_items as usize);
+    let mut new_offered_item_ids =
+        Vec::with_capacity(market_configuration.number_of_items as usize);
 
     let mut seen_locked_item_indices = HashSet::new();
     for locked_item_index in market_state.locked_item_indices.iter().cloned() {
@@ -291,24 +295,26 @@ pub fn refresh_market(
             continue;
         }
 
-        if let Some(previously_offered_item) = market_state.offered_items.get(locked_item_index) {
+        if let Some(previously_offered_item_id) =
+            market_state.offered_item_ids.get(locked_item_index)
+        {
             if seen_locked_item_indices.contains(&locked_item_index) {
                 continue;
             }
             seen_locked_item_indices.insert(locked_item_index);
 
-            if new_offered_items.len() < (market_configuration.number_of_items as usize) {
+            if new_offered_item_ids.len() < (market_configuration.number_of_items as usize) {
                 log::info!(
                     "re-offering locked \"{}\" at position {} in the market",
-                    previously_offered_item.id(),
+                    previously_offered_item_id,
                     locked_item_position,
                 );
-                new_offered_items.push(previously_offered_item.clone());
+                new_offered_item_ids.push(previously_offered_item_id.clone());
             } else {
                 log::error!(
                     "unable to re-offer locked \"{}\" at position {} in the market \
                     as the market already offers {} items",
-                    previously_offered_item.id(),
+                    previously_offered_item_id,
                     locked_item_position,
                     market_configuration.number_of_items,
                 );
@@ -322,32 +328,26 @@ pub fn refresh_market(
         }
     }
 
-    let new_locked_item_indices = (0..new_offered_items.len()).collect();
+    let new_locked_item_indices = (0..new_offered_item_ids.len()).collect();
 
-    if new_offered_items.len() < (market_configuration.number_of_items as usize) {
+    if new_offered_item_ids.len() < (market_configuration.number_of_items as usize) {
         let mut commonness_of_items_that_can_be_offered = Vec::new();
         for entry in item_registry.iter() {
             let commonness = market_configuration.commonness_of(&entry.item);
             if commonness != 0 {
-                commonness_of_items_that_can_be_offered.push((
-                    entry.item.id(),
-                    &entry.item,
-                    commonness,
-                ));
+                commonness_of_items_that_can_be_offered.push((entry.item.id(), commonness));
             }
         }
-        commonness_of_items_that_can_be_offered.sort_by(
-            |(id1, _, commonness1), (id2, _, commonness)| {
-                if commonness1 == commonness {
-                    id1.cmp(id2)
-                } else {
-                    commonness1.cmp(commonness).reverse()
-                }
-            },
-        );
+        commonness_of_items_that_can_be_offered.sort_by(|(id1, commonness1), (id2, commonness)| {
+            if commonness1 == commonness {
+                id1.cmp(id2)
+            } else {
+                commonness1.cmp(commonness).reverse()
+            }
+        });
 
         let number_of_items_to_offer_randomly =
-            (market_configuration.number_of_items as usize) - new_offered_items.len();
+            (market_configuration.number_of_items as usize) - new_offered_item_ids.len();
         if commonness_of_items_that_can_be_offered.is_empty() {
             log::error!(
                 "unable to randomly select {} more item{} to offer in the market \
@@ -358,23 +358,26 @@ pub fn refresh_market(
         } else {
             let total_commonness = commonness_of_items_that_can_be_offered
                 .iter()
-                .map(|(_, _, weight)| weight)
+                .map(|(_, commonness)| commonness)
                 .sum::<u64>();
 
             let mut probability_table = Table::new();
             probability_table.add_row(row![c -> "Item", c -> "Chance", c -> "Probability"]);
-            for (id, _, weight) in commonness_of_items_that_can_be_offered.iter() {
+            for (id, commonness) in commonness_of_items_that_can_be_offered.iter() {
                 probability_table.add_row(row![
                     l -> id,
-                    r -> format!("({} / {})", weight, total_commonness),
-                    r -> format!("{:.6}%", ((*weight as f64) / (total_commonness as f64)) * 100.00)
+                    r -> format!("({} / {})", commonness, total_commonness),
+                    r -> format!(
+                        "{:.6}%",
+                        ((*commonness as f64) / (total_commonness as f64)) * 100.00,
+                    )
                 ]);
             }
             let probability_table = probability_table.to_string();
 
             log::info!(
                 "{}item{} to offer will be selected randomly with these probabilities:\n{}",
-                if new_offered_items.is_empty() {
+                if new_offered_item_ids.is_empty() {
                     "".to_owned()
                 } else {
                     format!("{} more ", number_of_items_to_offer_randomly)
@@ -383,19 +386,19 @@ pub fn refresh_market(
                 probability_table.trim_end(),
             );
 
-            while new_offered_items.len() != (market_configuration.number_of_items as usize) {
+            while new_offered_item_ids.len() != (market_configuration.number_of_items as usize) {
                 match commonness_of_items_that_can_be_offered
-                    .choose_weighted(rng.deref_mut(), |(_, _, weight)| *weight)
+                    .choose_weighted(rng.deref_mut(), |(_, commonness)| *commonness)
                 {
-                    Ok((id, new_offered_item, weight)) => {
+                    Ok((id, commonness)) => {
                         log::info!(
                             "offering randomly selected \"{}\" with {:.6}% probability ({} / {})",
                             id,
-                            ((*weight as f64) / (total_commonness as f64)) * 100.00,
-                            weight,
+                            ((*commonness as f64) / (total_commonness as f64)) * 100.00,
+                            commonness,
                             total_commonness,
                         );
-                        new_offered_items.push((*new_offered_item).clone())
+                        new_offered_item_ids.push((*id).clone())
                     },
                     Err(error) => {
                         log::error!(
@@ -409,7 +412,7 @@ pub fn refresh_market(
         }
     }
 
-    market_state.offered_items = new_offered_items;
+    market_state.offered_item_ids = new_offered_item_ids;
     market_state.locked_item_indices = new_locked_item_indices;
 
     market_state.acquired_item_indices.clear();

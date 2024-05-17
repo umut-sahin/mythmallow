@@ -39,14 +39,14 @@ impl Plugin for MarketPlugin {
                     match game_state.get() {
                         GameState::Market => {},
                         GameState::Playing | GameState::Paused => {
-                            if market_state.offered_items.is_empty() {
+                            if market_state.offered_item_ids.is_empty() {
                                 return false;
                             }
                         },
                         _ => return false,
                     }
 
-                    market_state.offered_items.len()
+                    market_state.offered_item_ids.len()
                         != (market_configuration.number_of_items as usize)
                 },
             ),

@@ -40,6 +40,16 @@ impl ItemRegistry {
         }
         None
     }
+
+    /// Finds the item with the specified id mutably.
+    pub fn find_item_mut_by_id(&mut self, item_id: &str) -> Option<&mut RegisteredItem> {
+        for entry in self.0.iter_mut() {
+            if entry.item.id() == item_id {
+                return Some(&mut entry.item);
+            }
+        }
+        None
+    }
 }
 
 
@@ -62,12 +72,16 @@ impl ItemRegistryEntry {
 pub struct RegisteredItem {
     pub item: Arc<dyn IItem>,
     pub tags: SmallVec<[SmolStr; 3]>,
+    pub base_price: Experience,
+    pub commonness: u64,
 }
 
 impl RegisteredItem {
     /// Creates a new registered item.
     pub fn new(item: impl IItem) -> RegisteredItem {
-        RegisteredItem { item: Arc::new(item), tags: SmallVec::new() }
+        let base_price = item.base_price();
+        let commonness = item.commonness();
+        RegisteredItem { item: Arc::new(item), tags: SmallVec::new(), base_price, commonness }
     }
 }
 
