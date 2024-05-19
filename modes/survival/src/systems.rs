@@ -100,6 +100,33 @@ pub fn tick(
     }
 }
 
+/// Levels player up.
+pub fn level_up(
+    mut player_query: Query<(Entity, &mut Health, &mut RemainingHealth), With<Player>>,
+    mut leveled_up_event_reader: EventReader<LeveledUpEvent>,
+) {
+    if leveled_up_event_reader.is_empty() {
+        return;
+    }
+
+    let (player_entity, mut player_health, mut player_remaining_health) =
+        match player_query.get_single_mut() {
+            Ok(query_result) => query_result,
+            Err(_) => return,
+        };
+
+    for leveled_up in leveled_up_event_reader.read() {
+        if leveled_up.entity == player_entity {
+            log::info!(
+                "increasing the player health by 1 for leveling up to level {}",
+                leveled_up.new_level.0,
+            );
+            player_health.0 += 1.00;
+            player_remaining_health.0 += 1.00;
+        }
+    }
+}
+
 
 /// Wins the current wave.
 pub fn win(

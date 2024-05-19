@@ -73,6 +73,7 @@ impl Plugin for SurvivalModePlugin {
             PreUpdate,
             tick.in_set(GameplaySystems::GameMode).run_if(in_game_mode::<Survival>),
         );
+        app.add_systems(PostUpdate, level_up.run_if(in_game_mode::<Survival>));
 
         // Add game won systems.
         app.add_systems(OnEnter(GameState::Won), (unload, win).run_if(in_game_mode::<Survival>));
