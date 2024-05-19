@@ -9,9 +9,13 @@ pub struct RegisteredMarketSystems {
 
 impl RegisteredMarketSystems {
     /// Creates the database.
-    pub fn new(app: &mut App) -> RegisteredMarketSystems {
+    pub fn new(app: &mut App, systems: Entity) -> RegisteredMarketSystems {
         use super::systems::*;
-        RegisteredMarketSystems { refresh_market: app.world.register_system(refresh_market) }
+
+        let refresh_market = app.world.register_system(refresh_market);
+        RegisteredSystems::attach(app, systems, refresh_market, "refresh_market");
+
+        RegisteredMarketSystems { refresh_market }
     }
 }
 

@@ -11,9 +11,30 @@ pub struct RegisteredSystems {
 impl RegisteredSystems {
     /// Creates the database.
     pub fn new(app: &mut App) -> RegisteredSystems {
+        let systems = app.world.spawn(Name::new("RegisteredSystems")).id();
         RegisteredSystems {
-            leveling: RegisteredLevelingSystems::new(app),
-            market: RegisteredMarketSystems::new(app),
+            leveling: RegisteredLevelingSystems::new(app, systems),
+            market: RegisteredMarketSystems::new(app, systems),
+        }
+    }
+
+    /// Attaches a system into systems entity.
+    pub fn attach<I>(
+        app: &mut App,
+        systems: Entity,
+        system: SystemId<I>,
+        name: impl Into<Cow<'static, str>>,
+    ) {
+        unsafe {
+            // This is safe as long as SystemId<I> is just an Entity in runtime.
+            // And transmute wouldn't work if SystemId<I> and Entity don't have the same size.
+            let system = std::mem::transmute::<SystemId<I>, Entity>(system);
+            if let Some(mut systems) = app.world.get_entity_mut(systems) {
+                systems.add_child(system);
+                if let Some(mut system) = app.world.get_entity_mut(system) {
+                    system.insert(Name::new(name));
+                }
+            }
         }
     }
 }
