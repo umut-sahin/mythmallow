@@ -104,6 +104,7 @@ pub fn tick(
 /// Wins the current wave.
 pub fn win(
     mut commands: Commands,
+    mut player_query: Query<(&mut RemainingHealth, &Health), With<Player>>,
     mut current_wave: ResMut<CurrentWave>,
     mut market_configuration: ResMut<MarketConfiguration>,
     mut game_state_stack: ResMut<GameStateStack>,
@@ -118,6 +119,11 @@ pub fn win(
         next_game_state.set(GameState::Transition);
     } else {
         log::info!("wave {} won", current_wave.0);
+
+        if let Ok((mut remaining_health, health)) = player_query.get_single_mut() {
+            log::info!("resetting player health to {}", health.0);
+            remaining_health.0 = health.0;
+        }
 
         commands.run_system(registered_systems.market.refresh_market);
 
