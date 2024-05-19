@@ -35,7 +35,6 @@ impl SurvivalModeArgs {
         #[clap(name = "survival")]
         #[clap(disable_help_flag = true)]
         #[clap(disable_help_subcommand = true)]
-        #[clap(arg_required_else_help = true)]
         struct ArgsParser {
             #[arg(long)]
             pub wave: Option<NonZeroU8>,
