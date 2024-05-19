@@ -4,6 +4,7 @@ use crate::prelude::*;
 #[derive(Clone, Copy, Debug, EnumIter, Eq, Hash, PartialEq, SystemSet)]
 pub enum InitializationSystems {
     First,
+    Hud,
     GameMode,
     Player,
     Market,

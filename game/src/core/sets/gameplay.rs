@@ -14,6 +14,7 @@ pub enum GameplaySystems {
     Player,
     Leveling,
     Market,
+    Hud,
 }
 
 impl GameplaySystems {

@@ -28,3 +28,17 @@ pub const MAP_BOUNDS: MapBounds = MapBounds {
 
 /// Number of waves.
 pub const WAVES: u8 = 3;
+
+
+/// Font size of the current wave text in the HUD in pt.
+pub const CURRENT_WAVE_TEXT_FONT_SIZE: f32 = 40.0;
+
+/// Color of the current wave text in the HUD.
+pub const CURRENT_WAVE_TEXT_COLOR: Color = Color::WHITE;
+
+
+/// Font size of the remaining seconds text in the HUD in pt.
+pub const REMAINING_SECONDS_TEXT_FONT_SIZE: f32 = 35.0;
+
+/// Color of the remaining seconds text in the HUD.
+pub const REMAINING_SECONDS_TEXT_COLOR: Color = Color::WHITE;

@@ -15,6 +15,12 @@ impl Plugin for SurvivalModePlugin {
         let mut game_mode_registry = app.world.resource_mut::<GameModeRegistry>();
         game_mode_registry.register(Survival);
 
+        // Register components.
+        app.register_type::<CurrentWaveContainer>();
+        app.register_type::<CurrentWaveText>();
+        app.register_type::<RemainingSecondsContainer>();
+        app.register_type::<RemainingSecondsText>();
+
         // Register resources.
         app.register_type::<CurrentWave>();
         app.register_type::<GameMode<Survival>>();

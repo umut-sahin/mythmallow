@@ -56,6 +56,10 @@ pub use crate::{
         enemy_selection_screen::components::*,
         game_mode_selection_screen::components::*,
         game_over_menu::components::*,
+        hud::{
+            components::*,
+            materials::*,
+        },
         main_menu::components::*,
         market::{
             components::*,
@@ -76,6 +80,7 @@ pub mod utils {
 
 #[doc(inline)]
 pub use {
+    bevy::ui::Display as UiDisplay,
     bevy::{
         app::AppExit,
         diagnostic::{
@@ -99,6 +104,10 @@ pub use {
         },
         prelude::*,
         reflect as bevy_reflect,
+        render::render_resource::{
+            AsBindGroup,
+            ShaderRef,
+        },
         sprite::MaterialMesh2dBundle,
         transform::TransformSystem,
         utils::HashMap,
@@ -156,6 +165,7 @@ pub use {
         SmallVec,
     },
     smol_str::SmolStr,
+    std::borrow::Cow,
     std::sync::atomic::AtomicBool,
     std::sync::atomic::Ordering as AtomicOrdering,
     std::{

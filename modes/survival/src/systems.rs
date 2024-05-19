@@ -2,15 +2,86 @@ use {
     crate::{
         constants::*,
         prelude::*,
+        styles,
     },
     mythmallow::prelude::*,
 };
 
 
 /// Initializes the game mode.
-pub fn initialize(mut commands: Commands) {
-    commands.insert_resource(WaveDurations::new(WAVES));
-    commands.insert_resource(CurrentWave::default());
+pub fn initialize(
+    mut commands: Commands,
+    hud_query: Query<Entity, With<Hud>>,
+    asset_server: Res<AssetServer>,
+) {
+    let wave_durations = WaveDurations::new(WAVES);
+    let current_wave = CurrentWave::default();
+
+    if let Ok(hud) = hud_query.get_single() {
+        let wave_duration =
+            wave_durations.get(current_wave.index()).copied().unwrap_or(Duration::ZERO);
+
+        commands.entity(hud).with_children(|parent| {
+            parent
+                .spawn((
+                    Name::new("Current Wave"),
+                    CurrentWaveContainer,
+                    NodeBundle { style: styles::current_wave_container(), ..default() },
+                ))
+                .with_children(|parent| {
+                    parent.spawn((
+                        Name::new("Text"),
+                        CurrentWaveText,
+                        TextBundle {
+                            text: Text {
+                                sections: vec![TextSection::new(
+                                    format!("Wave {}", current_wave.0),
+                                    TextStyle {
+                                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                        font_size: CURRENT_WAVE_TEXT_FONT_SIZE,
+                                        color: CURRENT_WAVE_TEXT_COLOR,
+                                    },
+                                )],
+                                justify: JustifyText::Center,
+                                ..default()
+                            },
+                            ..default()
+                        },
+                    ));
+                });
+
+            parent
+                .spawn((
+                    Name::new("Remaining Seconds"),
+                    RemainingSecondsContainer,
+                    NodeBundle { style: styles::remaining_seconds_container(), ..default() },
+                ))
+                .with_children(|parent| {
+                    parent.spawn((
+                        Name::new("Text"),
+                        RemainingSecondsText,
+                        TextBundle {
+                            text: Text {
+                                sections: vec![TextSection::new(
+                                    format!("{:.0}", wave_duration.as_secs_f32().ceil()),
+                                    TextStyle {
+                                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                                        font_size: REMAINING_SECONDS_TEXT_FONT_SIZE,
+                                        color: REMAINING_SECONDS_TEXT_COLOR,
+                                    },
+                                )],
+                                justify: JustifyText::Center,
+                                ..default()
+                            },
+                            ..default()
+                        },
+                    ));
+                });
+        });
+    }
+
+    commands.insert_resource(wave_durations);
+    commands.insert_resource(current_wave);
 }
 
 /// Selects the wave from the arguments of the survival game mode.
@@ -30,6 +101,7 @@ pub fn select_wave_when_starting_in_game(
 /// Loads the current wave.
 pub fn load(
     mut commands: Commands,
+    mut remaining_seconds_text_query: Query<&mut Text, With<RemainingSecondsText>>,
     current_wave: Res<CurrentWave>,
     wave_durations: Res<WaveDurations>,
 ) {
@@ -38,6 +110,11 @@ pub fn load(
     let wave_duration = wave_durations.get(current_wave.index()).copied().unwrap_or(Duration::ZERO);
     log::info!("wave duration: {:?}", wave_duration);
     commands.insert_resource(WaveTimer::new(wave_duration));
+
+    if let Ok(mut remaining_seconds_text) = remaining_seconds_text_query.get_single_mut() {
+        remaining_seconds_text.sections[0].value =
+            format!("{:.0}", wave_duration.as_secs_f32().ceil());
+    }
 }
 
 /// Spawns the map.
@@ -88,12 +165,18 @@ pub fn spawn_map(mut commands: Commands) {
 
 /// Ticks wave timer and wins the current wave when wave timer is finished.
 pub fn tick(
+    mut remaining_seconds_text_query: Query<&mut Text, With<RemainingSecondsText>>,
     time: Res<Time>,
     mut wave_timer: ResMut<WaveTimer>,
     mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     wave_timer.tick(time.delta());
+    if let Ok(mut remaining_seconds_text) = remaining_seconds_text_query.get_single_mut() {
+        remaining_seconds_text.sections[0].value =
+            format!("{:.0}", wave_timer.remaining_secs().ceil());
+    }
+
     if wave_timer.just_finished() {
         game_state_stack.transition(GameState::Won);
         next_game_state.set(GameState::Transition);
@@ -131,6 +214,7 @@ pub fn level_up(
 /// Wins the current wave.
 pub fn win(
     mut commands: Commands,
+    mut current_wave_text_query: Query<&mut Text, With<CurrentWaveText>>,
     mut player_query: Query<(&mut RemainingHealth, &Health), With<Player>>,
     mut current_wave: ResMut<CurrentWave>,
     mut market_configuration: ResMut<MarketConfiguration>,
@@ -152,12 +236,12 @@ pub fn win(
             remaining_health.0 = health.0;
         }
 
-        commands.run_system(registered_systems.market.refresh_market);
-
         let refresh_cost =
             MarketRefreshCost::exponential(Balance(current_wave.get() as f64), 1.50, None);
         log::info!("setting the refresh cost model of the market to {}", refresh_cost);
         market_configuration.refresh_cost = refresh_cost;
+
+        commands.run_system(registered_systems.market.refresh_market);
 
         game_state_stack.pop();
         game_state_stack.push(GameState::Loading);
@@ -165,6 +249,10 @@ pub fn win(
         next_game_state.set(GameState::Transition);
 
         current_wave.increment();
+
+        if let Ok(mut current_wave_text) = current_wave_text_query.get_single_mut() {
+            current_wave_text.sections[0].value = format!("Wave {}", current_wave.0);
+        }
     }
 }
 
