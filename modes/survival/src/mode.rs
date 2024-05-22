@@ -1,11 +1,8 @@
 use {
     crate::prelude::*,
-    mythmallow::{
-        enemy::constants::{
-            MELEE_ENEMY_TAG,
-            RANGED_ENEMY_TAG,
-        },
-        prelude::*,
+    mythmallow::enemy::constants::{
+        MELEE_ENEMY_TAG,
+        RANGED_ENEMY_TAG,
     },
 };
 

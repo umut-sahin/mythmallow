@@ -1,6 +1,6 @@
-use {
-    crate::constants::*,
-    mythmallow::prelude::*,
+use crate::{
+    constants::*,
+    prelude::*,
 };
 
 

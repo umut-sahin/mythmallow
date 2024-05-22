@@ -1,4 +1,4 @@
-use mythmallow::prelude::*;
+use crate::prelude::*;
 
 
 /// Tag component for the current wave container in the HUD.

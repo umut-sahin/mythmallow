@@ -1,4 +1,4 @@
-use mythmallow::prelude::*;
+use crate::prelude::*;
 
 
 /// Gets the style of the current wave container in the HUD.
