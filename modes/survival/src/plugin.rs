@@ -1,9 +1,6 @@
-use {
-    crate::{
-        prelude::*,
-        systems::*,
-    },
-    mythmallow::prelude::*,
+use crate::{
+    prelude::*,
+    systems::*,
 };
 
 /// Plugin for managing "Survival" game mode.

@@ -1,4 +1,4 @@
-use mythmallow::prelude::*;
+use crate::prelude::*;
 
 
 /// Size of the grid. Value of 10 means the map will be a 10x10 grid of squares.
