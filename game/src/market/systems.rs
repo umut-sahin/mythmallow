@@ -337,12 +337,12 @@ pub fn refresh_market_automatically(world: &mut World) {
 
     for item_index in 0..market_state.offered_item_ids.len() {
         let item_position = NonZeroUsize::new(item_index + 1).unwrap();
-        if market_state.is_locked(item_position) {
-            if !market_state.is_acquired(item_position) {
+        if !market_state.is_acquired(item_position) {
+            if market_state.is_locked(item_position) {
                 previous_locked_item_count += 1;
+            } else {
+                market_state.locked_item_indices.push(item_index);
             }
-        } else {
-            market_state.locked_item_indices.push(item_index);
         }
     }
     market_state.locked_item_indices.truncate(number_of_items);
