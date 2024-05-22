@@ -6,10 +6,10 @@ use crate::prelude::*;
 pub struct MarketWidgets(
     /// Rows of widgets in the market.
     ///
-    /// - Balance
+    /// - Balance & Refresh button
     /// - Buy buttons
     /// - Lock buttons
-    /// - Refresh button
+    /// - Continue button
     pub [Vec<Entity>; 4],
 );
 
