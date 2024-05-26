@@ -22,6 +22,8 @@ pub enum MarketCommands {
     Unlock { position: NonZeroUsize },
     /// Acquires an item in the market.
     Acquire { position: NonZeroUsize },
+    /// Offers an item in the market.
+    Offer { position: NonZeroUsize, item: SmolStr },
     /// Opens the market.
     Open,
     /// Closes the market.
@@ -45,6 +47,11 @@ pub enum MarketCommands {
     FreeRefreshes {
         #[clap(subcommand)]
         subcommand: FreeRefreshesCommands,
+    },
+    /// Controls whether the market can be opened by the player.
+    CanBeOpenedByPlayer {
+        #[clap(subcommand)]
+        subcommand: CanBeOpenedByPlayerCommands,
     },
 }
 
@@ -141,4 +148,15 @@ pub enum FreeRefreshesCommands {
     Show,
     /// Sets the number of free refreshes in the market.
     Set { free_refreshes: usize },
+}
+
+/// Can be opened by player commands.
+#[derive(Debug, Subcommand)]
+pub enum CanBeOpenedByPlayerCommands {
+    /// Shows whether the market can be opened by the player.
+    Show,
+    /// Makes the market can be opened by the player.
+    Enable,
+    /// Makes the market cannot be opened by the player.
+    Disable,
 }
