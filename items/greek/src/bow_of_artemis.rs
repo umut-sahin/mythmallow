@@ -1,9 +1,9 @@
 use {
-    crate::constants::*,
-    mythmallow::{
-        items::constants::RANGED_ITEM_TAG,
+    crate::{
+        constants::*,
         prelude::*,
     },
+    mythmallow::items::constants::RANGED_ITEM_TAG,
 };
 
 /// Size of the item.

@@ -1,9 +1,9 @@
 use {
-    crate::constants::*,
-    mythmallow::{
-        items::constants::MELEE_ITEM_TAG,
+    crate::{
+        constants::*,
         prelude::*,
     },
+    mythmallow::items::constants::MELEE_ITEM_TAG,
 };
 
 /// Base price of the item.
