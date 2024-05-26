@@ -1,4 +1,4 @@
-use mythmallow::prelude::*;
+use crate::prelude::*;
 
 /// Resource for "Sweet" enemy pack.
 #[derive(Debug, Default, Reflect, Resource)]

@@ -1,9 +1,6 @@
 use {
     crate::prelude::*,
-    mythmallow::{
-        enemy::constants::MELEE_ENEMY_TAG,
-        prelude::*,
-    },
+    mythmallow::enemy::constants::MELEE_ENEMY_TAG,
 };
 
 /// Size of the enemy.

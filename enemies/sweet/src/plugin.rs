@@ -1,9 +1,7 @@
-use {
-    crate::{
-        chocolate_bar::ChocolateBarPlugin,
-        gummy_bear::GummyBearPlugin,
-    },
-    mythmallow::prelude::*,
+use crate::{
+    chocolate_bar::ChocolateBarPlugin,
+    gummy_bear::GummyBearPlugin,
+    prelude::*,
 };
 
 /// Plugin for managing the enemies from "Sweet" enemy pack.
