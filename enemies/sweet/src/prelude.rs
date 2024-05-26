@@ -4,3 +4,5 @@ pub use crate::{
     pack::SweetEnemyPack,
     plugin::SweetEnemiesPlugin,
 };
+
+pub(crate) use mythmallow::prelude::*;
