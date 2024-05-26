@@ -15,6 +15,7 @@ pub fn apply_market_command(
     mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
     registered_systems: Res<RegisteredSystems>,
+    item_registry: Res<ItemRegistry>,
     mut command: ConsoleCommand<MarketCommand>,
 ) {
     if let Some(Ok(MarketCommand { subcommand })) = command.take() {
@@ -101,6 +102,24 @@ pub fn apply_market_command(
                         reply!(command, "Acquired.");
                     },
                 }
+            },
+            MarketCommands::Offer { position, item } => {
+                let index = position.get() - 1;
+                if market_state.offered_item_ids.len() <= index {
+                    reply!(command, "Failed to offer item {} as it doesn't exist.", position);
+                    reply!(command, "");
+                    return;
+                }
+
+                if item_registry.find_item_by_id(&item).is_none() {
+                    reply!(command, "Failed to offer {} as it doesn't exist.", item);
+                    reply!(command, "");
+                    return;
+                }
+
+                log::info!("offering {:?} as item {} in the market", item, position);
+                market_state.offered_item_ids[index] = item;
+                reply!(command, "Done.");
             },
             MarketCommands::Open => {
                 match game_state.get() {
@@ -250,6 +269,31 @@ pub fn apply_market_command(
                         );
                         market_configuration.free_refreshes = free_refreshes;
                         reply!(command, "Done.");
+                    },
+                }
+            },
+            MarketCommands::CanBeOpenedByPlayer { subcommand } => {
+                match subcommand {
+                    CanBeOpenedByPlayerCommands::Show => {
+                        reply!(command, "{}", market_configuration.can_be_opened_by_player);
+                    },
+                    CanBeOpenedByPlayerCommands::Enable => {
+                        if market_configuration.can_be_opened_by_player {
+                            reply!(command, "Already enabled.");
+                        } else {
+                            log::info!("allowing the player to open the market");
+                            market_configuration.can_be_opened_by_player = true;
+                            reply!(command, "Done.");
+                        }
+                    },
+                    CanBeOpenedByPlayerCommands::Disable => {
+                        if !market_configuration.can_be_opened_by_player {
+                            reply!(command, "Already disabled.");
+                        } else {
+                            log::info!("preventing the player from open the market");
+                            market_configuration.can_be_opened_by_player = false;
+                            reply!(command, "Done.");
+                        }
                     },
                 }
             },
