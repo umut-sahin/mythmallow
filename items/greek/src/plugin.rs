@@ -1,9 +1,7 @@
-use {
-    crate::{
-        bident_of_hades::BidentOfHadesPlugin,
-        bow_of_artemis::BowOfArtemisPlugin,
-    },
-    mythmallow::prelude::*,
+use crate::{
+    bident_of_hades::BidentOfHadesPlugin,
+    bow_of_artemis::BowOfArtemisPlugin,
+    prelude::*,
 };
 
 /// Plugin for managing the items from "Greek" mythology.
