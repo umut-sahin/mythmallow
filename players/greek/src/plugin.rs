@@ -1,9 +1,7 @@
-use {
-    crate::{
-        artemis::ArtemisPlugin,
-        hades::HadesPlugin,
-    },
-    mythmallow::prelude::*,
+use crate::{
+    artemis::ArtemisPlugin,
+    hades::HadesPlugin,
+    prelude::*,
 };
 
 /// Plugin for managing the players from "Greek" mythology.

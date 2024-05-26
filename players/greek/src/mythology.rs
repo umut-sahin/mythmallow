@@ -1,4 +1,4 @@
-use mythmallow::prelude::*;
+use crate::prelude::*;
 
 /// Resource for "Greek" mythology.
 #[derive(Debug, Default, Reflect, Resource)]
