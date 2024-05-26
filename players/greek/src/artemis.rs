@@ -1,7 +1,6 @@
 use {
     crate::prelude::*,
     greek_items::prelude::*,
-    mythmallow::prelude::*,
 };
 
 /// Size of the player.
