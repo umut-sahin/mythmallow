@@ -179,7 +179,7 @@ impl Args {
                         }
                         #[cfg(feature = "wasm")]
                         {
-                            Path::new("session").join("configuration")
+                            Path::new("local").join("configuration")
                         }
                     });
 
@@ -208,7 +208,7 @@ impl Args {
                         }
                         #[cfg(feature = "wasm")]
                         {
-                            Path::new("session").join("data")
+                            Path::new("local").join("data")
                         }
                     });
 
