@@ -25,7 +25,7 @@ impl Plugin for InventoryPlugin {
                 .run_if(run_once()),
         );
         app.add_systems(
-            PostUpdate,
+            Last,
             (
                 acquire_release_items.run_if(|inventory: Res<Inventory>| inventory.is_changed()),
                 reposition_weapons.run_if(
