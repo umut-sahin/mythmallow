@@ -5,7 +5,7 @@ use crate::{
 
 
 /// Applies the item console commands.
-pub fn apply_command(
+pub fn apply_item_command(
     mut item_registry: ResMut<ItemRegistry>,
     mut command: ConsoleCommand<ItemCommand>,
 ) {
