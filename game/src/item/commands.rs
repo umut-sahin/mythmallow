@@ -9,6 +9,7 @@ pub struct ItemCommand {
     pub subcommand: ItemCommands,
 }
 
+/// Item commands.
 #[derive(Debug, Subcommand)]
 pub enum ItemCommands {
     /// Lists the available items.
