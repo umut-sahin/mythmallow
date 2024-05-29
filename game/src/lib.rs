@@ -6,7 +6,7 @@ pub mod core;
 pub mod enemy;
 pub mod input;
 pub mod inventory;
-pub mod items;
+pub mod item;
 pub mod leveling;
 pub mod map;
 pub mod market;

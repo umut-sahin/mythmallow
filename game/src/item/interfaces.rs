@@ -1,5 +1,5 @@
 use crate::{
-    items::constants::*,
+    item::constants::*,
     prelude::*,
 };
 
