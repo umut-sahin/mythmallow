@@ -7,7 +7,7 @@ use crate::{
     enemy::plugin::EnemyPlugin,
     input::plugin::InputPlugin,
     inventory::plugin::InventoryPlugin,
-    items::plugin::ItemPlugin,
+    item::plugin::ItemPlugin,
     leveling::plugin::LevelingPlugin,
     map::plugin::MapPlugin,
     market::plugin::MarketPlugin,

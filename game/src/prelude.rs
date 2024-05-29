@@ -17,7 +17,7 @@ pub use crate::{
     },
     input::actions::*,
     inventory::resources::*,
-    items::{
+    item::{
         components::*,
         interfaces::*,
         registry::*,

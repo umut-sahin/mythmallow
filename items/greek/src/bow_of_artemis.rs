@@ -3,7 +3,7 @@ use {
         constants::*,
         prelude::*,
     },
-    mythmallow::items::constants::RANGED_ITEM_TAG,
+    mythmallow::item::constants::RANGED_ITEM_TAG,
 };
 
 /// Size of the item.
