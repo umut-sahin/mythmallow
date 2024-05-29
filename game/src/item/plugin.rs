@@ -19,6 +19,6 @@ impl Plugin for ItemPlugin {
         app.init_resource::<ItemRegistry>();
 
         // Add console commands.
-        app.add_console_command::<ItemCommand, _>(apply_command);
+        app.add_console_command::<ItemCommand, _>(apply_item_command);
     }
 }
