@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 
 /// Database of registered market systems.
-#[derive(Clone, Copy, Debug, Deref, DerefMut, Resource)]
+#[derive(Clone, Copy, Debug, Resource)]
 pub struct RegisteredMarketSystems {
     pub refresh_market: SystemId,
 }

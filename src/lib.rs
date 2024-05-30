@@ -16,6 +16,11 @@ pub mod content {
             pub use mythmallow_mode_survival::*;
         }
     }
+    pub mod perks {
+        pub mod basic {
+            pub use mythmallow_perks_basic::*;
+        }
+    }
     pub mod players {
         pub mod greek {
             pub use mythmallow_players_greek::*;

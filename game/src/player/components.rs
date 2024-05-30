@@ -71,6 +71,7 @@ impl<P: Component + IPlayer> PlayerBundle<P> {
         let health = self.player.health();
         let pickup_range = self.player.pickup_range();
         let speed = self.player.speed();
+        let speed_multiplier = self.player.speed_multiplier();
         let collider = self.player.collider();
 
         let mut player = commands.spawn((
@@ -82,18 +83,21 @@ impl<P: Component + IPlayer> PlayerBundle<P> {
             health,
             pickup_range,
             speed,
+            speed_multiplier,
             // Combat
             RemainingHealth(*health),
             // Leveling
             Level::default(),
             Experience::default(),
             // Physics
-            RigidBody::Dynamic,
-            LinearVelocity::ZERO,
-            Restitution::PERFECTLY_INELASTIC,
-            LockedAxes::ROTATION_LOCKED,
-            collider.clone(),
-            CollisionLayers::new([Layer::Player], [Layer::MapBound, Layer::ExperiencePoint]),
+            (
+                RigidBody::Dynamic,
+                LinearVelocity::ZERO,
+                Restitution::PERFECTLY_INELASTIC,
+                LockedAxes::ROTATION_LOCKED,
+                collider.clone(),
+                CollisionLayers::new([Layer::Player], [Layer::MapBound, Layer::ExperiencePoint]),
+            ),
         ));
 
         player.with_children(|parent| {

@@ -19,3 +19,14 @@ pub struct PickupRange(pub f32);
 /// Component for speed.
 #[derive(Clone, Copy, Component, Debug, Deref, DerefMut, Reflect)]
 pub struct Speed(pub f32);
+
+
+/// Component for speed multiplier.
+#[derive(Clone, Copy, Component, Debug, Deref, DerefMut, Reflect)]
+pub struct SpeedMultiplier(pub f32);
+
+impl Default for SpeedMultiplier {
+    fn default() -> SpeedMultiplier {
+        SpeedMultiplier(1.00)
+    }
+}

@@ -6,6 +6,7 @@ pub enum RestartSystems {
     First,
     Hud,
     Market,
+    LevelUpScreen,
     Enemy,
     Camera,
     GameMode,

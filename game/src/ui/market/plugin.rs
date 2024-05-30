@@ -23,7 +23,7 @@ impl Plugin for MarketPlugin {
         app.register_type::<MarketContinueButton>();
 
         // Register resources.
-        app.register_type::<PreviouslySelectedWidget>();
+        app.register_type::<PreviouslySelectedMarketWidget>();
 
         // Add systems.
         app.add_systems(OnEnter(GameState::Market), spawn_market);
@@ -83,6 +83,7 @@ impl Plugin for MarketPlugin {
                 .in_set(MarketSystems),
         );
         app.add_systems(OnExit(GameState::Market), despawn_market);
+        app.add_systems(OnEnter(GameState::Restart), despawn_market.in_set(RestartSystems::Market));
         app.add_systems(OnExit(AppState::Game), despawn_market);
     }
 }

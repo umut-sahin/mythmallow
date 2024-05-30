@@ -20,17 +20,21 @@ pub trait IPlayer: Debug + Send + Sync + 'static {
     /// Gets the name of the player.
     fn name(&self) -> SmolStr;
 
-    /// Gets the health of the player.
+    /// Gets the base health of the player.
     fn health(&self) -> Health {
         Health(BASE_HEALTH)
     }
-    /// Gets the pickup range of the player.
+    /// Gets the base pickup range of the player.
     fn pickup_range(&self) -> PickupRange {
         PickupRange(BASE_PICKUP_RANGE)
     }
-    /// Gets the speed of the player.
+    /// Gets the base speed of the player.
     fn speed(&self) -> Speed {
         Speed(BASE_SPEED)
+    }
+    /// Gets the base speed multiplier of the player.
+    fn speed_multiplier(&self) -> SpeedMultiplier {
+        SpeedMultiplier::default()
     }
 
     /// Gets the collider of the player.

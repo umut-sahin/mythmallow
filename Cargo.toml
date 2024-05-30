@@ -17,6 +17,7 @@ mythmallow-enemies-sweet = { path = "enemies/sweet" }
 mythmallow-game = { path = "game" }
 mythmallow-items-greek = { path = "items/greek" }
 mythmallow-mode-survival = { path = "modes/survival" }
+mythmallow-perks-basic = { path = "perks/basic" }
 mythmallow-players-greek = { path = "players/greek" }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
@@ -42,6 +43,7 @@ members = [
     "game",
     "items/greek",
     "modes/survival",
+    "perks/basic",
     "players/greek",
 ]
 

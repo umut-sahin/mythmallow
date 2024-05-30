@@ -6,6 +6,7 @@ use {
     mythmallow_game::prelude::*,
     mythmallow_items_greek::prelude::*,
     mythmallow_mode_survival::prelude::*,
+    mythmallow_perks_basic::prelude::*,
     mythmallow_players_greek::prelude::*,
 };
 
@@ -111,6 +112,19 @@ fn main() {
             if number_of_enemies == 1 { "is" } else { "are" },
             number_of_enemy_packs,
             if number_of_enemy_packs == 1 { "" } else { "s" },
+        );
+    }
+
+    // Add perk plugins.
+    app.add_plugins(BasicPerksPlugin);
+    {
+        let perk_registry = app.world.resource_mut::<PerkRegistry>();
+        let number_of_perks = perk_registry.number_of_perks();
+        log::info!(
+            "{} perk{} {} registered",
+            number_of_perks,
+            if number_of_perks == 1 { "" } else { "s" },
+            if number_of_perks == 1 { "is" } else { "are" },
         );
     }
 

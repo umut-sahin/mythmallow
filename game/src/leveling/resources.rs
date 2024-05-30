@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 
 /// Database of registered leveling systems.
-#[derive(Clone, Copy, Debug, Deref, DerefMut, Resource)]
+#[derive(Clone, Copy, Debug, Resource)]
 pub struct RegisteredLevelingSystems {
     pub set_level: SystemId<Level>,
 }

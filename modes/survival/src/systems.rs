@@ -13,6 +13,7 @@ pub fn initialize(
 ) {
     let wave_durations = WaveDurations::new(WAVES);
     let current_wave = CurrentWave::default();
+    let level_up_rewards = LevelUpRewards::default();
 
     if let Ok(hud) = hud_query.get_single() {
         let wave_duration =
@@ -79,6 +80,7 @@ pub fn initialize(
 
     commands.insert_resource(wave_durations);
     commands.insert_resource(current_wave);
+    commands.insert_resource(level_up_rewards);
 }
 
 /// Selects the wave from the arguments of the survival game mode.
@@ -180,29 +182,75 @@ pub fn tick(
     }
 }
 
-/// Levels player up.
-pub fn level_up(
-    mut player_query: Query<(Entity, &mut Health, &mut RemainingHealth), With<Player>>,
-    mut leveled_up_event_reader: EventReader<LeveledUpEvent>,
+/// Processes player level change.
+pub fn level_change(
+    mut commands: Commands,
+    mut player_query: Query<
+        (&Level, &mut Health, &mut RemainingHealth),
+        (With<Player>, Changed<Level>),
+    >,
+    mut level_up_rewards: ResMut<LevelUpRewards>,
+    registered_systems: Res<RegisteredSystems>,
 ) {
-    if leveled_up_event_reader.is_empty() {
-        return;
+    if let Ok((player_level, mut player_health, mut player_remaining_health)) =
+        player_query.get_single_mut()
+    {
+        {
+            let expected_bonus_health = (player_level.get() as f32) - 1.00;
+            if level_up_rewards.health.0 != expected_bonus_health {
+                let difference = expected_bonus_health - level_up_rewards.health.0;
+
+                if difference > 0.00 {
+                    log::info!(
+                        "increasing the player health by {} for leveling up to level {}",
+                        difference,
+                        player_level.get(),
+                    );
+                } else {
+                    log::info!(
+                        "decreasing the player health by {} for leveling down to level {}",
+                        difference.abs(),
+                        player_level.get(),
+                    );
+                }
+
+                player_health.0 += difference;
+                player_remaining_health.0 += difference;
+
+                level_up_rewards.health.0 += difference;
+            }
+        }
+
+        {
+            let expected_number_of_perks = (player_level.get() as usize) - 1;
+            if level_up_rewards.perks.len() > expected_number_of_perks {
+                let mut level_to_lose = level_up_rewards.perks.len();
+                for perk in level_up_rewards.perks[expected_number_of_perks..].iter_mut().rev() {
+                    commands.run_system_with_input(
+                        registered_systems.perk.lose_perk,
+                        (
+                            perk.clone(),
+                            ObtainLosePerkReason::LevelingDown {
+                                to: Level::new(level_to_lose as u16),
+                            },
+                        ),
+                    );
+                    level_to_lose -= 1;
+                }
+            }
+            level_up_rewards.perks.truncate(expected_number_of_perks);
+        }
     }
+}
 
-    let (player_entity, mut player_health, mut player_remaining_health) =
-        match player_query.get_single_mut() {
-            Ok(query_result) => query_result,
-            Err(_) => return,
-        };
-
-    for leveled_up in leveled_up_event_reader.read() {
-        if leveled_up.entity == player_entity {
-            log::info!(
-                "increasing the player health by 1 for leveling up to level {}",
-                leveled_up.new_level.0,
-            );
-            player_health.0 += 1.00;
-            player_remaining_health.0 += 1.00;
+/// Processes obtaining a new perk.
+pub fn obtain_perk(
+    mut level_up_rewards: ResMut<LevelUpRewards>,
+    mut perk_obtained_event_reader: EventReader<PerkObtainedEvent>,
+) {
+    for event in perk_obtained_event_reader.read() {
+        if matches!(event.reason, ObtainLosePerkReason::LevelingUp { .. }) {
+            level_up_rewards.perks.push(event.perk.clone());
         }
     }
 }
@@ -212,9 +260,11 @@ pub fn level_up(
 pub fn win(
     mut commands: Commands,
     mut current_wave_text_query: Query<&mut Text, With<CurrentWaveText>>,
-    mut player_query: Query<(&mut RemainingHealth, &Health), With<Player>>,
+    mut player_query: Query<(&Level, &mut RemainingHealth, &Health), With<Player>>,
     mut current_wave: ResMut<CurrentWave>,
+    level_up_rewards: Res<LevelUpRewards>,
     mut market_configuration: ResMut<MarketConfiguration>,
+    mut level_up_screen_configuration: ResMut<LevelUpScreenConfiguration>,
     mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
     registered_systems: Res<RegisteredSystems>,
@@ -228,11 +278,6 @@ pub fn win(
     } else {
         log::info!("wave {} won", current_wave.0);
 
-        if let Ok((mut remaining_health, health)) = player_query.get_single_mut() {
-            log::info!("resetting player health to {}", health.0);
-            remaining_health.0 = health.0;
-        }
-
         let refresh_cost =
             MarketRefreshCost::exponential(Balance(current_wave.get() as f64), 1.50, None);
         log::info!("setting the refresh cost model of the market to {}", refresh_cost);
@@ -240,9 +285,33 @@ pub fn win(
 
         commands.run_system(registered_systems.market.refresh_market);
 
+        let reroll_cost =
+            LevelUpScreenRerollCost::exponential(Balance(current_wave.get() as f64), 1.50, None);
+        log::info!("setting the reroll cost model of the level up screen to {}", reroll_cost);
+        level_up_screen_configuration.reroll_cost = reroll_cost;
+
         game_state_stack.pop();
         game_state_stack.push(GameState::Loading);
         game_state_stack.push(GameState::Market);
+
+        if let Ok((player_level, mut player_remaining_health, player_health)) =
+            player_query.get_single_mut()
+        {
+            log::info!("resetting player health to {}", player_health.0);
+            player_remaining_health.0 = player_health.0;
+
+            let reward_count = ((player_level.get() as usize) - 1) - level_up_rewards.perks.len();
+            for _ in 0..reward_count {
+                game_state_stack.push(GameState::LevelUpScreen);
+            }
+
+            if reward_count > 0 {
+                commands.insert_resource(LevelUpScreenReason::LevelingUp {
+                    to: Level::new(level_up_rewards.perks.len() as u16 + 2),
+                });
+            }
+        }
+
         next_game_state.set(GameState::Transition);
 
         current_wave.increment();

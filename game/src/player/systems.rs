@@ -86,11 +86,12 @@ pub fn turn_player_visibility_on(mut player_query: Query<&mut Visibility, With<P
 /// Moves the player.
 pub fn movement(
     mut player_query: Query<
-        (&ActionState<GameAction>, &Speed, &mut LinearVelocity),
+        (&ActionState<GameAction>, &Speed, &SpeedMultiplier, &mut LinearVelocity),
         (With<Player>, Without<Dashing>),
     >,
 ) {
-    let (action_state, speed, mut velocity) = match player_query.get_single_mut() {
+    let (action_state, speed, speed_multiplier, mut velocity) = match player_query.get_single_mut()
+    {
         Ok(query_result) => query_result,
         Err(_) => return,
     };
@@ -110,7 +111,11 @@ pub fn movement(
         change.x += 1.0;
     }
 
-    velocity.0 = if change == Vec2::ZERO { Vec2::ZERO } else { change.normalize() * speed.0 }
+    velocity.0 = if change == Vec2::ZERO {
+        Vec2::ZERO
+    } else {
+        change.normalize() * (speed.0 * speed_multiplier.0)
+    }
 }
 
 /// Activates dashing for the player.
