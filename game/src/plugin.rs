@@ -13,6 +13,7 @@ use crate::{
     market::plugin::MarketPlugin,
     mode::plugin::ModePlugin,
     movement::plugin::MovementPlugin,
+    perk::plugin::PerkPlugin,
     physics::plugin::PhysicsPlugin,
     player::plugin::PlayerPlugin,
     prelude::*,
@@ -36,6 +37,7 @@ impl Plugin for MythmallowPlugin {
         app.add_plugins(PhysicsPlugin);
         app.add_plugins(ModePlugin);
         app.add_plugins(ItemPlugin);
+        app.add_plugins(PerkPlugin);
         app.add_plugins(MarketPlugin);
         app.add_plugins(InventoryPlugin);
         app.add_plugins(MapPlugin);

@@ -10,5 +10,6 @@ impl Plugin for PropertyPlugin {
         app.register_type::<Health>();
         app.register_type::<PickupRange>();
         app.register_type::<Speed>();
+        app.register_type::<SpeedMultiplier>();
     }
 }

@@ -4,6 +4,7 @@ pub use crate::{
     combat::components::*,
     configuration::resources::*,
     core::{
+        components::*,
         depths::*,
         resources::*,
         sets::*,
@@ -39,6 +40,12 @@ pub use crate::{
         resources::*,
     },
     movement::components::*,
+    perk::{
+        events::*,
+        interfaces::*,
+        registry::*,
+        resources::*,
+    },
     physics::layers::*,
     player::{
         components::*,
@@ -59,6 +66,10 @@ pub use crate::{
         hud::{
             components::*,
             materials::*,
+        },
+        level_up_screen::{
+            components::*,
+            resources::*,
         },
         main_menu::components::*,
         market::{
@@ -164,7 +175,11 @@ pub use {
         smallvec,
         SmallVec,
     },
-    smol_str::SmolStr,
+    smol_str::{
+        format_smolstr,
+        SmolStr,
+        ToSmolStr,
+    },
     std::borrow::Cow,
     std::sync::atomic::AtomicBool,
     std::sync::atomic::Ordering as AtomicOrdering,

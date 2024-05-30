@@ -21,6 +21,7 @@ pub enum GameState {
     Initialization,
     Loading,
     Playing,
+    LevelUpScreen,
     Market,
     Paused,
     Restart,

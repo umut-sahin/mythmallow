@@ -170,3 +170,17 @@ impl Index<CurrentWave> for WaveDurations {
         &self.0[current_wave.index()]
     }
 }
+
+
+/// Resource for the level up rewards obtained in since the start of the game.
+#[derive(Clone, Debug, Resource)]
+pub struct LevelUpRewards {
+    pub health: Health,
+    pub perks: Vec<Arc<dyn IPerk>>,
+}
+
+impl Default for LevelUpRewards {
+    fn default() -> LevelUpRewards {
+        LevelUpRewards { health: Health(0.00), perks: Vec::new() }
+    }
+}

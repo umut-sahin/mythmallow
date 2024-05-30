@@ -16,12 +16,12 @@ pub fn spawn_market(
     market_action_input_map: Res<InputMap<MarketAction>>,
     market_configuration: Res<MarketConfiguration>,
     market_state: Res<MarketState>,
-    previously_selected_widget: Option<Res<PreviouslySelectedWidget>>,
+    previously_selected_widget: Option<Res<PreviouslySelectedMarketWidget>>,
 ) {
     if !market_query.is_empty() {
         if let Some(previously_selected_widget) = previously_selected_widget {
             commands.entity(previously_selected_widget.0).insert(WidgetSelected::now());
-            commands.remove_resource::<PreviouslySelectedWidget>();
+            commands.remove_resource::<PreviouslySelectedMarketWidget>();
         }
         return;
     }
@@ -248,12 +248,12 @@ pub fn despawn_market(
     if app_state.get() == &AppState::Game {
         if game_state_stack.contains(&GameState::Market) {
             if let Ok(widget) = widget_query.get_single() {
-                commands.insert_resource(PreviouslySelectedWidget(widget));
+                commands.insert_resource(PreviouslySelectedMarketWidget(widget));
             }
             return;
         }
     } else {
-        commands.remove_resource::<PreviouslySelectedWidget>();
+        commands.remove_resource::<PreviouslySelectedMarketWidget>();
     }
     if let Ok(entity) = market_query.get_single() {
         commands.entity(entity).despawn_recursive();

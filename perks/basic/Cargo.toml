@@ -1,0 +1,10 @@
+[package]
+name = "mythmallow-perks-basic"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+mythmallow = { path = "../../game", package = "mythmallow-game" }
+
+[lints]
+workspace = true

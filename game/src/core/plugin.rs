@@ -8,6 +8,9 @@ pub struct CorePlugin;
 
 impl Plugin for CorePlugin {
     fn build(&self, app: &mut App) {
+        // Register components.
+        app.register_type::<Rarity>();
+
         // Setup the global random number generator.
         let seed = {
             let args = app.world.resource::<Args>();
@@ -52,6 +55,7 @@ impl Plugin for CorePlugin {
         InitializationSystems::configure(app);
         LoadingSystems::configure(app);
         GameplaySystems::configure(app);
+        LevelUpScreenSystems::configure(app);
         MarketSystems::configure(app);
         PauseMenuSystems::configure(app);
         RestartSystems::configure(app);

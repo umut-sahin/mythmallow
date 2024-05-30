@@ -16,4 +16,4 @@ pub struct MarketWidgets(
 
 /// Resource for the previously selected widget in the market.
 #[derive(Debug, Deref, DerefMut, Reflect, Resource)]
-pub struct PreviouslySelectedWidget(pub Entity);
+pub struct PreviouslySelectedMarketWidget(pub Entity);

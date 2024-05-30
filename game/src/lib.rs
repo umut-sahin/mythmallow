@@ -12,6 +12,7 @@ pub mod map;
 pub mod market;
 pub mod mode;
 pub mod movement;
+pub mod perk;
 pub mod physics;
 pub mod player;
 pub mod plugin;

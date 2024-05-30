@@ -4,8 +4,10 @@ use crate::prelude::*;
 /// Database of registered systems.
 #[derive(Debug, Resource)]
 pub struct RegisteredSystems {
+    pub level_up_screen: RegisteredLevelUpScreenSystems,
     pub leveling: RegisteredLevelingSystems,
     pub market: RegisteredMarketSystems,
+    pub perk: RegisteredPerkSystems,
 }
 
 impl RegisteredSystems {
@@ -13,8 +15,10 @@ impl RegisteredSystems {
     pub fn new(app: &mut App) -> RegisteredSystems {
         let systems = app.world.spawn(Name::new("RegisteredSystems")).id();
         RegisteredSystems {
+            level_up_screen: RegisteredLevelUpScreenSystems::new(app, systems),
             leveling: RegisteredLevelingSystems::new(app, systems),
             market: RegisteredMarketSystems::new(app, systems),
+            perk: RegisteredPerkSystems::new(app, systems),
         }
     }
 
