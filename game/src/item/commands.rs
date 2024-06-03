@@ -37,13 +37,13 @@ pub enum ItemBasePriceCommands {
     Set { item: SmolStr, base_price: f64 },
 }
 
-/// Item base price commands.
+/// Item commonness commands.
 #[derive(Debug, Subcommand)]
 pub enum ItemCommonnessCommands {
     /// Shows the commonness of an item.
     #[clap(arg_required_else_help = true)]
     Show { item: SmolStr },
-    #[clap(arg_required_else_help = true)]
     /// Sets the commonness of an item.
+    #[clap(arg_required_else_help = true)]
     Set { item: SmolStr, commonness: u64 },
 }
