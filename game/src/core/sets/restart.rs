@@ -14,6 +14,7 @@ pub enum RestartSystems {
     Map,
     Player,
     Leveling,
+    Combat,
     Last,
     Done,
 }
