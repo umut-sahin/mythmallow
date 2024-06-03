@@ -27,5 +27,11 @@ impl Plugin for CombatPlugin {
                 .in_set(GameplaySystems::Combat),
         );
         app.add_systems(OnEnter(GameState::Won), despawn_projectiles);
+        app.add_systems(OnEnter(GameState::Over), despawn_projectiles);
+        app.add_systems(
+            OnEnter(GameState::Restart),
+            despawn_projectiles.in_set(RestartSystems::Combat),
+        );
+        app.add_systems(OnExit(AppState::Game), despawn_projectiles);
     }
 }

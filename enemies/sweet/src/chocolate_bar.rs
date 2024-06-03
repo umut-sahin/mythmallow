@@ -149,7 +149,7 @@ pub fn attack(
             continue;
         }
 
-        let projectile_entity = ProjectileBundle::builder()
+        ProjectileBundle::builder()
             .mesh(MaterialMesh2dBundle {
                 mesh: meshes.add(Circle::new(PROJECTILE_SIZE)).into(),
                 material: materials.add(ColorMaterial::from(PROJECTILE_COLOR)),
@@ -163,12 +163,8 @@ pub fn attack(
             .velocity(LinearVelocity(player_direction * PROJECTILE_SPEED))
             .damage(DAMAGE)
             .build()
-            .spawn_toward_player(&mut commands)
-            .id();
+            .spawn_toward_player(&mut commands);
 
-        commands
-            .entity(enemy_entity)
-            .add_child(projectile_entity)
-            .insert(Cooldown::<Attack>::new(ATTACK_COOLDOWN));
+        commands.entity(enemy_entity).insert(Cooldown::<Attack>::new(ATTACK_COOLDOWN));
     }
 }
