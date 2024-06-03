@@ -150,7 +150,7 @@ pub fn enemy_death(
 
 
 /// Despawns the projectiles on contact.
-pub fn despawn_projectiles(
+pub fn despawn_projectiles_on_contact(
     mut commands: Commands,
     projectile_query: Query<Entity, With<Projectile>>,
     mut collision_started_event_reader: EventReader<CollisionStarted>,
@@ -161,5 +161,15 @@ pub fn despawn_projectiles(
         } else if projectile_query.get(entity2).is_ok() {
             commands.entity(entity2).despawn_recursive();
         }
+    }
+}
+
+/// Despawns the projectiles.
+pub fn despawn_projectiles(
+    mut commands: Commands,
+    projectile_query: Query<Entity, With<Projectile>>,
+) {
+    for projectile_entity in projectile_query.iter() {
+        commands.entity(projectile_entity).despawn_recursive();
     }
 }
