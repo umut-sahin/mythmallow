@@ -1,10 +1,266 @@
 use crate::{
     prelude::*,
     ui::level_up_screen::{
+        commands::*,
         constants::*,
         styles,
     },
 };
+
+
+/// Applies the level up screen console commands.
+pub fn apply_level_up_screen_command(
+    mut commands: Commands,
+    mut level_up_screen_configuration: ResMut<LevelUpScreenConfiguration>,
+    level_up_screen_state: Option<ResMut<LevelUpScreenState>>,
+    level_up_screen_reason: Option<ResMut<LevelUpScreenReason>>,
+    app_state: Res<State<AppState>>,
+    game_state: Res<State<GameState>>,
+    mut game_state_stack: ResMut<GameStateStack>,
+    mut next_game_state: ResMut<NextState<GameState>>,
+    registered_systems: Res<RegisteredSystems>,
+    perk_registry: Res<PerkRegistry>,
+    mut command: ConsoleCommand<LevelUpScreenCommand>,
+) {
+    if let Some(Ok(LevelUpScreenCommand { subcommand })) = command.take() {
+        if *app_state.get() != AppState::Game {
+            reply!(command, "Not available outside the game.");
+            reply!(command, "");
+            return;
+        }
+
+        match subcommand {
+            LevelUpScreenCommands::Open => {
+                match game_state.get() {
+                    GameState::Playing => {
+                        log::info!("opening the level up screen");
+                        commands.insert_resource(LevelUpScreenReason::Cheating);
+                        game_state_stack.push(GameState::LevelUpScreen);
+                        next_game_state.set(GameState::Transition);
+                        reply!(command, "Opened.");
+                    },
+                    GameState::LevelUpScreen => {
+                        reply!(command, "Already opened.",);
+                    },
+                    GameState::Market => {
+                        reply!(command, "Not available in the market.");
+                    },
+                    GameState::Paused => {
+                        reply!(command, "Not available in the pause menu.");
+                    },
+                    _ => {
+                        reply!(command, "How did you time this, seriously?");
+                    },
+                }
+            },
+            LevelUpScreenCommands::Close => {
+                match game_state.get() {
+                    GameState::LevelUpScreen => {
+                        log::info!("closing the level up screen");
+                        commands.remove_resource::<LevelUpScreenState>();
+                        game_state_stack.pop();
+                        next_game_state.set(GameState::Transition);
+                        reply!(command, "Closed.");
+                    },
+                    GameState::Playing => {
+                        reply!(command, "Already closed.");
+                    },
+                    GameState::Market => {
+                        reply!(command, "Not available in the market.");
+                    },
+                    GameState::Paused => {
+                        reply!(command, "Not available in the pause menu.");
+                    },
+                    _ => {
+                        reply!(command, "How did you time this, seriously?");
+                    },
+                }
+            },
+            LevelUpScreenCommands::Show => {
+                let level_up_screen_state = match level_up_screen_state {
+                    Some(resource) => resource,
+                    None => {
+                        reply!(command, "Not available outside the level up screen.");
+                        reply!(command, "");
+                        return;
+                    },
+                };
+
+                for (index, id) in level_up_screen_state.offered_perk_ids.iter().enumerate() {
+                    let position = NonZeroUsize::new(index + 1).unwrap();
+                    reply!(command, "{}) {}", position, id);
+                }
+            },
+            LevelUpScreenCommands::Select { position } => {
+                let level_up_screen_state = match level_up_screen_state {
+                    Some(resource) if level_up_screen_reason.is_some() => resource,
+                    _ => {
+                        reply!(command, "Not available outside the level up screen.");
+                        reply!(command, "");
+                        return;
+                    },
+                };
+                let mut level_up_screen_reason = level_up_screen_reason.unwrap();
+
+                let index = position.get() - 1;
+                if level_up_screen_state.offered_perk_ids.len() <= index {
+                    reply!(command, "Failed to select perk {} as it doesn't exist.", position);
+                    reply!(command, "");
+                    return;
+                }
+
+                let selected_perk_id = &level_up_screen_state.offered_perk_ids[index];
+                let selected_perk = match perk_registry.find_perk_by_id(selected_perk_id) {
+                    Some(perk) => perk,
+                    None => {
+                        reply!(
+                            command,
+                            "Failed to select perk {:?} as it not registered.",
+                            position,
+                        );
+                        reply!(command, "");
+                        return;
+                    },
+                };
+
+                let obtain_lose_perk_reason = match level_up_screen_reason.deref_mut() {
+                    LevelUpScreenReason::LevelingUp { to } => {
+                        let result = ObtainLosePerkReason::LevelingUp { to: *to };
+                        to.0 = to.0.checked_add(1).unwrap_or(NonZeroU16::MAX);
+                        result
+                    },
+                    LevelUpScreenReason::Cheating => ObtainLosePerkReason::Cheating,
+                };
+
+                commands.remove_resource::<LevelUpScreenState>();
+                commands.run_system_with_input(
+                    registered_systems.perk.obtain_perk,
+                    (selected_perk.deref().clone(), obtain_lose_perk_reason),
+                );
+
+                game_state_stack.pop();
+                next_game_state.set(GameState::Transition);
+
+                reply!(command, "Selected.");
+            },
+            LevelUpScreenCommands::Reroll => {
+                commands.run_system(registered_systems.level_up_screen.reroll_perks);
+                reply!(command, "Rerolled.");
+            },
+            LevelUpScreenCommands::Offer { position, perk } => {
+                let mut level_up_screen_state = match level_up_screen_state {
+                    Some(resource) => resource,
+                    None => {
+                        reply!(command, "Not available outside the level up screen.");
+                        reply!(command, "");
+                        return;
+                    },
+                };
+
+                let index = position.get() - 1;
+                if level_up_screen_state.offered_perk_ids.len() <= index {
+                    reply!(command, "Failed to offer perk {} as it doesn't exist.", position);
+                    reply!(command, "");
+                    return;
+                }
+
+                if perk_registry.find_perk_by_id(&perk).is_none() {
+                    reply!(command, "Failed to offer {:?} as it doesn't exist.", perk);
+                    reply!(command, "");
+                    return;
+                }
+
+                log::info!("offering {:?} as perk {} in the level up screen", perk, position);
+                level_up_screen_state.offered_perk_ids[index] = perk;
+                reply!(command, "Done.");
+            },
+            LevelUpScreenCommands::NumberOfPerks { subcommand } => {
+                match subcommand {
+                    NumberOfPerksCommands::Show => {
+                        reply!(command, "{}", level_up_screen_configuration.number_of_perks);
+                    },
+                    NumberOfPerksCommands::Set { number_of_perks } => {
+                        log::info!(
+                            "setting the number of perks in the level up screen to {}",
+                            number_of_perks,
+                        );
+                        level_up_screen_configuration.number_of_perks = number_of_perks;
+                        reply!(command, "Done.");
+                    },
+                }
+            },
+            LevelUpScreenCommands::RerollCost { subcommand } => {
+                match subcommand {
+                    RerollCostCommands::Show => {
+                        reply!(command, "{}", level_up_screen_configuration.reroll_cost());
+                    },
+                    RerollCostCommands::Model { subcommand } => {
+                        match subcommand {
+                            RerollCostModelCommands::Show => {
+                                reply!(command, "{}", level_up_screen_configuration.reroll_cost);
+                            },
+                            RerollCostModelCommands::Set { subcommand } => {
+                                match subcommand {
+                                    RerollCostModelSetCommands::Constant { cost } => {
+                                        level_up_screen_configuration.reroll_cost =
+                                            LevelUpScreenRerollCost::constant(Balance(cost));
+                                    },
+                                    RerollCostModelSetCommands::Linear {
+                                        base,
+                                        increase,
+                                        step,
+                                        max,
+                                    } => {
+                                        level_up_screen_configuration.reroll_cost =
+                                            LevelUpScreenRerollCost::linear(
+                                                Balance(base),
+                                                Balance(increase),
+                                                max.map(Balance),
+                                            );
+                                        if let Some(step) = step {
+                                            level_up_screen_configuration
+                                                .reroll_cost
+                                                .set_step(step);
+                                        }
+                                    },
+                                    RerollCostModelSetCommands::Exponential {
+                                        base,
+                                        factor,
+                                        step,
+                                        max,
+                                    } => {
+                                        if factor < 1.00 {
+                                            reply!(command, "Factor cannot be smaller than 1.00.");
+                                            reply!(command, "");
+                                            return;
+                                        }
+                                        level_up_screen_configuration.reroll_cost =
+                                            LevelUpScreenRerollCost::exponential(
+                                                Balance(base),
+                                                factor,
+                                                max.map(Balance),
+                                            );
+                                        if let Some(step) = step {
+                                            level_up_screen_configuration
+                                                .reroll_cost
+                                                .set_step(step);
+                                        }
+                                    },
+                                }
+                                log::info!(
+                                    "setting the reroll cost model of the level up screen to {}",
+                                    level_up_screen_configuration.reroll_cost,
+                                );
+                                reply!(command, "Done.");
+                            },
+                        }
+                    },
+                }
+            },
+        }
+        reply!(command, "");
+    }
+}
 
 
 /// Spawns the enemy selection screen.
@@ -222,87 +478,116 @@ pub fn despawn_level_up_screen(
 }
 
 
+/// Rerolls perks offered in the level up screen.
 pub fn reroll_perks(
     mut commands: Commands,
     mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
     perk_registry: Res<PerkRegistry>,
     level_up_screen_configuration: Res<LevelUpScreenConfiguration>,
+    level_up_screen_state: Option<ResMut<LevelUpScreenState>>,
 ) {
-    let mut new_offered_perk_ids = Vec::new();
+    let mut new_level_up_screen_state = match level_up_screen_state {
+        Some(mut level_up_screen_state) => std::mem::take(level_up_screen_state.deref_mut()),
+        None => LevelUpScreenState::default(),
+    };
 
-    let mut commonness_of_perks_that_can_be_offered = Vec::new();
-    for entry in perk_registry.iter() {
-        let commonness = entry.perk.commonness;
-        if commonness != 0 {
-            commonness_of_perks_that_can_be_offered.push((entry.perk.id(), commonness));
-        }
-    }
-    commonness_of_perks_that_can_be_offered.sort_by(|(id1, commonness1), (id2, commonness)| {
-        if commonness1 == commonness { id1.cmp(id2) } else { commonness1.cmp(commonness).reverse() }
-    });
+    let expected_number_of_perks = level_up_screen_configuration.number_of_perks as usize;
+    let mut actual_number_of_perks = new_level_up_screen_state.offered_perk_ids.len();
 
-    let number_of_perks_to_offer_randomly = level_up_screen_configuration.number_of_perks;
-    if commonness_of_perks_that_can_be_offered.is_empty() {
-        log::error!(
-            "unable to select {} perk{} to offer in the level up screen \
-                as no perk is eligible to be offered in the ",
-            number_of_perks_to_offer_randomly,
-            if number_of_perks_to_offer_randomly == 1 { "" } else { "s" },
-        );
+    if expected_number_of_perks < actual_number_of_perks {
+        // this can only happen if number of perks to offer
+        // has changed when the level up screen is open.
+
+        // in this case, number of perks to offer is reduced,
+        // so we can just truncate the offered perk ids and call it a day.
+        new_level_up_screen_state.offered_perk_ids.truncate(expected_number_of_perks);
     } else {
-        let total_commonness = commonness_of_perks_that_can_be_offered
-            .iter()
-            .map(|(_, commonness)| commonness)
-            .sum::<u64>();
-
-        let mut probability_table = Table::new();
-        probability_table.add_row(row![c -> "Perk", c -> "Chance", c -> "Probability"]);
-        for (id, commonness) in commonness_of_perks_that_can_be_offered.iter() {
-            probability_table.add_row(row![
-                l -> id,
-                r -> format!("({} / {})", commonness, total_commonness),
-                r -> format!(
-                    "{:.6}%",
-                    ((*commonness as f64) / (total_commonness as f64)) * 100.00,
-                )
-            ]);
+        if expected_number_of_perks == actual_number_of_perks {
+            // we're doing a regular reroll, so we need to reset everything.
+            new_level_up_screen_state.offered_perk_ids.clear();
+            actual_number_of_perks = 0;
         }
-        let probability_table = probability_table.to_string();
 
-        log::info!(
-            "perk{} to offer will be selected randomly with these probabilities:\n{}",
-            if number_of_perks_to_offer_randomly == 1 { "" } else { "s" },
-            probability_table.trim_end(),
-        );
+        let mut commonness_of_perks_that_can_be_offered = Vec::new();
+        for entry in perk_registry.iter() {
+            let commonness = entry.perk.commonness;
+            if commonness != 0 {
+                commonness_of_perks_that_can_be_offered.push((entry.perk.id(), commonness));
+            }
+        }
+        commonness_of_perks_that_can_be_offered.sort_by(|(id1, commonness1), (id2, commonness)| {
+            if commonness1 == commonness {
+                id1.cmp(id2)
+            } else {
+                commonness1.cmp(commonness).reverse()
+            }
+        });
 
-        while new_offered_perk_ids.len() != (level_up_screen_configuration.number_of_perks as usize)
-        {
-            match commonness_of_perks_that_can_be_offered
-                .choose_weighted(rng.deref_mut(), |(_, commonness)| *commonness)
-            {
-                Ok((id, commonness)) => {
-                    log::info!(
-                        "offering randomly selected \"{}\" \
-                            with {:.6}% probability ({} / {})",
-                        id,
+        let additional_perks_to_offer = expected_number_of_perks - actual_number_of_perks;
+        if commonness_of_perks_that_can_be_offered.is_empty() {
+            log::error!(
+                "unable to select {}{} perk{} to offer in the level up screen \
+                as no perk is eligible to be offered in the level up screen",
+                additional_perks_to_offer,
+                if actual_number_of_perks == 0 { "" } else { " more" },
+                if additional_perks_to_offer == 1 { "" } else { "s" },
+            );
+        } else if additional_perks_to_offer > 0 {
+            let total_commonness = commonness_of_perks_that_can_be_offered
+                .iter()
+                .map(|(_, commonness)| commonness)
+                .sum::<u64>();
+
+            let mut probability_table = Table::new();
+            probability_table.add_row(row![c -> "Perk", c -> "Chance", c -> "Probability"]);
+            for (id, commonness) in commonness_of_perks_that_can_be_offered.iter() {
+                probability_table.add_row(row![
+                    l -> id,
+                    r -> format!("({} / {})", commonness, total_commonness),
+                    r -> format!(
+                        "{:.6}%",
                         ((*commonness as f64) / (total_commonness as f64)) * 100.00,
-                        commonness,
-                        total_commonness,
-                    );
-                    new_offered_perk_ids.push((*id).clone())
-                },
-                Err(error) => {
-                    log::error!(
-                        "unable to choose a random perk to offer in the level up screen ({})",
-                        error,
-                    );
-                    break;
-                },
+                    )
+                ]);
+            }
+            let probability_table = probability_table.to_string();
+
+            log::info!(
+                "{}{} perk{} to offer will be selected randomly with these probabilities:\n{}",
+                additional_perks_to_offer,
+                if actual_number_of_perks == 0 { "" } else { " more" },
+                if additional_perks_to_offer == 1 { "" } else { "s" },
+                probability_table.trim_end(),
+            );
+
+            for _ in 0..additional_perks_to_offer {
+                match commonness_of_perks_that_can_be_offered
+                    .choose_weighted(rng.deref_mut(), |(_, commonness)| *commonness)
+                {
+                    Ok((id, commonness)) => {
+                        log::info!(
+                            "offering randomly selected \"{}\" \
+                            with {:.6}% probability ({} / {})",
+                            id,
+                            ((*commonness as f64) / (total_commonness as f64)) * 100.00,
+                            commonness,
+                            total_commonness,
+                        );
+                        new_level_up_screen_state.offered_perk_ids.push((*id).clone())
+                    },
+                    Err(error) => {
+                        log::error!(
+                            "unable to choose a random perk to offer in the level up screen ({})",
+                            error,
+                        );
+                        break;
+                    },
+                }
             }
         }
     }
 
-    commands.insert_resource(LevelUpScreenState { offered_perk_ids: new_offered_perk_ids });
+    commands.insert_resource(new_level_up_screen_state);
 }
 
 

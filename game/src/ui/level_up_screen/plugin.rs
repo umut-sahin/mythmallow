@@ -1,6 +1,9 @@
 use crate::{
     prelude::*,
-    ui::level_up_screen::systems::*,
+    ui::level_up_screen::{
+        commands::*,
+        systems::*,
+    },
 };
 
 /// Plugin for managing the level up screen.
@@ -27,6 +30,9 @@ impl Plugin for LevelUpScreenPlugin {
 
         // Insert resources.
         app.init_resource::<LevelUpScreenConfiguration>();
+
+        // Add console commands.
+        app.add_console_command::<LevelUpScreenCommand, _>(apply_level_up_screen_command);
 
         // Add systems.
         app.add_systems(OnEnter(GameState::LevelUpScreen), spawn_level_up_screen);
@@ -74,6 +80,31 @@ impl Plugin for LevelUpScreenPlugin {
                             || balance.is_changed()
                     },
                 ),
+            ),
+        );
+        app.add_systems(
+            Update,
+            reroll_perks.run_if(
+                |app_state: Res<State<AppState>>,
+                 game_state: Res<State<GameState>>,
+                 level_up_screen_configuration: Res<LevelUpScreenConfiguration>,
+                 level_up_screen_state: Option<Res<LevelUpScreenState>>| {
+                    if *app_state.get() != AppState::Game {
+                        return false;
+                    }
+
+                    if *game_state.get() != GameState::LevelUpScreen {
+                        return false;
+                    }
+
+                    match level_up_screen_state {
+                        Some(level_up_screen_state) => {
+                            level_up_screen_state.offered_perk_ids.len()
+                                != (level_up_screen_configuration.number_of_perks as usize)
+                        },
+                        None => true,
+                    }
+                },
             ),
         );
         app.add_systems(Update, navigation.in_set(LevelUpScreenSystems));
