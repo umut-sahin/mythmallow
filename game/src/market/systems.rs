@@ -112,7 +112,7 @@ pub fn apply_market_command(
                 }
 
                 if item_registry.find_item_by_id(&item).is_none() {
-                    reply!(command, "Failed to offer {} as it doesn't exist.", item);
+                    reply!(command, "Failed to offer {:?} as it doesn't exist.", item);
                     reply!(command, "");
                     return;
                 }
@@ -130,10 +130,13 @@ pub fn apply_market_command(
                         reply!(command, "Opened.");
                     },
                     GameState::Market => {
-                        reply!(command, "Failed to open the market as it's already opened.");
+                        reply!(command, "Already opened.");
+                    },
+                    GameState::LevelUpScreen => {
+                        reply!(command, "Not available in the level up screen.");
                     },
                     GameState::Paused => {
-                        reply!(command, "Not available when paused.");
+                        reply!(command, "Not available in the pause menu.");
                     },
                     _ => {
                         reply!(command, "How did you time this, seriously?");
@@ -149,10 +152,13 @@ pub fn apply_market_command(
                         reply!(command, "Closed.");
                     },
                     GameState::Playing => {
-                        reply!(command, "Failed to close the market as it's already closed.");
+                        reply!(command, "Already closed.");
+                    },
+                    GameState::LevelUpScreen => {
+                        reply!(command, "Not available in the level up screen.");
                     },
                     GameState::Paused => {
-                        reply!(command, "Not available when paused.");
+                        reply!(command, "Not available in the pause menu.");
                     },
                     _ => {
                         reply!(command, "How did you time this, seriously?");
