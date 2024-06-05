@@ -16,7 +16,7 @@ pub fn spawn_main_menu(
     let button_style = styles::button();
     let button_colors = WidgetColors::button();
     let button_font = asset_server.load("fonts/FiraSans-Bold.ttf");
-    let button_size = BUTTON_FONT_SIZE;
+    let button_font_size = BUTTON_FONT_SIZE;
 
     let play_button = Widget::button(
         &mut commands,
@@ -29,7 +29,7 @@ pub fn spawn_main_menu(
         &button_style,
         button_colors,
         &button_font,
-        button_size,
+        button_font_size,
         "Play",
     );
     let quit_button = Widget::button(
@@ -38,7 +38,7 @@ pub fn spawn_main_menu(
         &button_style,
         button_colors,
         &button_font,
-        button_size,
+        button_font_size,
         "Quit",
     );
 
@@ -66,18 +66,7 @@ pub fn spawn_main_menu(
             action_state,
             input_map: main_menu_action_input_map.clone(),
         },
-        NodeBundle {
-            style: Style {
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
-                flex_direction: FlexDirection::Column,
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                row_gap: Val::Px(ROW_GAP),
-                ..default()
-            },
-            ..default()
-        },
+        NodeBundle { style: styles::root(), ..default() },
     ));
 
     for entity in entities {
