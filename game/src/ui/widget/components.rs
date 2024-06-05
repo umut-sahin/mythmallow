@@ -54,7 +54,7 @@ impl Widget {
         style: &Style,
         color: WidgetColors,
         font: &Handle<Font>,
-        size: f32,
+        font_size: f32,
         text: impl AsRef<str>,
     ) -> Entity {
         commands
@@ -74,11 +74,7 @@ impl Widget {
                         text: Text {
                             sections: vec![TextSection::new(
                                 text.as_ref(),
-                                TextStyle {
-                                    font: font.clone(),
-                                    font_size: size,
-                                    color: color.text,
-                                },
+                                TextStyle { font: font.clone(), font_size, color: color.text },
                             )],
                             justify: JustifyText::Center,
                             ..default()

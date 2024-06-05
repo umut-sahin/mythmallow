@@ -17,7 +17,7 @@ pub fn spawn_game_over_menu(
     let button_style = styles::button();
     let button_colors = WidgetColors::button();
     let button_font = asset_server.load("fonts/FiraSans-Bold.ttf");
-    let button_size = BUTTON_FONT_SIZE;
+    let button_font_size = BUTTON_FONT_SIZE;
 
     let mut widgets = Vec::with_capacity(3);
 
@@ -34,7 +34,7 @@ pub fn spawn_game_over_menu(
                 &button_style,
                 button_colors,
                 &button_font,
-                button_size,
+                button_font_size,
                 "Play Again",
             );
             widgets.push(play_again_button);
@@ -53,7 +53,7 @@ pub fn spawn_game_over_menu(
                 &button_style,
                 button_colors,
                 &button_font,
-                button_size,
+                button_font_size,
                 "Retry",
             );
             widgets.push(retry_button);
@@ -72,7 +72,7 @@ pub fn spawn_game_over_menu(
         &button_style,
         button_colors,
         &button_font,
-        button_size,
+        button_font_size,
         "Return to main menu",
     );
     widgets.push(return_to_main_menu_button);
@@ -83,7 +83,7 @@ pub fn spawn_game_over_menu(
         &button_style,
         button_colors,
         &button_font,
-        button_size,
+        button_font_size,
         "Quit",
     );
     widgets.push(quit_button);
@@ -126,18 +126,7 @@ pub fn spawn_game_over_menu(
             action_state,
             input_map: game_over_menu_action_input_map.clone(),
         },
-        NodeBundle {
-            style: Style {
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
-                flex_direction: FlexDirection::Column,
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                row_gap: Val::Px(ROW_GAP),
-                ..default()
-            },
-            ..default()
-        },
+        NodeBundle { style: styles::root(), ..default() },
     ));
 
     game_over_menu.add_child(title);
