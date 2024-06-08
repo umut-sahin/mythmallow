@@ -4,6 +4,25 @@ use crate::{
 };
 
 
+/// Database of registered configuration systems.
+#[derive(Clone, Copy, Debug, Resource)]
+pub struct RegisteredConfigurationSystems {
+    pub set_locale: SystemId<LanguageIdentifier>,
+}
+
+impl RegisteredConfigurationSystems {
+    /// Creates the database.
+    pub fn new(app: &mut App, systems: Entity) -> RegisteredConfigurationSystems {
+        use super::systems::*;
+
+        let set_locale = app.world.register_system(set_locale);
+        RegisteredSystems::attach(app, systems, set_locale, "set_locale");
+
+        RegisteredConfigurationSystems { set_locale }
+    }
+}
+
+
 /// Resource for the arguments of the application.
 #[derive(Debug, Reflect, Resource)]
 pub struct Args {
@@ -321,6 +340,8 @@ impl Args {
 #[derive(Debug, Deserialize, Reflect, Resource, Serialize)]
 #[serde(default)]
 pub struct GeneralSettings {
+    pub locale: String,
+
     pub pause_on_losing_focus: bool,
     pub show_diagnostics_overlay: bool,
 
@@ -354,9 +375,18 @@ impl GeneralSettings {
     }
 }
 
+impl GeneralSettings {
+    /// Gets the default general settings of the game.
+    pub fn locale(&self) -> Option<DefaultLocale> {
+        self.locale.parse::<LanguageIdentifier>().map(DefaultLocale).ok()
+    }
+}
+
 impl Default for GeneralSettings {
     fn default() -> GeneralSettings {
         GeneralSettings {
+            locale: DefaultLocale::get(&SupportedLocales::get()).identifier().to_string(),
+
             pause_on_losing_focus: true,
             show_diagnostics_overlay: false,
 
@@ -365,6 +395,69 @@ impl Default for GeneralSettings {
         }
     }
 }
+
+
+/// Supported locales of the game.
+#[derive(Clone, Default, Deref, Resource)]
+pub struct SupportedLocales(pub Vec<LanguageIdentifier>);
+
+impl SupportedLocales {
+    /// Gets the supported locales.
+    pub fn get() -> SupportedLocales {
+        SupportedLocales(
+            ["en-US", "tr"]
+                .iter()
+                .map(|s| s.parse::<LanguageIdentifier>().expect("invalid locale constant"))
+                .collect(),
+        )
+    }
+}
+
+
+/// Default locale of the game in the current platform.
+#[derive(Clone, Deref, Resource)]
+pub struct DefaultLocale(pub LanguageIdentifier);
+
+impl DefaultLocale {
+    /// Gets the default locale.
+    pub fn get(supported_locales: &SupportedLocales) -> DefaultLocale {
+        let default_locale = sys_locale::get_locale()
+            .unwrap_or_else(|| "en-US".to_owned())
+            .parse::<LanguageIdentifier>()
+            .map(DefaultLocale);
+
+        if let Ok(default_locale) = default_locale {
+            if supported_locales.contains(&default_locale.0) {
+                return default_locale;
+            }
+        }
+
+        DefaultLocale("en-US".parse::<LanguageIdentifier>().unwrap())
+    }
+}
+
+impl DefaultLocale {
+    /// Gets the identifier of the default locale.
+    pub fn identifier(&self) -> LanguageIdentifier {
+        self.0.clone()
+    }
+}
+
+
+/// Asset locations of locale assets.
+#[derive(Debug, Default, Deref, DerefMut, Resource, Reflect)]
+#[reflect(Resource)]
+pub struct LocaleAssets(pub Vec<&'static str>);
+
+
+/// Asset handles of locale assets.
+#[derive(Clone, Default, Deref, Resource)]
+pub struct LocaleAssetHandles(pub Vec<UntypedHandle>);
+
+
+/// Locales folder.
+#[derive(Clone, Default, Deref, Resource)]
+pub struct LocalesFolder(pub Option<Handle<LoadedFolder>>);
 
 
 /// Resource for the key bindings of the application.

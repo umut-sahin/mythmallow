@@ -28,10 +28,10 @@ pub struct MythmallowPlugin;
 impl Plugin for MythmallowPlugin {
     fn build(&self, app: &mut App) {
         // Add sub-plugins.
+        app.add_plugins(ConsolePlugin);
         app.add_plugins(ConfigurationPlugin);
         app.add_plugins(CorePlugin);
         app.add_plugins(InputPlugin);
-        app.add_plugins(ConsolePlugin);
         app.add_plugins(CameraPlugin);
         app.add_plugins(UiPlugin);
         app.add_plugins(PhysicsPlugin);

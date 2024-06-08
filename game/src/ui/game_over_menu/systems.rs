@@ -2,6 +2,7 @@ use crate::{
     prelude::*,
     ui::game_over_menu::{
         constants::*,
+        localization,
         styles,
     },
 };
@@ -13,6 +14,7 @@ pub fn spawn_game_over_menu(
     asset_server: Res<AssetServer>,
     game_over_menu_action_input_map: Res<InputMap<GameOverMenuAction>>,
     game_result: Res<GameResult>,
+    localization: Res<Localization>,
 ) {
     let button_style = styles::button();
     let button_colors = WidgetColors::button();
@@ -35,11 +37,12 @@ pub fn spawn_game_over_menu(
                 button_colors,
                 &button_font,
                 button_font_size,
-                "Play Again",
+                localization::play_again_button(),
+                &localization,
             );
             widgets.push(play_again_button);
 
-            "You won!"
+            localization::won_title()
         },
         GameResult::Lost => {
             let retry_button = Widget::button(
@@ -54,11 +57,12 @@ pub fn spawn_game_over_menu(
                 button_colors,
                 &button_font,
                 button_font_size,
-                "Retry",
+                localization::retry_button(),
+                &localization,
             );
             widgets.push(retry_button);
 
-            "You lost!"
+            localization::lost_title()
         },
     };
 
@@ -73,7 +77,8 @@ pub fn spawn_game_over_menu(
         button_colors,
         &button_font,
         button_font_size,
-        "Return to main menu",
+        localization::return_to_main_menu_button(),
+        &localization,
     );
     widgets.push(return_to_main_menu_button);
 
@@ -84,7 +89,8 @@ pub fn spawn_game_over_menu(
         button_colors,
         &button_font,
         button_font_size,
-        "Quit",
+        localization::quit_button(),
+        &localization,
     );
     widgets.push(quit_button);
 
@@ -103,11 +109,16 @@ pub fn spawn_game_over_menu(
             TextBundle {
                 style: styles::title(),
                 text: Text::from_section(
-                    title_text,
-                    TextStyle { font_size: TITLE_FONT_SIZE, ..default() },
+                    title_text.get(&localization),
+                    TextStyle {
+                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                        font_size: TITLE_FONT_SIZE,
+                        ..default()
+                    },
                 ),
                 ..default()
             },
+            title_text,
         ))
         .id();
 

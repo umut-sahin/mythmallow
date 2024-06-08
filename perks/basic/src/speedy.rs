@@ -17,12 +17,22 @@ impl IPerk for Speedy {
         format_smolstr!("speedy-{}", self.rarity.id())
     }
 
-    fn name(&self) -> SmolStr {
-        format_smolstr!("Speedy {}", self.rarity.name())
+    fn name(&self) -> LocalizedText {
+        let rarity = self.rarity.name();
+        LocalizedText::Localized {
+            key: "speedy-name",
+            args: smallvec![("rarity", rarity.into())],
+            fallback: format!("Speedy {}", rarity).into(),
+        }
     }
 
-    fn description(&self) -> SmolStr {
-        format_smolstr!("+{:.0}% Speed", self.delta_speed_multiplier() * 100.00)
+    fn description(&self) -> LocalizedText {
+        let bonus = self.delta_speed_multiplier() * 100.00;
+        LocalizedText::Localized {
+            key: "speedy-description",
+            args: smallvec![("bonus", format_smolstr!("{:.0}", bonus))],
+            fallback: format!("+{:.0}% Speed", bonus).into(),
+        }
     }
 
     fn rarity(&self) -> Rarity {

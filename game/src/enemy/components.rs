@@ -47,7 +47,7 @@ impl<E: Component + IEnemy> EnemyBundle<E> {
     ) -> EntityCommands<'c> {
         counter.increment();
 
-        let name = self.enemy.name();
+        let id = self.enemy.id();
 
         let contact_damage = self.enemy.contact_damage();
         let health = self.enemy.health();
@@ -71,7 +71,7 @@ impl<E: Component + IEnemy> EnemyBundle<E> {
 
         let mut enemy = commands.spawn((
             // Tags
-            Name::new(format!("Enemy {} [{}]", counter.get(), name)),
+            Name::new(format!("Enemy {} [{}]", counter.get(), id)),
             Enemy,
             // Properties
             self,

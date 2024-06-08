@@ -1,0 +1,16 @@
+locale: tr
+isolation: false
+resources:
+  - ui/game_over_menu.ftl
+  - ui/hud.ftl
+  - ui/level_up_screen.ftl
+  - ui/main_menu.ftl
+  - ui/market.ftl
+  - ui/pause_menu.ftl
+  - ui/player_selection_screen.ftl
+  - ui/settings_menu.ftl
+  - content/enemies/sweet.ftl
+  - content/items/greek.ftl
+  - content/modes/survival.ftl
+  - content/perks/basic.ftl
+  - content/players/greek.ftl

@@ -10,7 +10,11 @@ impl IMythology for GreekMythology {
         "greek".into()
     }
 
-    fn name(&self) -> SmolStr {
-        "Greek".into()
+    fn name(&self) -> LocalizedText {
+        LocalizedText::Localized {
+            key: "greek-mythology-name",
+            args: smallvec![],
+            fallback: "Greek Mythology".into(),
+        }
     }
 }

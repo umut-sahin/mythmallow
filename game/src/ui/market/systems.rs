@@ -2,6 +2,7 @@ use crate::{
     prelude::*,
     ui::market::{
         constants::*,
+        localization,
         styles,
     },
 };
@@ -17,6 +18,7 @@ pub fn spawn_market(
     market_configuration: Res<MarketConfiguration>,
     market_state: Res<MarketState>,
     previously_selected_widget: Option<Res<PreviouslySelectedMarketWidget>>,
+    localization: Res<Localization>,
 ) {
     if !market_query.is_empty() {
         if let Some(previously_selected_widget) = previously_selected_widget {
@@ -158,7 +160,8 @@ pub fn spawn_market(
                     refresh_button_colors,
                     &refresh_button_font,
                     refresh_button_size,
-                    format!("Refresh - {}", market_configuration.refresh_cost(&market_state)),
+                    localization::refresh_button(market_configuration.refresh_cost(&market_state)),
+                    &localization,
                 );
 
                 let raw_refresh_cost = if market_configuration.free_refreshes > 0 {
@@ -220,7 +223,8 @@ pub fn spawn_market(
             continue_button_colors,
             &continue_button_font,
             continue_button_size,
-            "Continue",
+            localization::continue_button(),
+            &localization,
         );
 
         market_children.push(continue_button);
@@ -279,7 +283,7 @@ pub fn update_balance_text(
 pub fn update_refresh_button(
     mut commands: Commands,
     mut refresh_button_query: Query<(Entity, &mut MarketRefreshButton)>,
-    mut text_query: Query<(&Parent, &mut Text)>,
+    mut text_query: Query<(&Parent, &mut LocalizedText)>,
     balance: Res<Balance>,
     market_configuration: Res<MarketConfiguration>,
     market_state: Res<MarketState>,
@@ -294,7 +298,7 @@ pub fn update_refresh_button(
 
     for (parent_entity, mut refresh_button_text) in text_query.iter_mut() {
         if parent_entity.get() == refresh_button_entity {
-            refresh_button_text.sections[0].value = format!("Refresh - {}", refresh_cost);
+            *refresh_button_text = localization::refresh_button(refresh_cost);
             break;
         }
     }
@@ -317,6 +321,7 @@ pub fn update_offered_items(
     market_state: Res<MarketState>,
     mut market_widgets: ResMut<MarketWidgets>,
     item_registry: Res<ItemRegistry>,
+    localization: Res<Localization>,
 ) {
     let market_items_container_entity = match market_items_container_query.get_single() {
         Ok(query_result) => query_result,
@@ -352,7 +357,7 @@ pub fn update_offered_items(
 
         let item_container = commands
             .spawn((
-                Name::new(format!("Item {}", item_position)),
+                Name::new(format!("Item {} [{}]", item_position, item_id)),
                 MarketItemContainer,
                 NodeBundle { style: item_container_style.clone(), ..default() },
             ))
@@ -385,6 +390,7 @@ pub fn update_offered_items(
                 ))
                 .id();
 
+            let name = item.name();
             let item_name = commands
                 .spawn((
                     Name::new("Name"),
@@ -392,7 +398,7 @@ pub fn update_offered_items(
                     TextBundle {
                         text: Text {
                             sections: vec![TextSection::new(
-                                item.name(),
+                                name.get(&localization),
                                 TextStyle {
                                     font: item_name_font.clone(),
                                     font_size: item_name_size,
@@ -405,6 +411,7 @@ pub fn update_offered_items(
                         style: item_name_style.clone(),
                         ..default()
                     },
+                    name,
                 ))
                 .id();
 
@@ -419,6 +426,7 @@ pub fn update_offered_items(
                 &buy_button_font,
                 buy_button_size,
                 buy_button_label,
+                &localization,
             );
 
             buy_widgets.push(buy_button);
@@ -441,7 +449,12 @@ pub fn update_offered_items(
             lock_button_colors,
             &lock_button_font,
             lock_button_size,
-            if market_state.is_locked(item_position) { "Unlock" } else { "Lock" },
+            if market_state.is_locked(item_position) {
+                localization::unlock_button()
+            } else {
+                localization::lock_button()
+            },
+            &localization,
         );
 
         lock_widgets.push(lock_button);

@@ -11,6 +11,7 @@ use crate::{
         market::plugin::MarketPlugin,
         pause_menu::plugin::PauseMenuPlugin,
         player_selection_screen::plugin::PlayerSelectionScreenPlugin,
+        settings_menu::plugin::SettingsMenuPlugin,
         widget::plugin::WidgetPlugin,
     },
 };
@@ -23,6 +24,7 @@ impl Plugin for UiPlugin {
         // Add sub-plugins.
         app.add_plugins(WidgetPlugin);
         app.add_plugins(MainMenuPlugin);
+        app.add_plugins(SettingsMenuPlugin);
         app.add_plugins(GameModeSelectionScreenPlugin);
         app.add_plugins(PlayerSelectionScreenPlugin);
         app.add_plugins(EnemySelectionScreenPlugin);

@@ -17,12 +17,22 @@ impl IPerk for Healthy {
         format_smolstr!("healthy-{}", self.rarity.id())
     }
 
-    fn name(&self) -> SmolStr {
-        format_smolstr!("Healthy {}", self.rarity.name())
+    fn name(&self) -> LocalizedText {
+        let rarity = self.rarity.name();
+        LocalizedText::Localized {
+            key: "healthy-name",
+            args: smallvec![("rarity", rarity.into())],
+            fallback: format!("Healthy {}", rarity).into(),
+        }
     }
 
-    fn description(&self) -> SmolStr {
-        format_smolstr!("+{} Health", self.health_bonus())
+    fn description(&self) -> LocalizedText {
+        let bonus = self.health_bonus();
+        LocalizedText::Localized {
+            key: "healthy-description",
+            args: smallvec![("bonus", format_smolstr!("{}", bonus))],
+            fallback: format!("+{} Health", bonus).into(),
+        }
     }
 
     fn rarity(&self) -> Rarity {

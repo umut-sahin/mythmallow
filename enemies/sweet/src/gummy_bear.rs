@@ -31,8 +31,12 @@ impl IEnemy for GummyBear {
         "gummy-bear".into()
     }
 
-    fn name(&self) -> SmolStr {
-        "Gummy Bear".into()
+    fn name(&self) -> LocalizedText {
+        LocalizedText::Localized {
+            key: "gummy-bear-name",
+            args: smallvec![],
+            fallback: "Gummy Bear".into(),
+        }
     }
 
     fn contact_damage(&self) -> Option<(Damage, DamageCooldown)> {
