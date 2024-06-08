@@ -18,6 +18,11 @@ impl Plugin for WidgetPlugin {
         app.register_type::<WidgetRight>();
 
         // Add systems.
+        app.add_systems(OnEnter(LocalizationState::Ready), update_all_localized_texts);
+        app.add_systems(
+            Last,
+            update_changed_localized_texts.run_if(in_state(LocalizationState::Ready)),
+        );
         app.add_systems(
             PostUpdate,
             (

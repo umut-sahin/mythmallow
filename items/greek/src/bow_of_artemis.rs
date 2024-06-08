@@ -43,8 +43,12 @@ impl IItem for BowOfArtemis {
         "bow-of-artemis".into()
     }
 
-    fn name(&self) -> SmolStr {
-        "Bow of Artemis".into()
+    fn name(&self) -> LocalizedText {
+        LocalizedText::Localized {
+            key: "bow-of-artemis-name",
+            args: smallvec![],
+            fallback: "Bow of Artemis".into(),
+        }
     }
 
     fn is_weapon(&self) -> bool {
@@ -95,7 +99,7 @@ pub fn acquire(
 ) -> Entity {
     commands
         .spawn((
-            Name::new(format!("Item {} [{}]", inventory.items.len() + 1, item.name().to_string())),
+            Name::new(format!("Item {} [{}]", inventory.items.len() + 1, item.id())),
             item,
             MaterialMesh2dBundle {
                 mesh: meshes.add(Circle::new(SIZE)).into(),

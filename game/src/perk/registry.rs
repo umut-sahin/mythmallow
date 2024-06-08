@@ -71,7 +71,8 @@ impl PerkRegistryEntry {
 #[derive(Clone, Debug)]
 pub struct RegisteredPerk {
     pub perk: Arc<dyn IPerk>,
-    pub description: SmolStr,
+    pub name: LocalizedText,
+    pub description: LocalizedText,
     pub rarity: Rarity,
     pub commonness: u64,
 }
@@ -79,10 +80,11 @@ pub struct RegisteredPerk {
 impl RegisteredPerk {
     /// Creates a new registered perk.
     pub fn new(perk: impl IPerk) -> RegisteredPerk {
+        let name = perk.name();
         let description = perk.description();
         let rarity = perk.rarity();
         let commonness = perk.commonness();
-        RegisteredPerk { perk: Arc::new(perk), description, rarity, commonness }
+        RegisteredPerk { perk: Arc::new(perk), name, description, rarity, commonness }
     }
 }
 

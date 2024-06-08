@@ -1,6 +1,27 @@
 use crate::prelude::*;
 
 
+/// Updates all localized texts.
+pub fn update_all_localized_texts(
+    mut localized_text_query: Query<(&mut Text, &LocalizedText)>,
+    localization: Res<Localization>,
+) {
+    for (mut text, localized_text) in localized_text_query.iter_mut() {
+        text.sections[0].value = localized_text.get(&localization).to_string();
+    }
+}
+
+/// Updates changed localized texts.
+pub fn update_changed_localized_texts(
+    mut localized_text_query: Query<(&mut Text, &LocalizedText), Changed<LocalizedText>>,
+    localization: Res<Localization>,
+) {
+    for (mut text, localized_text) in localized_text_query.iter_mut() {
+        text.sections[0].value = localized_text.get(&localization).to_string();
+    }
+}
+
+
 /// Manages widget selected component on mouse wiggle.
 pub fn manage_widget_selected_on_mouse_wiggle(
     mut commands: Commands,

@@ -76,8 +76,12 @@ pub use crate::{
             components::*,
             resources::*,
         },
-        pause_menu::components::*,
+        pause_menu::{
+            components::*,
+            resources::*,
+        },
         player_selection_screen::components::*,
+        settings_menu::components::*,
         widget::components::*,
     },
 };
@@ -91,9 +95,13 @@ pub mod utils {
 
 #[doc(inline)]
 pub use {
-    bevy::ui::Display as UiDisplay,
     bevy::{
         app::AppExit,
+        asset::{
+            LoadState,
+            LoadedFolder,
+            UntypedAssetId,
+        },
         diagnostic::{
             DiagnosticsStore,
             EntityCountDiagnosticsPlugin,
@@ -121,6 +129,7 @@ pub use {
         },
         sprite::MaterialMesh2dBundle,
         transform::TransformSystem,
+        ui::Display as UiDisplay,
         utils::HashMap,
         utils::HashSet,
         window::{
@@ -137,6 +146,7 @@ pub use {
         ConsolePlugin as BevyConsolePlugin,
         ConsoleSet,
     },
+    bevy_fluent::prelude::*,
     bevy_persistent::prelude::*,
     bevy_prng::ChaCha8Rng,
     bevy_rand::prelude::*,
@@ -152,6 +162,9 @@ pub use {
         Subcommand,
     },
     core::num::NonZeroU8,
+    fluent::FluentArgs,
+    fluent_content::Content,
+    fluent_content::Request,
     itertools::Itertools,
     leafwing_input_manager::{
         action_state::ActionData,
@@ -159,7 +172,7 @@ pub use {
         prelude::*,
     },
     num_format::{
-        Locale,
+        Locale as NumLocale,
         ToFormattedString,
     },
     prettytable::{
@@ -214,6 +227,7 @@ pub use {
     strum::IntoEnumIterator,
     strum_macros::EnumIter,
     typed_builder::TypedBuilder,
+    unic_langid::LanguageIdentifier,
 };
 
 #[cfg(feature = "native")]

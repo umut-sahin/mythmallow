@@ -16,8 +16,12 @@ impl IGameMode for Survival {
         "survival".into()
     }
 
-    fn name(&self) -> SmolStr {
-        "Survival".into()
+    fn name(&self) -> LocalizedText {
+        LocalizedText::Localized {
+            key: "survival-mode-name",
+            args: smallvec![],
+            fallback: "Survival Mode".into(),
+        }
     }
 
     fn market_can_be_opened_by_player(&self) -> bool {

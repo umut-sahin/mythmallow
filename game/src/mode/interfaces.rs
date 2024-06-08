@@ -5,8 +5,8 @@ use crate::prelude::*;
 pub trait IGameMode: Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the game mode.
     fn id(&self) -> SmolStr;
-    /// Gets the name of the game mode.
-    fn name(&self) -> SmolStr;
+    /// Gets the localized name of the game mode.
+    fn name(&self) -> LocalizedText;
 
     /// Gets whether the market can be opened by the player in the game mode.
     fn market_can_be_opened_by_player(&self) -> bool;

@@ -2,6 +2,7 @@ use crate::{
     prelude::*,
     ui::hud::{
         constants::*,
+        localization,
         styles,
     },
 };
@@ -15,15 +16,16 @@ pub fn spawn_hud(
     mut health_bar_materials: ResMut<Assets<HealthBarMaterial>>,
     mut experience_bar_materials: ResMut<Assets<ExperienceBarMaterial>>,
     balance: Res<Balance>,
+    localization: Res<Localization>,
 ) {
     let (health_bar_text, experience_bar_text) = match player_query.get_single() {
         Ok((health, remaining_health, level)) => {
             (
                 format!("{} / {}", remaining_health.ceil(), health.ceil()),
-                format!("Level {}", level.0),
+                localization::experience_bar(level),
             )
         },
-        Err(_) => ("? / ?".to_owned(), "?".to_owned()),
+        Err(_) => ("? / ?".to_owned(), "?".into()),
     };
     let balance_text = format!("{}", *balance);
 
@@ -81,7 +83,7 @@ pub fn spawn_hud(
                         TextBundle {
                             text: Text {
                                 sections: vec![TextSection::new(
-                                    experience_bar_text,
+                                    experience_bar_text.get(&localization),
                                     TextStyle {
                                         font: asset_server.load("fonts/FiraSans-Bold.ttf"),
                                         font_size: EXPERIENCE_BAR_TEXT_FONT_SIZE,
@@ -93,6 +95,7 @@ pub fn spawn_hud(
                             },
                             ..default()
                         },
+                        experience_bar_text,
                     ));
                 });
 
@@ -195,7 +198,7 @@ pub fn update_experience_bar(
         (With<Player>, Or<(Changed<Experience>, Changed<Level>)>),
     >,
     experience_bar_query: Query<&Handle<ExperienceBarMaterial>, With<HudExperienceBar>>,
-    mut experience_bar_text_query: Query<&mut Text, With<HudExperienceBarText>>,
+    mut experience_bar_text_query: Query<&mut LocalizedText, With<HudExperienceBarText>>,
     mut experience_bar_materials: ResMut<Assets<ExperienceBarMaterial>>,
     experience_required_to_get_to_current_level: Res<ExperienceRequiredToGetToCurrentLevel>,
     experience_required_to_level_up: Res<ExperienceRequiredToLevelUp>,
@@ -227,7 +230,7 @@ pub fn update_experience_bar(
 
     experience_bar.percent =
         (experience_collected / experience_required_for_level_up).clamp(0.00, 1.00) as f32;
-    experience_bar_text.sections[0].value = format!("Level {}", player_level.0);
+    *experience_bar_text = localization::experience_bar(player_level);
 }
 
 /// Updates the balance.

@@ -9,6 +9,9 @@ pub struct GreekItemsPlugin;
 
 impl Plugin for GreekItemsPlugin {
     fn build(&self, app: &mut App) {
+        // Setup localization.
+        app.world.resource_mut::<LocaleAssets>().push("content/items/greek.ftl");
+
         // Add sub-plugins.
         app.add_plugins(BidentOfHadesPlugin);
         app.add_plugins(BowOfArtemisPlugin);

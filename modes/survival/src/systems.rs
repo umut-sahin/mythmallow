@@ -1,5 +1,6 @@
 use crate::{
     constants::*,
+    localization,
     prelude::*,
     styles,
 };
@@ -10,6 +11,7 @@ pub fn initialize(
     mut commands: Commands,
     hud_query: Query<Entity, With<Hud>>,
     asset_server: Res<AssetServer>,
+    localization: Res<Localization>,
 ) {
     let wave_durations = WaveDurations::new(WAVES);
     let current_wave = CurrentWave::default();
@@ -27,13 +29,14 @@ pub fn initialize(
                     NodeBundle { style: styles::current_wave_container(), ..default() },
                 ))
                 .with_children(|parent| {
+                    let text = localization::current_wave(&current_wave);
                     parent.spawn((
                         Name::new("Text"),
                         CurrentWaveText,
                         TextBundle {
                             text: Text {
                                 sections: vec![TextSection::new(
-                                    format!("Wave {}", current_wave.0),
+                                    text.get(&localization),
                                     TextStyle {
                                         font: asset_server.load("fonts/FiraSans-Bold.ttf"),
                                         font_size: CURRENT_WAVE_TEXT_FONT_SIZE,
@@ -45,6 +48,7 @@ pub fn initialize(
                             },
                             ..default()
                         },
+                        text,
                     ));
                 });
 
@@ -259,7 +263,7 @@ pub fn obtain_perk(
 /// Wins the current wave.
 pub fn win(
     mut commands: Commands,
-    mut current_wave_text_query: Query<&mut Text, With<CurrentWaveText>>,
+    mut current_wave_text_query: Query<&mut LocalizedText, With<CurrentWaveText>>,
     mut player_query: Query<(&Level, &mut RemainingHealth, &Health), With<Player>>,
     mut current_wave: ResMut<CurrentWave>,
     level_up_rewards: Res<LevelUpRewards>,
@@ -317,7 +321,7 @@ pub fn win(
         current_wave.increment();
 
         if let Ok(mut current_wave_text) = current_wave_text_query.get_single_mut() {
-            current_wave_text.sections[0].value = format!("Wave {}", current_wave.0);
+            *current_wave_text = localization::current_wave(&current_wave);
         }
     }
 }

@@ -2,6 +2,7 @@ use crate::{
     prelude::*,
     ui::pause_menu::{
         constants::*,
+        localization,
         styles,
     },
 };
@@ -10,9 +11,26 @@ use crate::{
 /// Spawns the pause menu.
 pub fn spawn_pause_menu(
     mut commands: Commands,
+    mut pause_menu_query: Query<Entity, With<PauseMenu>>,
+    mut child_query: Query<(&Parent, &mut Visibility)>,
     asset_server: Res<AssetServer>,
     pause_menu_action_input_map: Res<InputMap<PauseMenuAction>>,
+    previously_selected_widget: Option<Res<PreviouslySelectedPauseMenuWidget>>,
+    localization: Res<Localization>,
 ) {
+    if let Ok(pause_menu_entity) = pause_menu_query.get_single_mut() {
+        if let Some(previously_selected_widget) = previously_selected_widget {
+            commands.entity(previously_selected_widget.0).insert(WidgetSelected::now());
+            commands.remove_resource::<PreviouslySelectedPauseMenuWidget>();
+        }
+        for (parent, mut visibility) in child_query.iter_mut() {
+            if parent.get() == pause_menu_entity {
+                *visibility = Visibility::Visible;
+            }
+        }
+        return;
+    }
+
     let button_style = styles::button();
     let button_colors = WidgetColors::button();
     let button_font = asset_server.load("fonts/FiraSans-Bold.ttf");
@@ -30,7 +48,18 @@ pub fn spawn_pause_menu(
         button_colors,
         &button_font,
         button_font_size,
-        "Resume",
+        localization::resume_button(),
+        &localization,
+    );
+    let settings_button = Widget::button(
+        &mut commands,
+        (Name::new("Settings Button"), PauseMenuSettingsButton, Widget::default()),
+        &button_style,
+        button_colors,
+        &button_font,
+        button_font_size,
+        localization::settings_button(),
+        &localization,
     );
     let return_to_main_menu_button = Widget::button(
         &mut commands,
@@ -43,7 +72,8 @@ pub fn spawn_pause_menu(
         button_colors,
         &button_font,
         button_font_size,
-        "Return to main menu",
+        localization::return_to_main_menu_button(),
+        &localization,
     );
     let quit_button = Widget::button(
         &mut commands,
@@ -52,10 +82,11 @@ pub fn spawn_pause_menu(
         button_colors,
         &button_font,
         button_font_size,
-        "Quit",
+        localization::quit_button(),
+        &localization,
     );
 
-    let entities = [resume_button, return_to_main_menu_button, quit_button];
+    let entities = [resume_button, settings_button, return_to_main_menu_button, quit_button];
     for i in 0..entities.len() {
         let up = if i != 0 { entities[i - 1] } else { entities[entities.len() - 1] };
         let current = entities[i];
@@ -95,10 +126,27 @@ pub fn spawn_pause_menu(
 /// Despawns the pause menu.
 pub fn despawn_pause_menu(
     mut commands: Commands,
-    pause_menu_query: Query<Entity, With<PauseMenu>>,
+    mut pause_menu_query: Query<Entity, With<PauseMenu>>,
+    mut child_query: Query<(&Parent, &mut Visibility)>,
+    widget_query: Query<Entity, With<WidgetSelected>>,
+    app_state: Res<State<AppState>>,
+    game_state_stack: Res<GameStateStack>,
 ) {
-    if let Ok(entity) = pause_menu_query.get_single() {
-        commands.entity(entity).despawn_recursive();
+    if let Ok(pause_menu_entity) = pause_menu_query.get_single_mut() {
+        if app_state.get() == &AppState::Game {
+            if game_state_stack.contains(&GameState::Paused) {
+                for (parent, mut visibility) in child_query.iter_mut() {
+                    if parent.get() == pause_menu_entity {
+                        *visibility = Visibility::Hidden;
+                    }
+                }
+                if let Ok(widget) = widget_query.get_single() {
+                    commands.insert_resource(PreviouslySelectedPauseMenuWidget(widget));
+                }
+                return;
+            }
+        }
+        commands.entity(pause_menu_entity).despawn_recursive();
     }
 }
 
@@ -154,6 +202,20 @@ pub fn resume_button_interaction(
     if let Ok(mut button) = resume_button_query.get_single_mut() {
         button.on_click(|| {
             game_state_stack.pop();
+            next_game_state.set(GameState::Transition);
+        });
+    }
+}
+
+/// Opens the settings menu.
+pub fn settings_button_interaction(
+    mut settings_button_query: Query<&mut Widget, (Changed<Widget>, With<PauseMenuSettingsButton>)>,
+    mut game_state_stack: ResMut<GameStateStack>,
+    mut next_game_state: ResMut<NextState<GameState>>,
+) {
+    if let Ok(mut button) = settings_button_query.get_single_mut() {
+        button.on_click(|| {
+            game_state_stack.push(GameState::Settings);
             next_game_state.set(GameState::Transition);
         });
     }

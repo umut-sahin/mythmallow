@@ -8,6 +8,9 @@ impl Plugin for BasicPerksPlugin {
         // Register components.
         app.register_type::<Speedy>();
 
+        // Setup localization.
+        app.world.resource_mut::<LocaleAssets>().push("content/perks/basic.ftl");
+
         // Get perk registry.
         let mut perk_registry = app.world.resource_mut::<PerkRegistry>();
 

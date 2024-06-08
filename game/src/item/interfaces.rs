@@ -8,8 +8,8 @@ use crate::{
 pub trait IItem: Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the item.
     fn id(&self) -> SmolStr;
-    /// Gets the name of the item.
-    fn name(&self) -> SmolStr;
+    /// Gets the localized name of the item.
+    fn name(&self) -> LocalizedText;
 
     /// Gets if the item is a weapon.
     fn is_weapon(&self) -> bool;

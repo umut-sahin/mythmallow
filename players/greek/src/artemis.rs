@@ -19,8 +19,12 @@ impl IPlayer for Artemis {
         "artemis".into()
     }
 
-    fn name(&self) -> SmolStr {
-        "Artemis".into()
+    fn name(&self) -> LocalizedText {
+        LocalizedText::Localized {
+            key: "artemis-name",
+            args: smallvec![],
+            fallback: "Artemis".into(),
+        }
     }
 
     fn collider(&self) -> Collider {

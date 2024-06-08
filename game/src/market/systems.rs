@@ -138,6 +138,9 @@ pub fn apply_market_command(
                     GameState::Paused => {
                         reply!(command, "Not available in the pause menu.");
                     },
+                    GameState::Settings => {
+                        reply!(command, "Not available in the settings menu.");
+                    },
                     _ => {
                         reply!(command, "How did you time this, seriously?");
                     },
@@ -159,6 +162,9 @@ pub fn apply_market_command(
                     },
                     GameState::Paused => {
                         reply!(command, "Not available in the pause menu.");
+                    },
+                    GameState::Settings => {
+                        reply!(command, "Not available in the settings menu.");
                     },
                     _ => {
                         reply!(command, "How did you time this, seriously?");

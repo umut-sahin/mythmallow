@@ -28,6 +28,9 @@ impl Plugin for LevelUpScreenPlugin {
         app.register_type::<LevelUpScreenWidgets>();
         app.register_type::<PreviouslySelectedLevelUpScreenWidget>();
 
+        // Setup localization.
+        app.world.resource_mut::<LocaleAssets>().push("ui/level_up_screen.ftl");
+
         // Insert resources.
         app.init_resource::<LevelUpScreenConfiguration>();
 

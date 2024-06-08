@@ -6,6 +6,7 @@ mod main_menu;
 mod market;
 mod pause_menu;
 mod player_selection_screen;
+mod settings_menu;
 
 pub use {
     game::GameAction,
@@ -16,4 +17,5 @@ pub use {
     market::MarketAction,
     pause_menu::PauseMenuAction,
     player_selection_screen::PlayerSelectionScreenAction,
+    settings_menu::SettingsMenuAction,
 };

@@ -11,6 +11,11 @@ pub struct PauseMenu;
 pub struct PauseMenuResumeButton;
 
 
+/// Tag component for the settings button in the pause menu.
+#[derive(Component, Debug, Reflect)]
+pub struct PauseMenuSettingsButton;
+
+
 /// Tag component for the return to main menu button in the pause menu.
 #[derive(Component, Debug, Reflect)]
 pub struct PauseMenuReturnToMainMenuButton;
