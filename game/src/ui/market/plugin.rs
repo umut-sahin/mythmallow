@@ -25,6 +25,9 @@ impl Plugin for MarketPlugin {
         // Register resources.
         app.register_type::<PreviouslySelectedMarketWidget>();
 
+        // Setup localization.
+        app.world.resource_mut::<LocaleAssets>().push("ui/market.ftl");
+
         // Add systems.
         app.add_systems(OnEnter(GameState::Market), spawn_market);
         app.add_systems(

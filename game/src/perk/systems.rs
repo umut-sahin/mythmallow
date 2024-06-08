@@ -9,6 +9,7 @@ pub fn apply_perk_command(
     mut commands: Commands,
     mut perk_registry: ResMut<PerkRegistry>,
     registered_systems: Res<RegisteredSystems>,
+    localization: Res<Localization>,
     mut command: ConsoleCommand<PerkCommand>,
 ) {
     if let Some(Ok(PerkCommand { subcommand })) = command.take() {
@@ -17,12 +18,13 @@ pub fn apply_perk_command(
                 for (i, entry) in perk_registry.iter().enumerate() {
                     let perk = &entry.perk;
                     reply!(command, "{}) {}", i + 1, perk.id());
-                    reply!(command, "    - description: {}", perk.description);
+                    reply!(command, "    - name: {}", perk.name.get(&localization));
+                    reply!(command, "    - description: {}", perk.description.get(&localization));
                     reply!(command, "    - rarity: {}", perk.rarity);
                     reply!(
                         command,
                         "    - commonness: {}",
-                        perk.commonness.to_formatted_string(&Locale::es_US),
+                        perk.commonness.to_formatted_string(&NumLocale::es_US),
                     );
                 }
             },
@@ -64,7 +66,7 @@ pub fn apply_perk_command(
                                 reply!(
                                     command,
                                     "{}",
-                                    perk.commonness.to_formatted_string(&Locale::es_US),
+                                    perk.commonness.to_formatted_string(&NumLocale::es_US),
                                 );
                             },
                             None => {
@@ -78,7 +80,7 @@ pub fn apply_perk_command(
                                 log::info!(
                                     "setting the commonness of {:?} perk to {}",
                                     perk.id(),
-                                    commonness.to_formatted_string(&Locale::es_US),
+                                    commonness.to_formatted_string(&NumLocale::es_US),
                                 );
                                 perk.commonness = commonness;
                                 reply!(command, "Done.");

@@ -19,8 +19,8 @@ impl IPlayer for Hades {
         "hades".into()
     }
 
-    fn name(&self) -> SmolStr {
-        "Hades".into()
+    fn name(&self) -> LocalizedText {
+        LocalizedText::Localized { key: "hades-name", args: smallvec![], fallback: "Hades".into() }
     }
 
     fn collider(&self) -> Collider {

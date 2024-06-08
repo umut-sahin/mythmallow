@@ -11,8 +11,15 @@ impl Plugin for PauseMenuPlugin {
         // Register components.
         app.register_type::<PauseMenu>();
         app.register_type::<PauseMenuResumeButton>();
+        app.register_type::<PauseMenuSettingsButton>();
         app.register_type::<PauseMenuReturnToMainMenuButton>();
         app.register_type::<PauseMenuQuitButton>();
+
+        // Register resources.
+        app.register_type::<PreviouslySelectedPauseMenuWidget>();
+
+        // Setup localization.
+        app.world.resource_mut::<LocaleAssets>().push("ui/pause_menu.ftl");
 
         // Add systems.
         app.add_systems(OnEnter(GameState::Paused), spawn_pause_menu);
@@ -21,6 +28,7 @@ impl Plugin for PauseMenuPlugin {
             PostUpdate,
             (
                 resume_button_interaction,
+                settings_button_interaction,
                 return_to_main_menu_button_interaction,
                 quit_button_interaction,
             )

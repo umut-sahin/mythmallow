@@ -16,7 +16,9 @@ impl MenuSystems {
                 return false;
             }
             match app_state.get() {
+                AppState::LoadingInitialLocalization => false,
                 AppState::MainMenu => true,
+                AppState::SettingsMenu => true,
                 AppState::GameModeSelectionScreen => true,
                 AppState::PlayerSelectionScreen => true,
                 AppState::EnemySelectionScreen => true,
@@ -29,6 +31,7 @@ impl MenuSystems {
                         GameState::LevelUpScreen => true,
                         GameState::Market => true,
                         GameState::Paused => true,
+                        GameState::Settings => true,
                         GameState::Won => false,
                         GameState::Over => true,
                         GameState::Restart => false,

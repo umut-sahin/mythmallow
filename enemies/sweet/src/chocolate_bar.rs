@@ -44,8 +44,12 @@ impl IEnemy for ChocolateBar {
         "chocolate-bar".into()
     }
 
-    fn name(&self) -> SmolStr {
-        "Chocolate Bar".into()
+    fn name(&self) -> LocalizedText {
+        LocalizedText::Localized {
+            key: "chocolate-bar-name",
+            args: smallvec![],
+            fallback: "Chocolate Bar".into(),
+        }
     }
 
     fn health(&self) -> Health {

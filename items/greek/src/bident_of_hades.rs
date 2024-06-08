@@ -19,8 +19,12 @@ impl IItem for BidentOfHades {
         "bident-of-hades".into()
     }
 
-    fn name(&self) -> SmolStr {
-        "Bident of Hades".into()
+    fn name(&self) -> LocalizedText {
+        LocalizedText::Localized {
+            key: "bident-of-hades-name",
+            args: smallvec![],
+            fallback: "Bident of Hades".into(),
+        }
     }
 
     fn is_weapon(&self) -> bool {
@@ -65,10 +69,7 @@ pub fn acquire(
     inventory: Res<Inventory>,
 ) -> Entity {
     commands
-        .spawn((
-            Name::new(format!("Item {} [{}]", inventory.items.len() + 1, item.name().to_string())),
-            item,
-        ))
+        .spawn((Name::new(format!("Item {} [{}]", inventory.items.len() + 1, item.id())), item))
         .id()
 }
 

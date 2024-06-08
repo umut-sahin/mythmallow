@@ -9,4 +9,5 @@ pub mod market;
 pub mod pause_menu;
 pub mod player_selection_screen;
 pub mod plugin;
+pub mod settings_menu;
 pub mod widget;

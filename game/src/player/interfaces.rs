@@ -8,8 +8,8 @@ use crate::{
 pub trait IMythology: Any + Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the mythology.
     fn id(&self) -> SmolStr;
-    /// Gets the name of the mythology.
-    fn name(&self) -> SmolStr;
+    /// Gets the localized name of the mythology.
+    fn name(&self) -> LocalizedText;
 }
 
 
@@ -17,8 +17,8 @@ pub trait IMythology: Any + Debug + Send + Sync + 'static {
 pub trait IPlayer: Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the player.
     fn id(&self) -> SmolStr;
-    /// Gets the name of the player.
-    fn name(&self) -> SmolStr;
+    /// Gets the localized name of the player.
+    fn name(&self) -> LocalizedText;
 
     /// Gets the base health of the player.
     fn health(&self) -> Health {

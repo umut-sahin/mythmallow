@@ -2,6 +2,7 @@ use crate::{
     prelude::*,
     ui::player_selection_screen::{
         constants::*,
+        localization,
         styles,
     },
 };
@@ -13,6 +14,7 @@ pub fn spawn_player_selection_screen(
     asset_server: Res<AssetServer>,
     player_selection_screen_action_input_map: Res<InputMap<PlayerSelectionScreenAction>>,
     player_registry: Res<PlayerRegistry>,
+    localization: Res<Localization>,
 ) {
     let button_style = styles::button();
     let button_colors = WidgetColors::button();
@@ -33,7 +35,7 @@ pub fn spawn_player_selection_screen(
                 Widget::button(
                     &mut commands,
                     (
-                        Name::new(format!("{} Button", player.name())),
+                        Name::new(format!("Player Button [{}]", player.id())),
                         PlayerSelectionScreenPlayerButton { mythology_index, player_index },
                         Widget::default().selected(),
                         WidgetSelected::now(),
@@ -43,12 +45,13 @@ pub fn spawn_player_selection_screen(
                     &button_font,
                     button_font_size,
                     player.name(),
+                    &localization,
                 )
             } else {
                 Widget::button(
                     &mut commands,
                     (
-                        Name::new(format!("{} Button", player.name())),
+                        Name::new(format!("Player Button [{}]", player.id())),
                         PlayerSelectionScreenPlayerButton { mythology_index, player_index },
                         Widget::default(),
                     ),
@@ -57,6 +60,7 @@ pub fn spawn_player_selection_screen(
                     &button_font,
                     button_font_size,
                     player.name(),
+                    &localization,
                 )
             };
             entities.push(player_button)
@@ -70,7 +74,8 @@ pub fn spawn_player_selection_screen(
         button_colors,
         &button_font,
         button_font_size,
-        "Back",
+        localization::back_button(),
+        &localization,
     );
     entities.push(back_button);
 

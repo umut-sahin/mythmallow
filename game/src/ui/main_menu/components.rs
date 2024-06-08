@@ -11,6 +11,11 @@ pub struct MainMenu;
 pub struct MainMenuPlayButton;
 
 
+/// Tag component for the settings button in the main menu.
+#[derive(Component, Debug, Reflect)]
+pub struct MainMenuSettingsButton;
+
+
 /// Tag component for the quit button in the main menu.
 #[derive(Component, Debug, Reflect)]
 pub struct MainMenuQuitButton;

@@ -4,8 +4,8 @@ use crate::prelude::*;
 pub trait IEnemyPack: Any + Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the enemy pack.
     fn id(&self) -> SmolStr;
-    /// Gets the name of the enemy pack.
-    fn name(&self) -> SmolStr;
+    /// Gets the localized name of the enemy pack.
+    fn name(&self) -> LocalizedText;
 
     /// Gets the spawn pattern of the enemy pack,
     #[allow(unused_variables)]
@@ -18,8 +18,8 @@ pub trait IEnemyPack: Any + Debug + Send + Sync + 'static {
 pub trait IEnemy: Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the enemy.
     fn id(&self) -> SmolStr;
-    /// Gets the name of the enemy.
-    fn name(&self) -> SmolStr;
+    /// Gets the localized name of the enemy.
+    fn name(&self) -> LocalizedText;
 
     /// Gets the contact damage of the enemy.
     fn contact_damage(&self) -> Option<(Damage, DamageCooldown)> {

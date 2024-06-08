@@ -10,7 +10,11 @@ impl IEnemyPack for SweetEnemyPack {
         "sweet".into()
     }
 
-    fn name(&self) -> SmolStr {
-        "Sweet".into()
+    fn name(&self) -> LocalizedText {
+        LocalizedText::Localized {
+            key: "sweet-enemies-pack-name",
+            args: smallvec![],
+            fallback: "Sweet Enemies".into(),
+        }
     }
 }

@@ -7,6 +7,7 @@ use crate::{
 /// Applies the item console commands.
 pub fn apply_item_command(
     mut item_registry: ResMut<ItemRegistry>,
+    localization: Res<Localization>,
     mut command: ConsoleCommand<ItemCommand>,
 ) {
     if let Some(Ok(ItemCommand { subcommand })) = command.take() {
@@ -15,12 +16,13 @@ pub fn apply_item_command(
                 for (i, entry) in item_registry.iter().enumerate() {
                     let item = &entry.item;
                     reply!(command, "{}) {}", i + 1, item.id());
+                    reply!(command, "    - name: {}", item.name().get(&localization));
                     reply!(command, "    - tags: {}", item.tags.iter().join(", "));
                     reply!(command, "    - base price: {}", item.base_price);
                     reply!(
                         command,
                         "    - commonness: {:}",
-                        item.commonness.to_formatted_string(&Locale::es_US),
+                        item.commonness.to_formatted_string(&NumLocale::es_US),
                     );
                 }
             },
@@ -62,7 +64,7 @@ pub fn apply_item_command(
                                 reply!(
                                     command,
                                     "{}",
-                                    item.commonness.to_formatted_string(&Locale::es_US),
+                                    item.commonness.to_formatted_string(&NumLocale::es_US),
                                 );
                             },
                             None => {
@@ -76,7 +78,7 @@ pub fn apply_item_command(
                                 log::info!(
                                     "setting the commonness of {:?} to {}",
                                     item.id(),
-                                    commonness.to_formatted_string(&Locale::es_US),
+                                    commonness.to_formatted_string(&NumLocale::es_US),
                                 );
                                 item.commonness = commonness;
                                 reply!(command, "Done.");

@@ -11,6 +11,7 @@ mod menu;
 mod pause_menu;
 mod player_selection_screen;
 mod restart;
+mod settings_menu;
 
 pub use self::{
     enemy_selection_screen::EnemySelectionScreenSystems,
@@ -26,4 +27,5 @@ pub use self::{
     pause_menu::PauseMenuSystems,
     player_selection_screen::PlayerSelectionScreenSystems,
     restart::RestartSystems,
+    settings_menu::SettingsMenuSystems,
 };

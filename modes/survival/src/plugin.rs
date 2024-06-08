@@ -26,6 +26,9 @@ impl Plugin for SurvivalModePlugin {
         app.register_type::<WaveDurations>();
         app.register_type::<WaveTimer>();
 
+        // Setup localization.
+        app.world.resource_mut::<LocaleAssets>().push("content/modes/survival.ftl");
+
         // Insert resources.
         let args = app.world.resource::<Args>();
         app.insert_resource(

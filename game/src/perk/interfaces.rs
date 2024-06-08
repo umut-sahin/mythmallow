@@ -8,10 +8,10 @@ use crate::{
 pub trait IPerk: Debug + Send + Sync + 'static {
     /// Gets the unique identifier of the perk.
     fn id(&self) -> SmolStr;
-    /// Gets the name of the perk.
-    fn name(&self) -> SmolStr;
-    /// Gets the description of the perk.
-    fn description(&self) -> SmolStr;
+    /// Gets the localized name of the perk.
+    fn name(&self) -> LocalizedText;
+    /// Gets the localized description of the perk.
+    fn description(&self) -> LocalizedText;
 
     /// Gets the rarity of the perk.
     fn rarity(&self) -> Rarity;

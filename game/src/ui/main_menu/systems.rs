@@ -2,6 +2,7 @@ use crate::{
     prelude::*,
     ui::main_menu::{
         constants::*,
+        localization,
         styles,
     },
 };
@@ -12,6 +13,7 @@ pub fn spawn_main_menu(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     main_menu_action_input_map: Res<InputMap<MainMenuAction>>,
+    localization: Res<Localization>,
 ) {
     let button_style = styles::button();
     let button_colors = WidgetColors::button();
@@ -30,8 +32,21 @@ pub fn spawn_main_menu(
         button_colors,
         &button_font,
         button_font_size,
-        "Play",
+        localization::play_button(),
+        &localization,
     );
+
+    let settings_button = Widget::button(
+        &mut commands,
+        (Name::new("Settings Button"), MainMenuSettingsButton, Widget::default()),
+        &button_style,
+        button_colors,
+        &button_font,
+        button_font_size,
+        localization::settings_button(),
+        &localization,
+    );
+
     let quit_button = Widget::button(
         &mut commands,
         (Name::new("Quit Button"), MainMenuQuitButton, Widget::default()),
@@ -39,10 +54,11 @@ pub fn spawn_main_menu(
         button_colors,
         &button_font,
         button_font_size,
-        "Quit",
+        localization::quit_button(),
+        &localization,
     );
 
-    let entities = [play_button, quit_button];
+    let entities = [play_button, settings_button, quit_button];
     for i in 0..entities.len() {
         let up = if i != 0 { entities[i - 1] } else { entities[entities.len() - 1] };
         let current = entities[i];
@@ -124,6 +140,18 @@ pub fn play_button_interaction(
     if let Ok(mut button) = play_button_query.get_single_mut() {
         button.on_click(|| {
             next_app_state.set(AppState::GameModeSelectionScreen);
+        });
+    }
+}
+
+/// Transitions to the settings menu.
+pub fn settings_button_interaction(
+    mut settings_button_query: Query<&mut Widget, (Changed<Widget>, With<MainMenuSettingsButton>)>,
+    mut next_app_state: ResMut<NextState<AppState>>,
+) {
+    if let Ok(mut button) = settings_button_query.get_single_mut() {
+        button.on_click(|| {
+            next_app_state.set(AppState::SettingsMenu);
         });
     }
 }

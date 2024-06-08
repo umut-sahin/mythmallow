@@ -3,6 +3,7 @@ use crate::{
     ui::level_up_screen::{
         commands::*,
         constants::*,
+        localization,
         styles,
     },
 };
@@ -48,6 +49,9 @@ pub fn apply_level_up_screen_command(
                     GameState::Paused => {
                         reply!(command, "Not available in the pause menu.");
                     },
+                    GameState::Settings => {
+                        reply!(command, "Not available in the settings menu.");
+                    },
                     _ => {
                         reply!(command, "How did you time this, seriously?");
                     },
@@ -70,6 +74,9 @@ pub fn apply_level_up_screen_command(
                     },
                     GameState::Paused => {
                         reply!(command, "Not available in the pause menu.");
+                    },
+                    GameState::Settings => {
+                        reply!(command, "Not available in the settings menu.");
                     },
                     _ => {
                         reply!(command, "How did you time this, seriously?");
@@ -274,6 +281,7 @@ pub fn spawn_level_up_screen(
     level_up_screen_state: Option<ResMut<LevelUpScreenState>>,
     registered_systems: Res<RegisteredSystems>,
     previously_selected_level_up_screen_widget: Option<Res<PreviouslySelectedLevelUpScreenWidget>>,
+    localization: Res<Localization>,
 ) {
     if !level_up_screen_query.is_empty() {
         if let Some(previously_selected_widget) = previously_selected_level_up_screen_widget {
@@ -421,7 +429,8 @@ pub fn spawn_level_up_screen(
                     reroll_button_colors,
                     &reroll_button_font,
                     reroll_button_size,
-                    format!("Reroll - {}", reroll_cost),
+                    localization::reroll_button(reroll_cost),
+                    &localization,
                 );
 
                 if *balance < reroll_cost {
@@ -600,6 +609,7 @@ pub fn update_offered_perks(
     level_up_screen_state: Res<LevelUpScreenState>,
     mut level_up_screen_widgets: ResMut<LevelUpScreenWidgets>,
     perk_registry: Res<PerkRegistry>,
+    localization: Res<Localization>,
 ) {
     let level_up_screen_perks_container_entity =
         match level_up_screen_perks_container_query.get_single() {
@@ -668,7 +678,7 @@ pub fn update_offered_perks(
                     TextBundle {
                         text: Text {
                             sections: vec![TextSection::new(
-                                perk.name(),
+                                perk.name.get(&localization),
                                 TextStyle {
                                     font: perk_name_font.clone(),
                                     font_size: perk_name_size,
@@ -681,6 +691,7 @@ pub fn update_offered_perks(
                         style: perk_name_style.clone(),
                         ..default()
                     },
+                    perk.name.clone(),
                 ))
                 .id();
 
@@ -691,7 +702,7 @@ pub fn update_offered_perks(
                     TextBundle {
                         text: Text {
                             sections: vec![TextSection::new(
-                                perk.description(),
+                                perk.description.get(&localization),
                                 TextStyle {
                                     font: perk_description_font.clone(),
                                     font_size: perk_description_size,
@@ -704,6 +715,7 @@ pub fn update_offered_perks(
                         style: perk_description_style.clone(),
                         ..default()
                     },
+                    perk.description.clone(),
                 ))
                 .id();
 
@@ -723,7 +735,8 @@ pub fn update_offered_perks(
             select_button_colors,
             &select_button_font,
             select_button_size,
-            "Select",
+            localization::select_button(),
+            &localization,
         );
 
         select_widgets.push(select_button);
@@ -913,7 +926,7 @@ pub fn update_balance_text(
 pub fn update_reroll_button(
     mut commands: Commands,
     mut reroll_button_query: Query<(Entity, &mut LevelUpScreenRerollButton)>,
-    mut text_query: Query<(&Parent, &mut Text)>,
+    mut text_query: Query<(&Parent, &mut LocalizedText)>,
     balance: Res<Balance>,
     level_up_screen_configuration: Res<LevelUpScreenConfiguration>,
 ) {
@@ -927,7 +940,7 @@ pub fn update_reroll_button(
 
     for (parent_entity, mut refresh_button_text) in text_query.iter_mut() {
         if parent_entity.get() == reroll_button_entity {
-            refresh_button_text.sections[0].value = format!("Reroll - {}", reroll_cost);
+            *refresh_button_text = localization::reroll_button(reroll_cost);
             break;
         }
     }
