@@ -6,6 +6,7 @@ pub struct BasicPerksPlugin;
 impl Plugin for BasicPerksPlugin {
     fn build(&self, app: &mut App) {
         // Register components.
+        app.register_type::<Healthy>();
         app.register_type::<Speedy>();
 
         // Setup localization.
