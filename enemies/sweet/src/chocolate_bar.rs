@@ -126,10 +126,7 @@ pub fn attack(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    enemy_query: Query<
-        (Entity, &Name, &Transform),
-        (With<ChocolateBar>, Without<Cooldown<Attack>>),
-    >,
+    enemy_query: Query<(Entity, &Transform), (With<ChocolateBar>, Without<Cooldown<Attack>>)>,
     player_query: Query<&Transform, (With<Player>, Without<ChocolateBar>)>,
     spatial_query: SpatialQuery,
 ) {
@@ -139,7 +136,7 @@ pub fn attack(
             return;
         },
     };
-    for (enemy_entity, enemy_name, enemy_transform) in enemy_query.iter() {
+    for (enemy_entity, enemy_transform) in enemy_query.iter() {
         let enemy_position = Position::new(enemy_transform.translation.xy());
 
         let to_player = (player_transform.translation - enemy_transform.translation).xy();
@@ -157,7 +154,7 @@ pub fn attack(
         }
 
         ProjectileBundle::builder()
-            .originator(enemy_name)
+            .originator(enemy_entity)
             .mesh(MaterialMesh2dBundle {
                 mesh: meshes.add(Circle::new(PROJECTILE_SIZE)).into(),
                 material: materials.add(ColorMaterial::from(PROJECTILE_COLOR)),

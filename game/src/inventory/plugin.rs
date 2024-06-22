@@ -11,6 +11,9 @@ pub struct InventoryPlugin;
 
 impl Plugin for InventoryPlugin {
     fn build(&self, app: &mut App) {
+        // Register components.
+        app.register_type::<BaseOrientation>();
+
         // Insert resources.
         app.init_resource::<Inventory>();
 
@@ -34,6 +37,7 @@ impl Plugin for InventoryPlugin {
                         !weapon_query.is_empty() || !player_query.is_empty()
                     },
                 ),
+                orient_weapons.after(reposition_weapons),
             ),
         );
         app.add_systems(OnEnter(GameState::Over), clear_inventory);

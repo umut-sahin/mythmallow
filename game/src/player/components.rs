@@ -51,6 +51,11 @@ impl PlayerPickupArea {
 pub struct DamagePlayerOnContact;
 
 
+/// Tag component for entities that apply damage to the player on contact started.
+#[derive(Component, Debug, Default, Reflect)]
+pub struct DamagePlayerOnContactStarted;
+
+
 /// Bundle for players.
 #[derive(Bundle, TypedBuilder)]
 pub struct PlayerBundle<P: Component + IPlayer> {
