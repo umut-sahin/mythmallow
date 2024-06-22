@@ -24,7 +24,7 @@ impl Plugin for SettingsMenuPlugin {
         // Add systems.
         app.add_systems(OnEnter(AppState::SettingsMenu), spawn_settings_menu);
         app.add_systems(OnEnter(GameState::Settings), spawn_settings_menu);
-        app.add_systems(PreUpdate, navigation.in_set(SettingsMenuSystems));
+        app.add_systems(Update, navigation.in_set(SettingsMenuSystems));
         app.add_systems(
             PostUpdate,
             (
