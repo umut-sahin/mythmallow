@@ -6,6 +6,11 @@ use crate::prelude::*;
 pub struct Damage(pub f32);
 
 
+/// Component for dodge chance.
+#[derive(Clone, Copy, Component, Debug, Default, Deref, DerefMut, Reflect)]
+pub struct DodgeChance(pub f32);
+
+
 /// Component for maximum health.
 #[derive(Clone, Copy, Component, Debug, Deref, DerefMut, Reflect)]
 pub struct Health(pub f32);
@@ -14,6 +19,11 @@ pub struct Health(pub f32);
 /// Component for experience point pickup range.
 #[derive(Clone, Copy, Component, Debug, Deref, DerefMut, Reflect)]
 pub struct PickupRange(pub f32);
+
+
+/// Component for range.
+#[derive(Clone, Copy, Component, Debug, Deref, DerefMut, Reflect)]
+pub struct Range(pub f32);
 
 
 /// Component for speed.
@@ -30,8 +40,3 @@ impl Default for SpeedMultiplier {
         SpeedMultiplier(1.00)
     }
 }
-
-
-/// Component for dodge chance.
-#[derive(Clone, Copy, Component, Debug, Default, Deref, DerefMut, Reflect)]
-pub struct DodgeChance(pub f32);

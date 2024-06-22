@@ -30,6 +30,11 @@ impl EnemyHitBox {
 pub struct DamageEnemiesOnContact;
 
 
+/// Tag component for entities that apply damage to enemies on contact started.
+#[derive(Component, Debug, Default, Reflect)]
+pub struct DamageEnemiesOnContactStarted;
+
+
 /// Bundle for enemies.
 #[derive(Bundle, TypedBuilder)]
 pub struct EnemyBundle<E: Component + IEnemy> {
@@ -97,7 +102,7 @@ impl<E: Component + IEnemy> EnemyBundle<E> {
         });
 
         if let Some((damage, cooldown)) = contact_damage {
-            enemy.insert((DamagePlayerOnContact, damage, cooldown));
+            enemy.insert((Attack::Contact, DamagePlayerOnContact, damage, cooldown));
         }
 
         enemy

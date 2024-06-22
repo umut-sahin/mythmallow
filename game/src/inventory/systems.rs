@@ -122,8 +122,9 @@ pub fn acquire_release_items(world: &mut World) {
 
 /// Repositions the weapons around the player.
 pub fn reposition_weapons(
+    mut commands: Commands,
     player_query: Query<(&GlobalTransform, &Collider), With<Player>>,
-    mut weapon_query: Query<&mut Transform, (With<Weapon>, Without<Player>)>,
+    mut weapon_query: Query<(Entity, &mut Transform), (With<Weapon>, Without<Player>)>,
     mut spatial_query: SpatialQuery,
 ) {
     spatial_query.update_pipeline();
@@ -146,7 +147,8 @@ pub fn reposition_weapons(
     let mut direction = Vec2::X;
     let rotation = Rotation::from_degrees(360.00 / (weapon_query.iter().len() as f32));
 
-    for mut weapon_transform in weapon_query.iter_mut() {
+    for (weapon_index, (weapon_entity, mut weapon_transform)) in weapon_query.iter_mut().enumerate()
+    {
         let distance = spatial_query
             .cast_ray(
                 player_position.xy(),
@@ -163,7 +165,53 @@ pub fn reposition_weapons(
         weapon_transform.translation.x = new_weapon_translation.x;
         weapon_transform.translation.y = new_weapon_translation.y;
 
+        weapon_transform.rotation =
+            Quat::from_rotation_z(rotation.as_radians() * (weapon_index as Scalar));
+        commands
+            .entity(weapon_entity)
+            .insert(BaseOrientation(weapon_transform.rotation))
+            .remove::<EasingComponent<Transform>>()
+            .remove::<EasingChainComponent<Transform>>();
+
         direction = rotation.rotate(direction);
+    }
+}
+
+/// Orients weapons toward enemies.
+pub fn orient_weapons(
+    mut weapon_query: Query<
+        (&GlobalTransform, &mut Transform, &Range, Option<&BaseOrientation>),
+        (With<Weapon>, Without<Attack>),
+    >,
+    enemy_hit_box_query: Query<&Position, With<EnemyHitBox>>,
+    spatial_query: SpatialQuery,
+) {
+    for (item_global_transform, mut item_transform, item_range, item_base_orientation) in
+        weapon_query.iter_mut()
+    {
+        let search_area = Collider::circle(item_range.0 * 2.00);
+
+        let item_position = Position(item_global_transform.translation().xy());
+        let enemies_in_range = utils::combat::find_enemies_in_range_sorted_by_distance(
+            &spatial_query,
+            &item_position,
+            &search_area,
+            &enemy_hit_box_query,
+        );
+
+        if enemies_in_range.is_empty() {
+            if let Some(item_base_orientation) = item_base_orientation {
+                item_transform.rotation = item_base_orientation.0;
+            }
+            continue;
+        }
+
+        let (_, closest_enemy_position, _) = enemies_in_range[0];
+
+        let enemy_direction = closest_enemy_position.xy() - item_position.xy();
+        let angle = Vec2::X.angle_between(enemy_direction);
+
+        item_transform.rotation = Quat::from_rotation_z(angle);
     }
 }
 

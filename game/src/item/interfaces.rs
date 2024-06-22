@@ -13,6 +13,14 @@ pub trait IItem: Debug + Send + Sync + 'static {
 
     /// Gets if the item is a weapon.
     fn is_weapon(&self) -> bool;
+    /// Gets the base range of the weapon.
+    fn base_range(&self) -> Option<Range> {
+        if self.is_weapon() {
+            panic!("weapons need to provide a base range");
+        } else {
+            None
+        }
+    }
 
     /// Gets whether the item needs to be whitelisted explicitly to appear in the market.
     fn needs_to_be_whitelisted_to_appear_in_market(&self) -> bool {

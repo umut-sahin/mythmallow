@@ -3,7 +3,11 @@ use crate::prelude::*;
 
 /// Tag component for attacks.
 #[derive(Component, Debug, Reflect)]
-pub struct Attack;
+#[component(storage = "SparseSet")]
+pub enum Attack {
+    Contact,
+    Thrust { direction: Vec2, range: Range, duration: Duration, started: bool },
+}
 
 
 /// Component for cooldown of applying damage.
@@ -20,37 +24,13 @@ impl DamageCooldown {
 }
 
 
-/// Component for the name of the originator of entities.
+/// Component for the originator of entities.
 #[derive(Component, Debug, Deref, DerefMut, Reflect)]
-pub struct OriginatorName(pub Name);
+pub struct Originator(pub Entity);
 
-impl From<&str> for OriginatorName {
-    fn from(name: &str) -> OriginatorName {
-        OriginatorName(name.into())
-    }
-}
-
-impl From<String> for OriginatorName {
-    fn from(name: String) -> OriginatorName {
-        OriginatorName(name.into())
-    }
-}
-
-impl From<SmolStr> for OriginatorName {
-    fn from(name: SmolStr) -> OriginatorName {
-        OriginatorName(name.as_str().into())
-    }
-}
-
-impl From<Name> for OriginatorName {
-    fn from(name: Name) -> OriginatorName {
-        OriginatorName(name)
-    }
-}
-
-impl From<&Name> for OriginatorName {
-    fn from(name: &Name) -> OriginatorName {
-        OriginatorName(name.clone())
+impl From<Entity> for Originator {
+    fn from(entity: Entity) -> Originator {
+        Originator(entity)
     }
 }
 
@@ -64,7 +44,7 @@ pub struct Projectile;
 #[derive(Bundle, TypedBuilder)]
 pub struct ProjectileBundle {
     #[builder(setter(into))]
-    pub originator: OriginatorName,
+    pub originator: Originator,
     pub mesh: MaterialMesh2dBundle<ColorMaterial>,
     pub collider: Collider,
     pub position: Position,
@@ -99,7 +79,7 @@ impl ProjectileBundle {
             [Layer::Projectile, Layer::DamagePlayer],
             [Layer::MapBound, Layer::MapObstacle, Layer::PlayerHitBox],
         );
-        self.spawn(commands, layers, DamagePlayerOnContact)
+        self.spawn(commands, layers, (DamagePlayerOnContact, Attack::Contact))
     }
 
     /// Spawns the projectile toward enemies.
@@ -108,7 +88,7 @@ impl ProjectileBundle {
             [Layer::Projectile, Layer::DamageEnemies],
             [Layer::MapBound, Layer::MapObstacle, Layer::EnemyHitBox],
         );
-        self.spawn(commands, layers, DamageEnemiesOnContact)
+        self.spawn(commands, layers, (DamageEnemiesOnContact, Attack::Contact))
     }
 }
 
