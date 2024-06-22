@@ -14,6 +14,7 @@ impl Plugin for PlayerPlugin {
         // Register components.
         app.register_type::<Player>();
         app.register_type::<DamagePlayerOnContact>();
+        app.register_type::<DamagePlayerOnContactStarted>();
         app.register_type::<SelectedMythologyIndex>();
         app.register_type::<SelectedPlayerIndex>();
 
