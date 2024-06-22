@@ -30,3 +30,8 @@ impl Default for SpeedMultiplier {
         SpeedMultiplier(1.00)
     }
 }
+
+
+/// Component for dodge chance.
+#[derive(Clone, Copy, Component, Debug, Default, Deref, DerefMut, Reflect)]
+pub struct DodgeChance(pub f32);

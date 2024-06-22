@@ -1,4 +1,5 @@
 pub use crate::{
+    dodgy::Dodgy,
     healthy::Healthy,
     plugin::BasicPerksPlugin,
     speedy::Speedy,
