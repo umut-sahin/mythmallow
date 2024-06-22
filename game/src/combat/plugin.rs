@@ -11,6 +11,7 @@ impl Plugin for CombatPlugin {
         // Register components.
         app.register_type::<DamageCooldown>();
         app.register_type::<Cooldown<Attack>>();
+        app.register_type::<OriginatorName>();
         app.register_type::<Projectile>();
         app.register_type::<RemainingHealth>();
 
