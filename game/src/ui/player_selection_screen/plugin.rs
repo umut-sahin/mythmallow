@@ -18,7 +18,7 @@ impl Plugin for PlayerSelectionScreenPlugin {
 
         // Add systems.
         app.add_systems(OnEnter(AppState::PlayerSelectionScreen), spawn_player_selection_screen);
-        app.add_systems(PreUpdate, navigation.in_set(PlayerSelectionScreenSystems));
+        app.add_systems(Update, navigation.in_set(PlayerSelectionScreenSystems));
         app.add_systems(
             Update,
             (player_button_interaction, back_button_interaction)
