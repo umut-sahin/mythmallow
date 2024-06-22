@@ -4,30 +4,63 @@ use crate::prelude::*;
 /// Damages the player.
 pub fn damage_player(
     mut commands: Commands,
-    mut player_query: Query<&mut RemainingHealth, With<Player>>,
+    mut player_query: Query<(&Name, &DodgeChance, &mut RemainingHealth), With<Player>>,
     player_hit_box_query: Query<&Parent, With<PlayerHitBox>>,
     player_damage_query: Query<
-        (Entity, &Damage, Option<&DamageCooldown>),
+        (Entity, &Name, Option<&OriginatorName>, &Damage, Option<&DamageCooldown>),
         (With<DamagePlayerOnContact>, Without<Cooldown<Attack>>),
     >,
     mut collision_event_reader: EventReader<Collision>,
+    mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
 ) {
     let mut apply_damage_if_applicable = |player_hit_box_entity, player_damage_entity| {
-        let (damaging_entity, damage, damage_cooldown) =
-            match player_damage_query.get(player_damage_entity) {
-                Ok(query_result) => query_result,
-                Err(_) => return,
-            };
-        let remaining_health = match player_hit_box_query.get(player_hit_box_entity) {
+        let (
+            damaging_entity,
+            damaging_entity_name,
+            damaging_entity_originator_name,
+            damage,
+            damage_cooldown,
+        ) = match player_damage_query.get(player_damage_entity) {
+            Ok(query_result) => query_result,
+            Err(_) => return,
+        };
+        let player = match player_hit_box_query.get(player_hit_box_entity) {
             Ok(parent) => player_query.get_mut(parent.get()),
             Err(_) => return,
         };
-        if let Ok(mut remaining_health) = remaining_health {
-            remaining_health.0 -= damage.0;
+        if let Ok((player_name, player_dodge_chance, mut player_remaining_health)) = player {
             if let Some(damage_cooldown) = damage_cooldown {
                 commands
                     .entity(damaging_entity)
                     .insert(Cooldown::<Attack>::new(damage_cooldown.duration));
+            }
+
+            let originator = damaging_entity_originator_name
+                .map(|name| format!(" of {:?}", name.0))
+                .unwrap_or_default();
+
+            if rng.gen_range(0.00..100.00) < player_dodge_chance.0 {
+                log::info!(
+                    "{:?} dodged {:.2} damage from {:?}{}",
+                    player_name,
+                    damage.0,
+                    damaging_entity_name,
+                    originator,
+                );
+                return;
+            }
+
+            log::info!(
+                "{:?} received {:.2} damage from {:?}{}",
+                player_name,
+                damage.0,
+                damaging_entity_name,
+                originator,
+            );
+            player_remaining_health.0 -= damage.0;
+
+            if player_remaining_health.0 > 0.00 {
+                log::info!("{:?} has {:.2} health left", player_name, player_remaining_health.0);
             }
         }
     };
@@ -41,30 +74,51 @@ pub fn damage_player(
 /// Damages the enemies.
 pub fn damage_enemies(
     mut commands: Commands,
-    mut enemy_query: Query<&mut RemainingHealth, With<Enemy>>,
+    mut enemy_query: Query<(&Name, &mut RemainingHealth), With<Enemy>>,
     enemy_hit_box_query: Query<&Parent, With<EnemyHitBox>>,
     enemy_damage_query: Query<
-        (Entity, &Damage, Option<&DamageCooldown>),
+        (Entity, &Name, Option<&OriginatorName>, &Damage, Option<&DamageCooldown>),
         (With<DamageEnemiesOnContact>, Without<Cooldown<Attack>>),
     >,
     mut collision_event_reader: EventReader<Collision>,
 ) {
     let mut apply_damage_if_applicable = |enemy_hit_box_entity, enemy_damage_entity| {
-        let (damaging_entity, damage, damage_cooldown) =
-            match enemy_damage_query.get(enemy_damage_entity) {
-                Ok(query_result) => query_result,
-                Err(_) => return,
-            };
-        let remaining_health = match enemy_hit_box_query.get(enemy_hit_box_entity) {
+        let (
+            damaging_entity,
+            damaging_entity_name,
+            damaging_entity_originator_name,
+            damage,
+            damage_cooldown,
+        ) = match enemy_damage_query.get(enemy_damage_entity) {
+            Ok(query_result) => query_result,
+            Err(_) => return,
+        };
+        let enemy = match enemy_hit_box_query.get(enemy_hit_box_entity) {
             Ok(parent) => enemy_query.get_mut(parent.get()),
             Err(_) => return,
         };
-        if let Ok(mut remaining_health) = remaining_health {
-            remaining_health.0 -= damage.0;
+        if let Ok((enemy_name, mut enemy_remaining_health)) = enemy {
             if let Some(damage_cooldown) = damage_cooldown {
                 commands
                     .entity(damaging_entity)
                     .insert(Cooldown::<Attack>::new(damage_cooldown.duration));
+            }
+
+            let originator = damaging_entity_originator_name
+                .map(|name| format!(" of {:?}", name.0))
+                .unwrap_or_default();
+
+            log::info!(
+                "{:?} received {:.2} damage from {:?}{}",
+                enemy_name,
+                damage.0,
+                damaging_entity_name,
+                originator,
+            );
+            enemy_remaining_health.0 -= damage.0;
+
+            if enemy_remaining_health.0 > 0.00 {
+                log::info!("{:?} has {:.2} health left", enemy_name, enemy_remaining_health.0);
             }
         }
     };
@@ -79,15 +133,16 @@ pub fn damage_enemies(
 /// Handles player death.
 pub fn player_death(
     mut commands: Commands,
-    player_query: Query<&RemainingHealth, With<Player>>,
+    player_query: Query<(&Name, &RemainingHealth), With<Player>>,
     mut game_state_stack: ResMut<GameStateStack>,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
-    let remaining_health = match player_query.get_single() {
+    let (player_name, player_remaining_health) = match player_query.get_single() {
         Ok(query_result) => query_result,
         Err(_) => return,
     };
-    if remaining_health.0 <= 0.00 {
+    if player_remaining_health.0 <= 0.00 {
+        log::info!("{:?} has died", player_name);
         commands.insert_resource(GameResult::Lost);
         game_state_stack.transition(GameState::Over);
         next_game_state.set(GameState::Transition);
@@ -100,6 +155,7 @@ pub fn enemy_death(
     enemy_query: Query<
         (
             Entity,
+            &Name,
             &RemainingHealth,
             &Experience,
             &Position,
@@ -115,6 +171,7 @@ pub fn enemy_death(
 ) {
     for (
         enemy_entity,
+        enemy_name,
         enemy_remaining_health,
         enemy_experience_reward,
         enemy_position,
@@ -142,6 +199,15 @@ pub fn enemy_death(
                 let mut experience_point_entity =
                     experience_point_bundle.spawn(&mut commands, &mut experience_point_counter);
                 experience_point_entity.set_parent(map_query.get_single().unwrap());
+
+                log::info!(
+                    "{:?} has died and dropped {:?} with {:.2} experience points",
+                    enemy_name,
+                    format!("Experience Point {}", experience_point_counter.get()),
+                    enemy_experience_reward.0,
+                );
+            } else {
+                log::info!("{:?} has died", enemy_name);
             }
             commands.entity(enemy_entity).despawn_recursive();
         }

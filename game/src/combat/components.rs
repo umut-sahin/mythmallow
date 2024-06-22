@@ -20,6 +20,41 @@ impl DamageCooldown {
 }
 
 
+/// Component for the name of the originator of entities.
+#[derive(Component, Debug, Deref, DerefMut, Reflect)]
+pub struct OriginatorName(pub Name);
+
+impl From<&str> for OriginatorName {
+    fn from(name: &str) -> OriginatorName {
+        OriginatorName(name.into())
+    }
+}
+
+impl From<String> for OriginatorName {
+    fn from(name: String) -> OriginatorName {
+        OriginatorName(name.into())
+    }
+}
+
+impl From<SmolStr> for OriginatorName {
+    fn from(name: SmolStr) -> OriginatorName {
+        OriginatorName(name.as_str().into())
+    }
+}
+
+impl From<Name> for OriginatorName {
+    fn from(name: Name) -> OriginatorName {
+        OriginatorName(name)
+    }
+}
+
+impl From<&Name> for OriginatorName {
+    fn from(name: &Name) -> OriginatorName {
+        OriginatorName(name.clone())
+    }
+}
+
+
 /// Tag component for projectiles.
 #[derive(Component, Debug, Reflect)]
 pub struct Projectile;
@@ -28,6 +63,8 @@ pub struct Projectile;
 /// Bundle for projectiles.
 #[derive(Bundle, TypedBuilder)]
 pub struct ProjectileBundle {
+    #[builder(setter(into))]
+    pub originator: OriginatorName,
     pub mesh: MaterialMesh2dBundle<ColorMaterial>,
     pub collider: Collider,
     pub position: Position,
