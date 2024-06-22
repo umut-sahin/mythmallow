@@ -11,6 +11,9 @@ impl Plugin for CorePlugin {
         // Register components.
         app.register_type::<Rarity>();
 
+        // Setup easing.
+        app.add_plugins(EasingsPlugin);
+
         // Setup the global random number generator.
         let seed = {
             let args = app.world.resource::<Args>();

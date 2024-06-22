@@ -17,6 +17,7 @@ pub use crate::{
         resources::*,
     },
     input::actions::*,
+    inventory::components::*,
     inventory::resources::*,
     item::{
         components::*,
@@ -145,6 +146,15 @@ pub use {
         ConsoleOpen as ConsoleState,
         ConsolePlugin as BevyConsolePlugin,
         ConsoleSet,
+    },
+    bevy_easings::{
+        Ease,
+        EaseFunction,
+        EasingChainComponent,
+        EasingComponent,
+        EasingState,
+        EasingType,
+        EasingsPlugin,
     },
     bevy_fluent::prelude::*,
     bevy_persistent::prelude::*,

@@ -12,6 +12,7 @@ impl Plugin for EnemyPlugin {
         app.register_type::<Enemy>();
         app.register_type::<EnemyHitBox>();
         app.register_type::<DamageEnemiesOnContact>();
+        app.register_type::<DamageEnemiesOnContactStarted>();
 
         // Register resources.
         app.register_type::<EnemyCounter>();

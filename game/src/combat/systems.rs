@@ -1,131 +1,330 @@
 use crate::prelude::*;
 
 
-/// Damages the player.
-pub fn damage_player(
+/// Starts attack animations.
+pub fn start_attack_animations(
     mut commands: Commands,
-    mut player_query: Query<(&Name, &DodgeChance, &mut RemainingHealth), With<Player>>,
-    player_hit_box_query: Query<&Parent, With<PlayerHitBox>>,
-    player_damage_query: Query<
-        (Entity, &Name, Option<&OriginatorName>, &Damage, Option<&DamageCooldown>),
-        (With<DamagePlayerOnContact>, Without<Cooldown<Attack>>),
+    mut attack_query: Query<
+        (Entity, &Transform, &mut Attack),
+        Without<EasingChainComponent<Transform>>,
     >,
-    mut collision_event_reader: EventReader<Collision>,
-    mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
 ) {
-    let mut apply_damage_if_applicable = |player_hit_box_entity, player_damage_entity| {
-        let (
-            damaging_entity,
-            damaging_entity_name,
-            damaging_entity_originator_name,
-            damage,
-            damage_cooldown,
-        ) = match player_damage_query.get(player_damage_entity) {
-            Ok(query_result) => query_result,
-            Err(_) => return,
-        };
-        let player = match player_hit_box_query.get(player_hit_box_entity) {
-            Ok(parent) => player_query.get_mut(parent.get()),
-            Err(_) => return,
-        };
-        if let Ok((player_name, player_dodge_chance, mut player_remaining_health)) = player {
-            if let Some(damage_cooldown) = damage_cooldown {
-                commands
-                    .entity(damaging_entity)
-                    .insert(Cooldown::<Attack>::new(damage_cooldown.duration));
-            }
+    for (entity, transform, mut attack) in attack_query.iter_mut() {
+        match attack.deref_mut() {
+            Attack::Thrust { direction, range, duration, started } => {
+                if !*started {
+                    let mut target_transform = transform.clone();
+                    target_transform.translation += (direction.xy() * range.0).extend(0.00);
 
-            let originator = damaging_entity_originator_name
-                .map(|name| format!(" of {:?}", name.0))
-                .unwrap_or_default();
+                    let pattern = transform
+                        .clone()
+                        .ease_to(
+                            target_transform,
+                            EaseFunction::QuadraticInOut,
+                            EasingType::Once { duration: *duration / 2 },
+                        )
+                        .ease_to(
+                            transform.clone(),
+                            EaseFunction::QuadraticInOut,
+                            EasingType::Once { duration: *duration / 2 },
+                        );
+                    commands.entity(entity).insert(pattern);
 
-            if rng.gen_range(0.00..100.00) < player_dodge_chance.0 {
-                log::info!(
-                    "{:?} dodged {:.2} damage from {:?}{}",
-                    player_name,
-                    damage.0,
-                    damaging_entity_name,
-                    originator,
-                );
-                return;
-            }
-
-            log::info!(
-                "{:?} received {:.2} damage from {:?}{}",
-                player_name,
-                damage.0,
-                damaging_entity_name,
-                originator,
-            );
-            player_remaining_health.0 -= damage.0;
-
-            if player_remaining_health.0 > 0.00 {
-                log::info!("{:?} has {:.2} health left", player_name, player_remaining_health.0);
-            }
+                    *started = true;
+                } else {
+                    commands.entity(entity).remove::<Attack>();
+                }
+            },
+            _ => {},
         }
-    };
-
-    for Collision(contacts) in collision_event_reader.read().cloned() {
-        apply_damage_if_applicable(contacts.entity1, contacts.entity2);
-        apply_damage_if_applicable(contacts.entity2, contacts.entity1);
     }
 }
 
-/// Damages the enemies.
-pub fn damage_enemies(
+/// Pauses attack animations.
+pub fn pause_attack_animations(
+    mut attack_query: Query<&mut EasingComponent<Transform>, With<Attack>>,
+) {
+    for mut easing in attack_query.iter_mut() {
+        easing.state = EasingState::Paused;
+    }
+}
+
+/// Resumes attack animations.
+pub fn resume_attack_animations(
+    mut attack_query: Query<&mut EasingComponent<Transform>, With<Attack>>,
+) {
+    for mut easing in attack_query.iter_mut() {
+        easing.state = EasingState::Play;
+    }
+}
+
+
+/// Applies damage.
+pub fn apply_damage(
+    commands: &mut Commands,
+    name_query: &Query<&Name>,
+    rng: &mut ResMut<GlobalEntropy<ChaCha8Rng>>,
+
+    damaged_entity_name: &Name,
+    damaged_entity_dodge_chance: Option<&DodgeChance>,
+    damaged_entity_remaining_health: &mut RemainingHealth,
+
+    damaging_entity: Entity,
+    damaging_entity_name: &Name,
+    damaging_entity_originator: Option<&Originator>,
+
+    damage: &Damage,
+    damage_cooldown: Option<&DamageCooldown>,
+) {
+    if let Some(damage_cooldown) = damage_cooldown {
+        commands.entity(damaging_entity).insert(Cooldown::<Damage>::new(damage_cooldown.duration));
+    }
+
+    let originator = damaging_entity_originator
+        .and_then(|originator| {
+            name_query
+                .get(originator.0)
+                .map(|originator_name| format!(" of {:?}", originator_name))
+                .ok()
+        })
+        .unwrap_or_default();
+
+    if let Some(damaged_entity_dodge_chance) = damaged_entity_dodge_chance {
+        if rng.gen_range(0.00..100.00) < damaged_entity_dodge_chance.0 {
+            log::info!(
+                "{:?} dodged {:.2} damage from {:?}{}",
+                damaged_entity_name,
+                damage.0,
+                damaging_entity_name,
+                originator,
+            );
+            return;
+        }
+    }
+
+    log::info!(
+        "{:?} received {:.2} damage from {:?}{}",
+        damaged_entity_name,
+        damage.0,
+        damaging_entity_name,
+        originator,
+    );
+    damaged_entity_remaining_health.0 -= damage.0;
+
+    if damaged_entity_remaining_health.0 > 0.00 {
+        log::info!(
+            "{:?} has {:.2} health left",
+            damaged_entity_name,
+            damaged_entity_remaining_health.0
+        );
+    }
+}
+
+/// Damages the player on contact.
+pub fn damage_player_on_contact(
     mut commands: Commands,
-    mut enemy_query: Query<(&Name, &mut RemainingHealth), With<Enemy>>,
-    enemy_hit_box_query: Query<&Parent, With<EnemyHitBox>>,
-    enemy_damage_query: Query<
-        (Entity, &Name, Option<&OriginatorName>, &Damage, Option<&DamageCooldown>),
-        (With<DamageEnemiesOnContact>, Without<Cooldown<Attack>>),
+    name_query: Query<&Name>,
+    mut player_query: Query<(&Name, &DodgeChance, &mut RemainingHealth), With<Player>>,
+    player_hit_box_query: Query<&Parent, With<PlayerHitBox>>,
+    player_damage_query: Query<
+        (Entity, &Name, Option<&Originator>, &Damage, Option<&DamageCooldown>),
+        (With<Attack>, With<DamagePlayerOnContact>, Without<Cooldown<Damage>>),
     >,
+    mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
     mut collision_event_reader: EventReader<Collision>,
 ) {
-    let mut apply_damage_if_applicable = |enemy_hit_box_entity, enemy_damage_entity| {
+    for Collision(contacts) in collision_event_reader.read().cloned() {
+        let (player_name, player_dodge_chance, mut player_remaining_health) =
+            match player_hit_box_query
+                .get(contacts.entity1)
+                .or_else(|_| player_hit_box_query.get(contacts.entity2))
+                .and_then(|parent| player_query.get_mut(parent.get()))
+            {
+                Ok(query_result) => query_result,
+                Err(_) => continue,
+            };
+
         let (
             damaging_entity,
             damaging_entity_name,
             damaging_entity_originator_name,
             damage,
             damage_cooldown,
-        ) = match enemy_damage_query.get(enemy_damage_entity) {
+        ) = match player_damage_query
+            .get(contacts.entity2)
+            .or_else(|_| player_damage_query.get(contacts.entity1))
+        {
             Ok(query_result) => query_result,
-            Err(_) => return,
+            Err(_) => continue,
         };
-        let enemy = match enemy_hit_box_query.get(enemy_hit_box_entity) {
-            Ok(parent) => enemy_query.get_mut(parent.get()),
-            Err(_) => return,
+
+        apply_damage(
+            &mut commands,
+            &name_query,
+            &mut rng,
+            player_name,
+            Some(player_dodge_chance),
+            &mut player_remaining_health,
+            damaging_entity,
+            damaging_entity_name,
+            damaging_entity_originator_name,
+            damage,
+            damage_cooldown,
+        );
+    }
+}
+
+/// Damages the player on contact.
+pub fn damage_player_on_contact_started(
+    mut commands: Commands,
+    name_query: Query<&Name>,
+    mut player_query: Query<(&Name, &DodgeChance, &mut RemainingHealth), With<Player>>,
+    player_hit_box_query: Query<&Parent, With<PlayerHitBox>>,
+    player_damage_query: Query<
+        (Entity, &Name, Option<&Originator>, &Damage, Option<&DamageCooldown>),
+        (With<Attack>, With<DamagePlayerOnContactStarted>, Without<Cooldown<Damage>>),
+    >,
+    mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
+    mut collision_started_event_reader: EventReader<CollisionStarted>,
+) {
+    for CollisionStarted(entity1, entity2) in collision_started_event_reader.read().cloned() {
+        let (player_name, player_dodge_chance, mut player_remaining_health) =
+            match player_hit_box_query
+                .get(entity1)
+                .or_else(|_| player_hit_box_query.get(entity2))
+                .and_then(|parent| player_query.get_mut(parent.get()))
+            {
+                Ok(query_result) => query_result,
+                Err(_) => continue,
+            };
+
+        let (
+            damaging_entity,
+            damaging_entity_name,
+            damaging_entity_originator_name,
+            damage,
+            damage_cooldown,
+        ) = match player_damage_query.get(entity2).or_else(|_| player_damage_query.get(entity1)) {
+            Ok(query_result) => query_result,
+            Err(_) => continue,
         };
-        if let Ok((enemy_name, mut enemy_remaining_health)) = enemy {
-            if let Some(damage_cooldown) = damage_cooldown {
-                commands
-                    .entity(damaging_entity)
-                    .insert(Cooldown::<Attack>::new(damage_cooldown.duration));
-            }
 
-            let originator = damaging_entity_originator_name
-                .map(|name| format!(" of {:?}", name.0))
-                .unwrap_or_default();
+        apply_damage(
+            &mut commands,
+            &name_query,
+            &mut rng,
+            player_name,
+            Some(player_dodge_chance),
+            &mut player_remaining_health,
+            damaging_entity,
+            damaging_entity_name,
+            damaging_entity_originator_name,
+            damage,
+            damage_cooldown,
+        );
+    }
+}
 
-            log::info!(
-                "{:?} received {:.2} damage from {:?}{}",
-                enemy_name,
-                damage.0,
-                damaging_entity_name,
-                originator,
-            );
-            enemy_remaining_health.0 -= damage.0;
-
-            if enemy_remaining_health.0 > 0.00 {
-                log::info!("{:?} has {:.2} health left", enemy_name, enemy_remaining_health.0);
-            }
-        }
-    };
-
+/// Damages the enemies on contact.
+pub fn damage_enemies_on_contact(
+    mut commands: Commands,
+    name_query: Query<&Name>,
+    mut enemy_query: Query<(&Name, Option<&DodgeChance>, &mut RemainingHealth), With<Enemy>>,
+    enemy_hit_box_query: Query<&Parent, With<EnemyHitBox>>,
+    enemy_damage_query: Query<
+        (Entity, &Name, Option<&Originator>, &Damage, Option<&DamageCooldown>),
+        (With<Attack>, With<DamageEnemiesOnContact>, Without<Cooldown<Damage>>),
+    >,
+    mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
+    mut collision_event_reader: EventReader<Collision>,
+) {
     for Collision(contacts) in collision_event_reader.read().cloned() {
-        apply_damage_if_applicable(contacts.entity1, contacts.entity2);
-        apply_damage_if_applicable(contacts.entity2, contacts.entity1);
+        let (enemy_name, enemy_dodge_chance, mut enemy_remaining_health) = match enemy_hit_box_query
+            .get(contacts.entity1)
+            .or_else(|_| enemy_hit_box_query.get(contacts.entity2))
+            .and_then(|parent| enemy_query.get_mut(parent.get()))
+        {
+            Ok(query_result) => query_result,
+            Err(_) => continue,
+        };
+
+        let (
+            damaging_entity,
+            damaging_entity_name,
+            damaging_entity_originator_name,
+            damage,
+            damage_cooldown,
+        ) = match enemy_damage_query
+            .get(contacts.entity2)
+            .or_else(|_| enemy_damage_query.get(contacts.entity1))
+        {
+            Ok(query_result) => query_result,
+            Err(_) => continue,
+        };
+
+        apply_damage(
+            &mut commands,
+            &name_query,
+            &mut rng,
+            enemy_name,
+            enemy_dodge_chance,
+            &mut enemy_remaining_health,
+            damaging_entity,
+            damaging_entity_name,
+            damaging_entity_originator_name,
+            damage,
+            damage_cooldown,
+        );
+    }
+}
+
+/// Damages the enemies on contact started.
+pub fn damage_enemies_on_contact_started(
+    mut commands: Commands,
+    name_query: Query<&Name>,
+    mut enemy_query: Query<(&Name, Option<&DodgeChance>, &mut RemainingHealth), With<Enemy>>,
+    enemy_hit_box_query: Query<&Parent, With<EnemyHitBox>>,
+    enemy_damage_query: Query<
+        (Entity, &Name, Option<&Originator>, &Damage, Option<&DamageCooldown>),
+        (With<Attack>, With<DamageEnemiesOnContactStarted>, Without<Cooldown<Damage>>),
+    >,
+    mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
+    mut collision_started_event_reader: EventReader<CollisionStarted>,
+) {
+    for CollisionStarted(entity1, entity2) in collision_started_event_reader.read().cloned() {
+        let (enemy_name, enemy_dodge_chance, mut enemy_remaining_health) = match enemy_hit_box_query
+            .get(entity1)
+            .or_else(|_| enemy_hit_box_query.get(entity2))
+            .and_then(|parent| enemy_query.get_mut(parent.get()))
+        {
+            Ok(query_result) => query_result,
+            Err(_) => continue,
+        };
+
+        let (
+            damaging_entity,
+            damaging_entity_name,
+            damaging_entity_originator_name,
+            damage,
+            damage_cooldown,
+        ) = match enemy_damage_query.get(entity2).or_else(|_| enemy_damage_query.get(entity1)) {
+            Ok(query_result) => query_result,
+            Err(_) => continue,
+        };
+
+        apply_damage(
+            &mut commands,
+            &name_query,
+            &mut rng,
+            enemy_name,
+            enemy_dodge_chance,
+            &mut enemy_remaining_health,
+            damaging_entity,
+            damaging_entity_name,
+            damaging_entity_originator_name,
+            damage,
+            damage_cooldown,
+        );
     }
 }
 
