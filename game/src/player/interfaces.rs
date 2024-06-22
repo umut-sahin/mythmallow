@@ -36,6 +36,10 @@ pub trait IPlayer: Debug + Send + Sync + 'static {
     fn speed_multiplier(&self) -> SpeedMultiplier {
         SpeedMultiplier::default()
     }
+    /// Gets the base dodge change of the player.
+    fn dodge_chance(&self) -> DodgeChance {
+        DodgeChance::default()
+    }
 
     /// Gets the collider of the player.
     fn collider(&self) -> Collider;

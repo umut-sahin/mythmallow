@@ -123,12 +123,15 @@ pub fn attack(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    item_query: Query<(Entity, &GlobalTransform), (With<BowOfArtemis>, Without<Cooldown<Attack>>)>,
+    item_query: Query<
+        (Entity, &Name, &GlobalTransform),
+        (With<BowOfArtemis>, Without<Cooldown<Attack>>),
+    >,
     enemy_hit_box_query: Query<&Position, With<EnemyHitBox>>,
     spatial_query: SpatialQuery,
 ) {
     let base_attack_area = Collider::circle(BASE_RANGE);
-    for (item_entity, &item_transform) in item_query.iter() {
+    for (item_entity, item_name, &item_transform) in item_query.iter() {
         let item_position = Position(item_transform.translation().xy());
         let enemies_in_range = utils::combat::find_enemies_in_range_sorted_by_distance(
             &spatial_query,
@@ -151,6 +154,7 @@ pub fn attack(
             }
 
             let projectile_entity = ProjectileBundle::builder()
+                .originator(item_name)
                 .mesh(MaterialMesh2dBundle {
                     mesh: meshes.add(Circle::new(PROJECTILE_SIZE)).into(),
                     material: materials.add(ColorMaterial::from(PROJECTILE_COLOR)),

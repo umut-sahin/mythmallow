@@ -72,6 +72,7 @@ impl<P: Component + IPlayer> PlayerBundle<P> {
         let pickup_range = self.player.pickup_range();
         let speed = self.player.speed();
         let speed_multiplier = self.player.speed_multiplier();
+        let dodge_chance = self.player.dodge_chance();
         let collider = self.player.collider();
 
         let mut player = commands.spawn((
@@ -84,6 +85,7 @@ impl<P: Component + IPlayer> PlayerBundle<P> {
             pickup_range,
             speed,
             speed_multiplier,
+            dodge_chance,
             // Combat
             RemainingHealth(*health),
             // Leveling
