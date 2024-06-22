@@ -60,3 +60,9 @@ opt-level = 3
 
 [profile.release]
 lto = "fat"
+
+[profile.dev.build-override]
+opt-level = 3
+
+[profile.release.build-override]
+opt-level = 3
