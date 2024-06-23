@@ -157,6 +157,7 @@ pub use {
         EasingsPlugin,
     },
     bevy_fluent::prelude::*,
+    bevy_fluent::ResourceAsset,
     bevy_persistent::prelude::*,
     bevy_prng::ChaCha8Rng,
     bevy_rand::prelude::*,
