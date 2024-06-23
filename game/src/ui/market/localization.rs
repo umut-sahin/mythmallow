@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+
 /// Gets the localized text of the refresh button.
 pub fn refresh_button(refresh_cost: Balance) -> LocalizedText {
     LocalizedText::Localized {
