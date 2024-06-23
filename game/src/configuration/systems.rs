@@ -24,14 +24,14 @@ pub fn apply_locale_command(
             },
             LocaleCommands::Set { locale: requested } => {
                 match requested.parse::<LanguageIdentifier>() {
-                    Ok(new_locale) => {
+                    Ok(new_locale) if supported_locales.contains(&new_locale) => {
                         commands.run_system_with_input(
                             registered_systems.configuration.set_locale,
                             new_locale,
                         );
                         reply!(command, "Set.");
                     },
-                    Err(_) => reply!(command, "Requested locale isn't available."),
+                    _ => reply!(command, "Requested locale isn't available."),
                 }
             },
         }
