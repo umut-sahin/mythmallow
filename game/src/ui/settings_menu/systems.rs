@@ -164,23 +164,15 @@ pub fn spawn_settings_menu(
 
             let up_widget = if upper_row_index == i {
                 current_widget
+            } else if i == widgets.len() - 1 {
+                *widgets[upper_row_index].last().unwrap()
             } else {
-                if i == widgets.len() - 1 {
-                    widgets[upper_row_index].last().unwrap().clone()
-                } else {
-                    widgets[upper_row_index]
-                        .get(j)
-                        .unwrap_or(widgets[upper_row_index].last().unwrap())
-                        .clone()
-                }
+                *widgets[upper_row_index].get(j).unwrap_or(widgets[upper_row_index].last().unwrap())
             };
             let down_widget = if lower_row_index == i {
                 current_widget
             } else {
-                widgets[lower_row_index]
-                    .get(j)
-                    .unwrap_or(widgets[lower_row_index].last().unwrap())
-                    .clone()
+                *widgets[lower_row_index].get(j).unwrap_or(widgets[lower_row_index].last().unwrap())
             };
 
             commands.entity(current_widget).insert((

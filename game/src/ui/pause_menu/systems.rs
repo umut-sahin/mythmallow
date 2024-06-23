@@ -133,18 +133,16 @@ pub fn despawn_pause_menu(
     game_state_stack: Res<GameStateStack>,
 ) {
     if let Ok(pause_menu_entity) = pause_menu_query.get_single_mut() {
-        if app_state.get() == &AppState::Game {
-            if game_state_stack.contains(&GameState::Paused) {
-                for (parent, mut visibility) in child_query.iter_mut() {
-                    if parent.get() == pause_menu_entity {
-                        *visibility = Visibility::Hidden;
-                    }
+        if app_state.get() == &AppState::Game && game_state_stack.contains(&GameState::Paused) {
+            for (parent, mut visibility) in child_query.iter_mut() {
+                if parent.get() == pause_menu_entity {
+                    *visibility = Visibility::Hidden;
                 }
-                if let Ok(widget) = widget_query.get_single() {
-                    commands.insert_resource(PreviouslySelectedPauseMenuWidget(widget));
-                }
-                return;
             }
+            if let Ok(widget) = widget_query.get_single() {
+                commands.insert_resource(PreviouslySelectedPauseMenuWidget(widget));
+            }
+            return;
         }
         commands.entity(pause_menu_entity).despawn_recursive();
     }
