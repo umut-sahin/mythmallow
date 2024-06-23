@@ -7,7 +7,7 @@ use crate::{
 };
 
 
-/// Applies the inventory console commands.
+/// Applies the player console commands.
 pub fn apply_player_command(
     mut command: ConsoleCommand<PlayerCommand>,
     mut god_mode: ResMut<GodMode>,
