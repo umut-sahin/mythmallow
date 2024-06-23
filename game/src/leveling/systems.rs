@@ -4,7 +4,7 @@ use crate::{
 };
 
 
-/// Applies the inventory console commands.
+/// Applies the experience console commands.
 pub fn apply_experience_command(
     player_query: Query<(Entity, &Experience), With<Player>>,
     mut experience_gained_event_writer: EventWriter<ExperienceGainedEvent>,

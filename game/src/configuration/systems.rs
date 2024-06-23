@@ -1,13 +1,10 @@
-use {
-    crate::{
-        configuration::commands::*,
-        prelude::*,
-    },
-    bevy_fluent::ResourceAsset,
+use crate::{
+    configuration::commands::*,
+    prelude::*,
 };
 
 
-/// Applies the inventory console commands.
+/// Applies the locale console commands.
 pub fn apply_locale_command(
     mut commands: Commands,
     registered_systems: Res<RegisteredSystems>,
