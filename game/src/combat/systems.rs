@@ -11,20 +11,20 @@ pub fn start_attack_animations(
 ) {
     for (entity, transform, mut attack) in attack_query.iter_mut() {
         match attack.deref_mut() {
+            Attack::Contact => {},
             Attack::Thrust { direction, range, duration, started } => {
                 if !*started {
-                    let mut target_transform = transform.clone();
+                    let mut target_transform = *transform;
                     target_transform.translation += (direction.xy() * range.0).extend(0.00);
 
                     let pattern = transform
-                        .clone()
                         .ease_to(
                             target_transform,
                             EaseFunction::QuadraticInOut,
                             EasingType::Once { duration: *duration / 2 },
                         )
                         .ease_to(
-                            transform.clone(),
+                            *transform,
                             EaseFunction::QuadraticInOut,
                             EasingType::Once { duration: *duration / 2 },
                         );
@@ -35,7 +35,6 @@ pub fn start_attack_animations(
                     commands.entity(entity).remove::<Attack>();
                 }
             },
-            _ => {},
         }
     }
 }
