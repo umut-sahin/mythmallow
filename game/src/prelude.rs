@@ -17,8 +17,10 @@ pub use crate::{
         resources::*,
     },
     input::actions::*,
-    inventory::components::*,
-    inventory::resources::*,
+    inventory::{
+        components::*,
+        resources::*,
+    },
     item::{
         components::*,
         interfaces::*,
@@ -57,8 +59,10 @@ pub use crate::{
     },
     plugin::MythmallowPlugin,
     property::components::*,
-    status_effect::components::*,
-    status_effect::systems::cooldown,
+    status_effect::{
+        components::*,
+        systems::cooldown,
+    },
     ui::{
         diagnostics_overlay::components::*,
         enemy_selection_screen::components::*,
@@ -131,8 +135,10 @@ pub use {
         sprite::MaterialMesh2dBundle,
         transform::TransformSystem,
         ui::Display as UiDisplay,
-        utils::HashMap,
-        utils::HashSet,
+        utils::{
+            HashMap,
+            HashSet,
+        },
         window::{
             PrimaryWindow,
             WindowFocused,
@@ -156,8 +162,10 @@ pub use {
         EasingType,
         EasingsPlugin,
     },
-    bevy_fluent::prelude::*,
-    bevy_fluent::ResourceAsset,
+    bevy_fluent::{
+        prelude::*,
+        ResourceAsset,
+    },
     bevy_persistent::prelude::*,
     bevy_prng::ChaCha8Rng,
     bevy_rand::prelude::*,
@@ -173,9 +181,15 @@ pub use {
         Subcommand,
     },
     core::num::NonZeroU8,
-    fluent::FluentArgs,
-    fluent_content::Content,
-    fluent_content::Request,
+    fluent::{
+        bundle::FluentBundle,
+        FluentArgs,
+        FluentResource,
+    },
+    fluent_content::{
+        Content,
+        Request,
+    },
     itertools::Itertools,
     leafwing_input_manager::{
         action_state::ActionData,
@@ -204,14 +218,12 @@ pub use {
         SmolStr,
         ToSmolStr,
     },
-    std::borrow::Cow,
-    std::sync::atomic::AtomicBool,
-    std::sync::atomic::Ordering as AtomicOrdering,
     std::{
         any::{
             Any,
             TypeId,
         },
+        borrow::Cow,
         cmp::Ordering,
         fmt::{
             self,
@@ -230,6 +242,10 @@ pub use {
         },
         path::PathBuf,
         sync::{
+            atomic::{
+                AtomicBool,
+                Ordering as AtomicOrdering,
+            },
             Arc,
             Mutex,
         },
