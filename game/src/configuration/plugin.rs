@@ -22,26 +22,45 @@ impl Plugin for ConfigurationPlugin {
 
         // Setup localization.
         {
-            let general_setting = app.world.resource::<Persistent<GeneralSettings>>();
+            let general_settings = app.world.resource::<Persistent<GeneralSettings>>();
 
             let supported_locales = SupportedLocales::get();
             let locale_assets = LocaleAssets::default();
             let default_locale = DefaultLocale::get(&supported_locales);
-            let current_locale = general_setting.locale().unwrap_or_else(|| default_locale.clone());
-            let locale =
-                Locale::new(current_locale.identifier()).with_default(default_locale.identifier());
+            let current_locale = match general_settings.locale() {
+                Some(locale) => {
+                    if supported_locales.contains(&locale) {
+                        Locale::new(locale)
+                    } else {
+                        log::error!(
+                            "requested locale {:?} is not supported, defaulting to {:?}",
+                            locale.to_string(),
+                            default_locale.identifier().to_string(),
+                        );
+                        Locale::new(default_locale.identifier())
+                    }
+                },
+                None => {
+                    log::error!(
+                        "requested locale {:?} is not valid, defaulting to {:?}",
+                        general_settings.locale,
+                        default_locale.identifier().to_string(),
+                    );
+                    Locale::new(default_locale.identifier())
+                },
+            };
 
             app.insert_resource(supported_locales);
             app.insert_resource(locale_assets);
             app.insert_resource(default_locale);
-            app.insert_resource(locale);
+            app.insert_resource(current_locale);
 
             app.add_systems(OnEnter(LocalizationState::Loading), load_locale_assets);
             app.add_systems(
                 Update,
                 load_locales_folder.run_if(in_state(LocalizationState::Loading)).run_if(
                     |asset_server: Res<AssetServer>,
-                     locale_assets: Option<Res<LocaleAssetHandles>>| {
+                     locale_assets: Option<Res<LocaleResourceHandles>>| {
                         if let Some(locale_assets) = locale_assets {
                             locale_assets.iter().all(|handle| {
                                 matches!(

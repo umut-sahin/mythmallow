@@ -303,17 +303,19 @@ pub fn language_setting_previous_button_interaction(
         button.on_click(|| {
             let position = supported_locales
                 .iter()
-                .find_position(|supported_locale| *supported_locale == &locale.requested);
-            if let Some((position, _)) = position {
-                let mut new_position = position as isize - 1;
-                if new_position < 0 {
-                    new_position = supported_locales.len() as isize - 1;
-                }
-                commands.run_system_with_input(
-                    registered_systems.configuration.set_locale,
-                    supported_locales[new_position as usize].clone(),
-                )
+                .find_position(|supported_locale| *supported_locale == &locale.requested)
+                .map(|(position, _)| position)
+                .unwrap_or(0);
+
+            let mut new_position = position as isize - 1;
+            if new_position < 0 {
+                new_position = supported_locales.len() as isize - 1;
             }
+
+            commands.run_system_with_input(
+                registered_systems.configuration.set_locale,
+                supported_locales[new_position as usize].clone(),
+            )
         });
     }
 }
@@ -333,17 +335,19 @@ pub fn language_setting_next_button_interaction(
         button.on_click(|| {
             let position = supported_locales
                 .iter()
-                .find_position(|supported_locale| *supported_locale == &locale.requested);
-            if let Some((position, _)) = position {
-                let mut new_position = position + 1;
-                if new_position >= supported_locales.len() {
-                    new_position = 0;
-                }
-                commands.run_system_with_input(
-                    registered_systems.configuration.set_locale,
-                    supported_locales[new_position].clone(),
-                )
+                .find_position(|supported_locale| *supported_locale == &locale.requested)
+                .map(|(position, _)| position)
+                .unwrap_or(0);
+
+            let mut new_position = position + 1;
+            if new_position >= supported_locales.len() {
+                new_position = 0;
             }
+
+            commands.run_system_with_input(
+                registered_systems.configuration.set_locale,
+                supported_locales[new_position].clone(),
+            )
         });
     }
 }

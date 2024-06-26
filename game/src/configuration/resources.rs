@@ -376,9 +376,9 @@ impl GeneralSettings {
 }
 
 impl GeneralSettings {
-    /// Gets the default general settings of the game.
-    pub fn locale(&self) -> Option<DefaultLocale> {
-        self.locale.parse::<LanguageIdentifier>().map(DefaultLocale).ok()
+    /// Gets the locale specified in the general settings of the game.
+    pub fn locale(&self) -> Option<LanguageIdentifier> {
+        self.locale.parse::<LanguageIdentifier>().ok()
     }
 }
 
@@ -450,14 +450,14 @@ impl DefaultLocale {
 pub struct LocaleAssets(pub Vec<&'static str>);
 
 
-/// Asset handles of locale assets.
+/// Asset handles of locale resources.
 #[derive(Clone, Default, Deref, Resource)]
-pub struct LocaleAssetHandles(pub Vec<UntypedHandle>);
+pub struct LocaleResourceHandles(pub Vec<Handle<ResourceAsset>>);
 
 
 /// Locales folder.
 #[derive(Clone, Default, Deref, Resource)]
-pub struct LocalesFolder(pub Option<Handle<LoadedFolder>>);
+pub struct LocalesFolder(pub Handle<LoadedFolder>);
 
 
 /// Resource for the key bindings of the application.
