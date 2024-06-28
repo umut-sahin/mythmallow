@@ -86,12 +86,27 @@ pub fn turn_player_visibility_on(mut player_query: Query<&mut Visibility, With<P
 /// Moves the player.
 pub fn movement(
     mut player_query: Query<
-        (&ActionState<GameAction>, &Speed, &SpeedMultiplier, &mut LinearVelocity),
+        (
+            &ActionState<GameAction>,
+            &Speed,
+            &SpeedMultiplier,
+            &mut LastWalkingParticlePosition,
+            &Position,
+            &mut LinearVelocity,
+        ),
         (With<Player>, Without<Dashing>),
     >,
+    mut walking_effect_query: Query<(&mut EffectSpawner, &mut Transform), With<WalkingParticles>>,
+    mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
 ) {
-    let (action_state, speed, speed_multiplier, mut velocity) = match player_query.get_single_mut()
-    {
+    let (
+        action_state,
+        speed,
+        speed_multiplier,
+        mut last_walking_particle_position,
+        position,
+        mut velocity,
+    ) = match player_query.get_single_mut() {
         Ok(query_result) => query_result,
         Err(_) => return,
     };
@@ -111,10 +126,31 @@ pub fn movement(
         change.x += 1.0;
     }
 
-    velocity.0 = if change == Vec2::ZERO {
-        Vec2::ZERO
+    if change == Vec2::ZERO {
+        velocity.0 = Vec2::ZERO;
+
+        last_walking_particle_position.0 = position.0;
     } else {
-        change.normalize() * (speed.0 * speed_multiplier.0)
+        velocity.0 = change.normalize() * (speed.0 * speed_multiplier.0);
+
+        let particle_gap = position.distance(last_walking_particle_position.0);
+
+        if particle_gap >= WALKING_EFFECT_GAP {
+            let (mut spawner, mut effect_transform) = match walking_effect_query.get_single_mut() {
+                Ok(query_result) => query_result,
+                Err(_) => return,
+            };
+
+            last_walking_particle_position.0 = position.0;
+
+            effect_transform.translation = Vec3::new(
+                position.x + rng.gen_range(-WALKING_EFFECT_SPREAD..WALKING_EFFECT_SPREAD),
+                position.y + rng.gen_range(-WALKING_EFFECT_SPREAD..WALKING_EFFECT_SPREAD),
+                0.0,
+            );
+
+            spawner.reset();
+        }
     }
 }
 

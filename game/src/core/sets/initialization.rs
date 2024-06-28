@@ -7,6 +7,7 @@ pub enum InitializationSystems {
     Hud,
     GameMode,
     Player,
+    Effect,
     Market,
     Leveling,
     Inventory,
