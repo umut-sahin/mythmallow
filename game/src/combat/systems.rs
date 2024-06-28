@@ -123,7 +123,7 @@ pub fn apply_damage(
 pub fn damage_player_on_contact(
     mut commands: Commands,
     name_query: Query<&Name>,
-    mut player_query: Query<(&Name, &DodgeChance, &mut RemainingHealth), With<Player>>,
+    mut player_query: Query<(&Name, &Position, &DodgeChance, &mut RemainingHealth), With<Player>>,
     player_hit_box_query: Query<&Parent, With<PlayerHitBox>>,
     player_damage_query: Query<
         (Entity, &Name, Option<&Originator>, &Damage, Option<&DamageCooldown>),
@@ -131,9 +131,27 @@ pub fn damage_player_on_contact(
     >,
     mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
     mut collision_event_reader: EventReader<Collision>,
+    mut blood_query: Query<
+        (&mut EffectSpawner, &mut Transform),
+        (With<BloodParticles>, Without<PopParticles>),
+    >,
+    mut pop_query: Query<
+        (&mut EffectSpawner, &mut Transform),
+        (With<PopParticles>, Without<BloodParticles>),
+    >,
 ) {
+    let (mut blood_spawner, mut blood_effect_transform) = match blood_query.get_single_mut() {
+        Ok(query_result) => query_result,
+        Err(_) => return,
+    };
+
+    let (mut pop_spawner, mut pop_effect_transform) = match pop_query.get_single_mut() {
+        Ok(query_result) => query_result,
+        Err(_) => return,
+    };
+
     for Collision(contacts) in collision_event_reader.read().cloned() {
-        let (player_name, player_dodge_chance, mut player_remaining_health) =
+        let (player_name, player_position, player_dodge_chance, mut player_remaining_health) =
             match player_hit_box_query
                 .get(contacts.entity1)
                 .or_else(|_| player_hit_box_query.get(contacts.entity2))
@@ -170,6 +188,22 @@ pub fn damage_player_on_contact(
             damage,
             damage_cooldown,
         );
+
+        blood_effect_transform.translation = Vec3::new(
+            player_position.x + rng.gen_range(-BLOOD_EFFECT_SPREAD..BLOOD_EFFECT_SPREAD),
+            player_position.y + rng.gen_range(-BLOOD_EFFECT_SPREAD..BLOOD_EFFECT_SPREAD),
+            0.0,
+        );
+
+        blood_spawner.reset();
+
+        pop_effect_transform.translation = Vec3::new(
+            player_position.x + rng.gen_range(-POP_EFFECT_SPREAD..POP_EFFECT_SPREAD),
+            player_position.y + rng.gen_range(-POP_EFFECT_SPREAD..POP_EFFECT_SPREAD),
+            0.0,
+        );
+
+        pop_spawner.reset();
     }
 }
 
@@ -177,7 +211,7 @@ pub fn damage_player_on_contact(
 pub fn damage_player_on_contact_started(
     mut commands: Commands,
     name_query: Query<&Name>,
-    mut player_query: Query<(&Name, &DodgeChance, &mut RemainingHealth), With<Player>>,
+    mut player_query: Query<(&Name, &Position, &DodgeChance, &mut RemainingHealth), With<Player>>,
     player_hit_box_query: Query<&Parent, With<PlayerHitBox>>,
     player_damage_query: Query<
         (Entity, &Name, Option<&Originator>, &Damage, Option<&DamageCooldown>),
@@ -185,9 +219,27 @@ pub fn damage_player_on_contact_started(
     >,
     mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
     mut collision_started_event_reader: EventReader<CollisionStarted>,
+    mut blood_query: Query<
+        (&mut EffectSpawner, &mut Transform),
+        (With<BloodParticles>, Without<PopParticles>),
+    >,
+    mut pop_query: Query<
+        (&mut EffectSpawner, &mut Transform),
+        (With<PopParticles>, Without<BloodParticles>),
+    >,
 ) {
+    let (mut blood_spawner, mut blood_effect_transform) = match blood_query.get_single_mut() {
+        Ok(query_result) => query_result,
+        Err(_) => return,
+    };
+
+    let (mut pop_spawner, mut pop_effect_transform) = match pop_query.get_single_mut() {
+        Ok(query_result) => query_result,
+        Err(_) => return,
+    };
+
     for CollisionStarted(entity1, entity2) in collision_started_event_reader.read().cloned() {
-        let (player_name, player_dodge_chance, mut player_remaining_health) =
+        let (player_name, player_position, player_dodge_chance, mut player_remaining_health) =
             match player_hit_box_query
                 .get(entity1)
                 .or_else(|_| player_hit_box_query.get(entity2))
@@ -221,6 +273,22 @@ pub fn damage_player_on_contact_started(
             damage,
             damage_cooldown,
         );
+
+        blood_effect_transform.translation = Vec3::new(
+            player_position.x + rng.gen_range(-BLOOD_EFFECT_SPREAD..BLOOD_EFFECT_SPREAD),
+            player_position.y + rng.gen_range(-BLOOD_EFFECT_SPREAD..BLOOD_EFFECT_SPREAD),
+            0.0,
+        );
+
+        blood_spawner.reset();
+
+        pop_effect_transform.translation = Vec3::new(
+            player_position.x + rng.gen_range(-POP_EFFECT_SPREAD..POP_EFFECT_SPREAD),
+            player_position.y + rng.gen_range(-POP_EFFECT_SPREAD..POP_EFFECT_SPREAD),
+            0.0,
+        );
+
+        pop_spawner.reset();
     }
 }
 
@@ -228,7 +296,10 @@ pub fn damage_player_on_contact_started(
 pub fn damage_enemies_on_contact(
     mut commands: Commands,
     name_query: Query<&Name>,
-    mut enemy_query: Query<(&Name, Option<&DodgeChance>, &mut RemainingHealth), With<Enemy>>,
+    mut enemy_query: Query<
+        (&Name, &Position, Option<&DodgeChance>, &mut RemainingHealth),
+        With<Enemy>,
+    >,
     enemy_hit_box_query: Query<&Parent, With<EnemyHitBox>>,
     enemy_damage_query: Query<
         (Entity, &Name, Option<&Originator>, &Damage, Option<&DamageCooldown>),
@@ -236,16 +307,35 @@ pub fn damage_enemies_on_contact(
     >,
     mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
     mut collision_event_reader: EventReader<Collision>,
+    mut blood_query: Query<
+        (&mut EffectSpawner, &mut Transform),
+        (With<BloodParticles>, Without<PopParticles>),
+    >,
+    mut pop_query: Query<
+        (&mut EffectSpawner, &mut Transform),
+        (With<PopParticles>, Without<BloodParticles>),
+    >,
 ) {
+    let (mut blood_spawner, mut blood_effect_transform) = match blood_query.get_single_mut() {
+        Ok(query_result) => query_result,
+        Err(_) => return,
+    };
+
+    let (mut pop_spawner, mut pop_effect_transform) = match pop_query.get_single_mut() {
+        Ok(query_result) => query_result,
+        Err(_) => return,
+    };
+
     for Collision(contacts) in collision_event_reader.read().cloned() {
-        let (enemy_name, enemy_dodge_chance, mut enemy_remaining_health) = match enemy_hit_box_query
-            .get(contacts.entity1)
-            .or_else(|_| enemy_hit_box_query.get(contacts.entity2))
-            .and_then(|parent| enemy_query.get_mut(parent.get()))
-        {
-            Ok(query_result) => query_result,
-            Err(_) => continue,
-        };
+        let (enemy_name, enemy_position, enemy_dodge_chance, mut enemy_remaining_health) =
+            match enemy_hit_box_query
+                .get(contacts.entity1)
+                .or_else(|_| enemy_hit_box_query.get(contacts.entity2))
+                .and_then(|parent| enemy_query.get_mut(parent.get()))
+            {
+                Ok(query_result) => query_result,
+                Err(_) => continue,
+            };
 
         let (
             damaging_entity,
@@ -274,6 +364,22 @@ pub fn damage_enemies_on_contact(
             damage,
             damage_cooldown,
         );
+
+        blood_effect_transform.translation = Vec3::new(
+            enemy_position.x + rng.gen_range(-BLOOD_EFFECT_SPREAD..BLOOD_EFFECT_SPREAD),
+            enemy_position.y + rng.gen_range(-BLOOD_EFFECT_SPREAD..BLOOD_EFFECT_SPREAD),
+            0.0,
+        );
+
+        blood_spawner.reset();
+
+        pop_effect_transform.translation = Vec3::new(
+            enemy_position.x + rng.gen_range(-POP_EFFECT_SPREAD..POP_EFFECT_SPREAD),
+            enemy_position.y + rng.gen_range(-POP_EFFECT_SPREAD..POP_EFFECT_SPREAD),
+            0.0,
+        );
+
+        pop_spawner.reset();
     }
 }
 
@@ -281,7 +387,10 @@ pub fn damage_enemies_on_contact(
 pub fn damage_enemies_on_contact_started(
     mut commands: Commands,
     name_query: Query<&Name>,
-    mut enemy_query: Query<(&Name, Option<&DodgeChance>, &mut RemainingHealth), With<Enemy>>,
+    mut enemy_query: Query<
+        (&Name, &Position, Option<&DodgeChance>, &mut RemainingHealth),
+        With<Enemy>,
+    >,
     enemy_hit_box_query: Query<&Parent, With<EnemyHitBox>>,
     enemy_damage_query: Query<
         (Entity, &Name, Option<&Originator>, &Damage, Option<&DamageCooldown>),
@@ -289,16 +398,35 @@ pub fn damage_enemies_on_contact_started(
     >,
     mut rng: ResMut<GlobalEntropy<ChaCha8Rng>>,
     mut collision_started_event_reader: EventReader<CollisionStarted>,
+    mut blood_query: Query<
+        (&mut EffectSpawner, &mut Transform),
+        (With<BloodParticles>, Without<PopParticles>),
+    >,
+    mut pop_query: Query<
+        (&mut EffectSpawner, &mut Transform),
+        (With<PopParticles>, Without<BloodParticles>),
+    >,
 ) {
+    let (mut blood_spawner, mut blood_effect_transform) = match blood_query.get_single_mut() {
+        Ok(query_result) => query_result,
+        Err(_) => return,
+    };
+
+    let (mut pop_spawner, mut pop_effect_transform) = match pop_query.get_single_mut() {
+        Ok(query_result) => query_result,
+        Err(_) => return,
+    };
+
     for CollisionStarted(entity1, entity2) in collision_started_event_reader.read().cloned() {
-        let (enemy_name, enemy_dodge_chance, mut enemy_remaining_health) = match enemy_hit_box_query
-            .get(entity1)
-            .or_else(|_| enemy_hit_box_query.get(entity2))
-            .and_then(|parent| enemy_query.get_mut(parent.get()))
-        {
-            Ok(query_result) => query_result,
-            Err(_) => continue,
-        };
+        let (enemy_name, enemy_position, enemy_dodge_chance, mut enemy_remaining_health) =
+            match enemy_hit_box_query
+                .get(entity1)
+                .or_else(|_| enemy_hit_box_query.get(entity2))
+                .and_then(|parent| enemy_query.get_mut(parent.get()))
+            {
+                Ok(query_result) => query_result,
+                Err(_) => continue,
+            };
 
         let (
             damaging_entity,
@@ -324,6 +452,22 @@ pub fn damage_enemies_on_contact_started(
             damage,
             damage_cooldown,
         );
+
+        blood_effect_transform.translation = Vec3::new(
+            enemy_position.x + rng.gen_range(-BLOOD_EFFECT_SPREAD..BLOOD_EFFECT_SPREAD),
+            enemy_position.y + rng.gen_range(-BLOOD_EFFECT_SPREAD..BLOOD_EFFECT_SPREAD),
+            0.0,
+        );
+
+        blood_spawner.reset();
+
+        pop_effect_transform.translation = Vec3::new(
+            enemy_position.x + rng.gen_range(-POP_EFFECT_SPREAD..POP_EFFECT_SPREAD),
+            enemy_position.y + rng.gen_range(-POP_EFFECT_SPREAD..POP_EFFECT_SPREAD),
+            0.0,
+        );
+
+        pop_spawner.reset();
     }
 }
 

@@ -3,6 +3,7 @@ pub mod combat;
 pub mod configuration;
 pub mod console;
 pub mod core;
+pub mod effect;
 pub mod enemy;
 pub mod input;
 pub mod inventory;
