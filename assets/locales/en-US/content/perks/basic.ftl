@@ -6,3 +6,6 @@ speedy-description = +{ $bonus }% Speed
 
 dodgy-name = Dodgy { $rarity }
 dodgy-description = +{ $bonus }% Dodge Chance
+
+regenerative-name = Regenerative { $rarity }
+regenerative-description = +{ $bonus } HP Regeneration / Seconds

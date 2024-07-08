@@ -15,6 +15,7 @@ pub enum GameplaySystems {
     Leveling,
     Market,
     Hud,
+    Property,
 }
 
 impl GameplaySystems {

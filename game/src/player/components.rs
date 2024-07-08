@@ -78,6 +78,7 @@ impl<P: Component + IPlayer> PlayerBundle<P> {
         let speed = self.player.speed();
         let speed_multiplier = self.player.speed_multiplier();
         let dodge_chance = self.player.dodge_chance();
+        let hp_regeneration = self.player.hp_regeneration();
         let collider = self.player.collider();
 
         let mut player = commands.spawn((
@@ -91,6 +92,7 @@ impl<P: Component + IPlayer> PlayerBundle<P> {
             speed,
             speed_multiplier,
             dodge_chance,
+            hp_regeneration,
             // Effects
             LastWalkingParticlePosition::default(),
             // Combat

@@ -40,3 +40,13 @@ impl Default for SpeedMultiplier {
         SpeedMultiplier(1.00)
     }
 }
+
+/// Component for HP regeneration.
+#[derive(Clone, Copy, Component, Debug, Deref, DerefMut, Reflect)]
+pub struct HpRegeneration(pub f32);
+
+impl Default for HpRegeneration {
+    fn default() -> HpRegeneration {
+        HpRegeneration(0.0)
+    }
+}

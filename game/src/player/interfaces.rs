@@ -40,6 +40,11 @@ pub trait IPlayer: Debug + Send + Sync + 'static {
     fn dodge_chance(&self) -> DodgeChance {
         DodgeChance::default()
     }
+    /// Gets the base health regeneration of the player.
+    fn hp_regeneration(&self) -> HpRegeneration {
+        HpRegeneration::default()
+    }
+
 
     /// Gets the collider of the player.
     fn collider(&self) -> Collider;
