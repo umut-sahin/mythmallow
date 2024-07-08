@@ -9,6 +9,7 @@ impl Plugin for BasicPerksPlugin {
         app.register_type::<Healthy>();
         app.register_type::<Speedy>();
         app.register_type::<Dodgy>();
+        app.register_type::<Regenerative>();
 
         // Setup localization.
         app.world.resource_mut::<LocaleAssets>().push("content/perks/basic.ftl");
@@ -21,6 +22,7 @@ impl Plugin for BasicPerksPlugin {
             perk_registry.register(Healthy { rarity });
             perk_registry.register(Speedy { rarity });
             perk_registry.register(Dodgy { rarity });
+            perk_registry.register(Regenerative { rarity });
         }
     }
 }
