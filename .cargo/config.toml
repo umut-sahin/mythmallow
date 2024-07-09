@@ -3,17 +3,27 @@ runner = "wasm-server-runner"
 
 [target.x86_64-pc-windows-msvc]
 linker = "rust-lld.exe"
-rustflags = ["-Zshare-generics=n"]
+rustflags = [
+    "-Zshare-generics=n",
+    "-Zthreads=0",
+]
 
 [target.x86_64-apple-darwin]
-rustflags = ["-Zshare-generics=y"]
+rustflags = [
+    "-Zshare-generics=y",
+    "-Zthreads=0",
+]
 
 [target.aarch64-apple-darwin]
-rustflags = ["-Zshare-generics=y"]
+rustflags = [
+    "-Zshare-generics=y",
+    "-Zthreads=0",
+]
 
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
 rustflags = [
     "-Clink-arg=-fuse-ld=mold",
     "-Zshare-generics=y",
+    "-Zthreads=0",
 ]
