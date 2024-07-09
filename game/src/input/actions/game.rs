@@ -22,7 +22,7 @@ impl GameAction {
         let mut input_map = InputMap::default();
 
         // Extend the input map from key bindings.
-        let key_bindings = app.world.resource::<Persistent<KeyBindings>>();
+        let key_bindings = app.world_mut().resource::<Persistent<KeyBindings>>();
         for key_code in key_bindings.up.iter().cloned() {
             input_map.insert(GameAction::MoveUp, key_code);
         }

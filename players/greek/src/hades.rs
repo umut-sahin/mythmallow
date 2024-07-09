@@ -7,7 +7,7 @@ use {
 pub const SIZE: f32 = 20.00;
 
 /// Color of the player.
-pub const COLOR: Color = Color::BLACK;
+pub const COLOR: Color = Color::srgb(0.00, 0.00, 0.00);
 
 /// Tag component for the player "Hades".
 #[derive(Clone, Component, Debug, Default, Reflect)]
@@ -38,7 +38,7 @@ pub struct HadesPlugin;
 impl Plugin for HadesPlugin {
     fn build(&self, app: &mut App) {
         // Register the player.
-        let mut player_registry = app.world.resource_mut::<PlayerRegistry>();
+        let mut player_registry = app.world_mut().resource_mut::<PlayerRegistry>();
         player_registry.register(GreekMythology, Hades);
 
         // Register components.

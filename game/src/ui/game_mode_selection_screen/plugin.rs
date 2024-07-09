@@ -28,7 +28,7 @@ impl Plugin for GameModeSelectionScreenPlugin {
         );
 
         // Select the game mode when starting in game.
-        let args = app.world.resource::<Args>();
+        let args = app.world_mut().resource::<Args>();
         if args.start_in_game {
             app.add_systems(
                 OnEnter(AppState::GameModeSelectionScreen),

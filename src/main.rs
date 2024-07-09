@@ -60,7 +60,7 @@ fn main() {
     // Add game mode plugins.
     app.add_plugins(SurvivalModePlugin);
     {
-        let game_mode_registry = app.world.resource_mut::<GameModeRegistry>();
+        let game_mode_registry = app.world().resource::<GameModeRegistry>();
         let number_of_game_modes = game_mode_registry.number_of_game_modes();
         log::info!(
             "{} game mode{} {} registered",
@@ -73,7 +73,7 @@ fn main() {
     // Add item plugins.
     app.add_plugins(GreekItemsPlugin);
     {
-        let item_registry = app.world.resource_mut::<ItemRegistry>();
+        let item_registry = app.world().resource::<ItemRegistry>();
         let number_of_items = item_registry.number_of_items();
         log::info!(
             "{} item{} {} registered",
@@ -86,7 +86,7 @@ fn main() {
     // Add player plugins.
     app.add_plugins(GreekPlayersPlugin);
     {
-        let player_registry = app.world.resource::<PlayerRegistry>();
+        let player_registry = app.world_mut().resource::<PlayerRegistry>();
         let number_of_mythologies = player_registry.number_of_mythologies();
         let number_of_players = player_registry.number_of_players();
         log::info!(
@@ -102,7 +102,7 @@ fn main() {
     // Add enemy plugins.
     app.add_plugins(SweetEnemiesPlugin);
     {
-        let enemy_registry = app.world.resource_mut::<EnemyRegistry>();
+        let enemy_registry = app.world().resource::<EnemyRegistry>();
         let number_of_enemy_packs = enemy_registry.number_of_packs();
         let number_of_enemies = enemy_registry.number_of_enemies();
         log::info!(
@@ -118,7 +118,7 @@ fn main() {
     // Add perk plugins.
     app.add_plugins(BasicPerksPlugin);
     {
-        let perk_registry = app.world.resource_mut::<PerkRegistry>();
+        let perk_registry = app.world().resource::<PerkRegistry>();
         let number_of_perks = perk_registry.number_of_perks();
         log::info!(
             "{} perk{} {} registered",
@@ -148,7 +148,7 @@ fn initialize(app: &mut App, args: &Args) {
     );
 
     // Spawn persistent primary window.
-    app.world.spawn((
+    app.world_mut().spawn((
         Name::new("Primary Window"),
         PrimaryWindow,
         PersistentWindowBundle {
@@ -178,7 +178,7 @@ fn initialize(app: &mut App, args: &Args) {
             if keyboard_input.pressed(KeyCode::ControlLeft)
                 && keyboard_input.just_pressed(KeyCode::KeyQ)
             {
-                app_exit_events.send(AppExit);
+                app_exit_events.send(AppExit::Success);
             }
         }
         app.add_systems(Update, exit_with_ctrl_q);
@@ -188,36 +188,13 @@ fn initialize(app: &mut App, args: &Args) {
 #[cfg(feature = "wasm")]
 fn initialize(app: &mut App, _args: &Args) {
     // Add default plugins.
-    app.add_plugins(DefaultPlugins.build().disable::<LogPlugin>());
-
-    // Fit canvas to parent.
-    {
-        let window = match web_sys::window() {
-            Some(window) => window,
-            None => {
-                log::error!("unable to get the window to fit canvas to parent");
-                return;
-            },
-        };
-        let document = match window.document() {
-            Some(document) => document,
-            None => {
-                log::error!("unable to get the document to fit canvas to parent");
-                return;
-            },
-        };
-        let canvas = match document.query_selector("canvas") {
-            Ok(Some(canvas)) if canvas.is_instance_of::<HtmlCanvasElement>() => {
-                canvas.unchecked_into::<HtmlCanvasElement>()
-            },
-            _ => {
-                log::error!("unable to get the canvas to fit to parent");
-                return;
-            },
-        };
-
-        let style = canvas.style();
-        style.set_property("width", "100%").unwrap();
-        style.set_property("height", "100%").unwrap();
-    }
+    app.add_plugins(
+        DefaultPlugins
+            .set(WindowPlugin {
+                primary_window: Some(Window { fit_canvas_to_parent: true, ..default() }),
+                ..default()
+            })
+            .build()
+            .disable::<LogPlugin>(),
+    );
 }

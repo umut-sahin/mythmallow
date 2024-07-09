@@ -247,7 +247,7 @@ pub fn quit_button_interaction(
 ) {
     if let Ok(mut button) = quit_button_query.get_single_mut() {
         button.on_click(|| {
-            app_exit_event_writer.send(AppExit);
+            app_exit_event_writer.send(AppExit::Success);
         });
     }
 }

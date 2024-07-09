@@ -96,12 +96,12 @@ pub fn spawn_enemy(world: &mut World, map_bounds: &MapBounds, spawn: &mut EnemyS
                 let enemy_direction = {
                     let EnemySpawnDirection { from_degrees, to_degrees } = spawn.direction;
                     let rotation = if from_degrees == to_degrees {
-                        Rotation::from_degrees(from_degrees)
+                        Rotation::degrees(from_degrees)
                     } else {
                         let mut rng = world.resource_mut::<GlobalEntropy<ChaCha8Rng>>();
-                        Rotation::from_degrees(rng.gen_range(from_degrees..to_degrees))
+                        Rotation::degrees(rng.gen_range(from_degrees..to_degrees))
                     };
-                    rotation.rotate(Vector::X)
+                    rotation * Vector::X
                 };
 
                 match spawn.position {
@@ -118,7 +118,7 @@ pub fn spawn_enemy(world: &mut World, map_bounds: &MapBounds, spawn: &mut EnemyS
                         ) -> Option<f32> {
                             let ray = spatial.cast_ray(
                                 *origin,
-                                Direction2d::new(direction).ok()?,
+                                Dir2::new(direction).ok()?,
                                 max_distance,
                                 false,
                                 SpatialQueryFilter::from_mask([Layer::MapBound]),

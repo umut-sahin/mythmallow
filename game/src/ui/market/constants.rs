@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 
 /// Background color of the market.
-pub const BACKGROUND_COLOR: Color = Color::rgba(0.00, 0.00, 0.00, 0.50);
+pub const BACKGROUND_COLOR: Color = Color::srgba(0.00, 0.00, 0.00, 0.50);
 
 /// Gap between the widgets in the market in percent of the available space.
 pub const ROW_GAP_PERCENT: f32 = 7.00;
@@ -66,10 +66,10 @@ pub const ITEM_DETAILS_HEIGHT_PERCENT: f32 = 100.00;
 pub const ITEM_DETAILS_ROW_GAP_PERCENT: f32 = 15.00;
 
 /// Border color of item details in the market.
-pub const ITEM_DETAILS_BORDER_COLOR: Color = Color::rgb(1.00, 1.00, 1.00);
+pub const ITEM_DETAILS_BORDER_COLOR: Color = Color::srgb(1.00, 1.00, 1.00);
 
 /// Background color of item details in the market.
-pub const ITEM_DETAILS_BACKGROUND_COLOR: Color = Color::rgba(0.00, 0.00, 0.00, 0.95);
+pub const ITEM_DETAILS_BACKGROUND_COLOR: Color = Color::srgba(0.00, 0.00, 0.00, 0.95);
 
 
 /// Font size of buy buttons in the market in pt.

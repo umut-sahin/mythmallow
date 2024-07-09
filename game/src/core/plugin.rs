@@ -16,7 +16,7 @@ impl Plugin for CorePlugin {
 
         // Setup the global random number generator.
         let seed = {
-            let args = app.world.resource::<Args>();
+            let args = app.world_mut().resource::<Args>();
             let seed = match args.seed {
                 Some(seed) => seed,
                 None => ChaCha8Rng::from_entropy().gen::<u64>(),
@@ -40,9 +40,9 @@ impl Plugin for CorePlugin {
         app.init_state::<DiagnosticsOverlayState>();
 
         // Enable diagnostics overlay if it's enabled in the general settings.
-        let general_settings = app.world.resource::<Persistent<GeneralSettings>>();
+        let general_settings = app.world_mut().resource::<Persistent<GeneralSettings>>();
         if general_settings.show_diagnostics_overlay {
-            app.world.insert_resource(NextState(Some(DiagnosticsOverlayState::Enabled)));
+            app.world_mut().insert_resource(NextState::Pending(DiagnosticsOverlayState::Enabled));
         }
 
         // Configure system sets.

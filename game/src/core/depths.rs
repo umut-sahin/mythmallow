@@ -8,7 +8,6 @@ pub enum Depth {
     Enemy,
     Player,
     Item,
-    Effect,
     Projectile,
 
     Top,

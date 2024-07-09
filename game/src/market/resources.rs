@@ -12,7 +12,7 @@ impl RegisteredMarketSystems {
     pub fn new(app: &mut App, systems: Entity) -> RegisteredMarketSystems {
         use super::systems::*;
 
-        let refresh_market = app.world.register_system(refresh_market);
+        let refresh_market = app.world_mut().register_system(refresh_market);
         RegisteredSystems::attach(app, systems, refresh_market, "refresh_market");
 
         RegisteredMarketSystems { refresh_market }

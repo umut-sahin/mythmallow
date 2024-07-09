@@ -15,7 +15,7 @@ impl RegisteredConfigurationSystems {
     pub fn new(app: &mut App, systems: Entity) -> RegisteredConfigurationSystems {
         use super::systems::*;
 
-        let set_locale = app.world.register_system(set_locale);
+        let set_locale = app.world_mut().register_system(set_locale);
         RegisteredSystems::attach(app, systems, set_locale, "set_locale");
 
         RegisteredConfigurationSystems { set_locale }
@@ -352,7 +352,7 @@ pub struct GeneralSettings {
 impl GeneralSettings {
     /// Initializes the resource in the app.
     pub fn initialize(app: &mut App) {
-        let args = app.world.resource::<Args>();
+        let args = app.world().resource::<Args>();
         app.insert_resource(
             Persistent::<GeneralSettings>::builder()
                 .name("general settings")
@@ -483,7 +483,7 @@ pub struct KeyBindings {
 impl KeyBindings {
     /// Initializes the resource in the app.
     pub fn initialize(app: &mut App) {
-        let args = app.world.resource::<Args>();
+        let args = app.world().resource::<Args>();
         app.insert_resource(
             Persistent::<KeyBindings>::builder()
                 .name("key bindings")

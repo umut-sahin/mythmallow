@@ -17,7 +17,7 @@ impl Plugin for GameOverMenuPlugin {
         app.register_type::<GameOverMenuQuitButton>();
 
         // Setup localization.
-        app.world.resource_mut::<LocaleAssets>().push("ui/game_over_menu.ftl");
+        app.world_mut().resource_mut::<LocaleAssets>().push("ui/game_over_menu.ftl");
 
         // Add systems.
         app.add_systems(OnEnter(GameState::Over), spawn_game_over_menu);

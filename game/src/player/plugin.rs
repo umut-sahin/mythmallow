@@ -22,7 +22,7 @@ impl Plugin for PlayerPlugin {
         app.register_type::<GodMode>();
 
         // Insert resources.
-        let args = app.world.resource::<Args>();
+        let args = app.world().resource::<Args>();
         app.insert_resource(GodMode { is_enabled: args.enable_god_mode });
 
         // Initialize registry.

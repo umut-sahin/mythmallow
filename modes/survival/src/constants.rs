@@ -11,7 +11,7 @@ pub const GRID_SPACING: f32 = 50.0;
 pub const GRID_WIDTH: f32 = 2.0;
 
 /// Color of the grid.
-pub const GRID_COLOR: Color = Color::rgb(0.27, 0.27, 0.27);
+pub const GRID_COLOR: Color = Color::srgb(0.27, 0.27, 0.27);
 
 
 /// Size of the map.

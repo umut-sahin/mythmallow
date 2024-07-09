@@ -4,7 +4,6 @@ use crate::{
     configuration::plugin::ConfigurationPlugin,
     console::plugin::ConsolePlugin,
     core::plugin::CorePlugin,
-    effect::plugin::EffectPlugin,
     enemy::plugin::EnemyPlugin,
     input::plugin::InputPlugin,
     inventory::plugin::InventoryPlugin,
@@ -49,6 +48,5 @@ impl Plugin for MythmallowPlugin {
         app.add_plugins(PlayerPlugin);
         app.add_plugins(EnemyPlugin);
         app.add_plugins(CombatPlugin);
-        app.add_plugins(EffectPlugin);
     }
 }

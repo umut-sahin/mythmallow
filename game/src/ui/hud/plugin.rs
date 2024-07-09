@@ -18,7 +18,7 @@ impl Plugin for HudPlugin {
         app.register_type::<HudBalanceText>();
 
         // Setup localization.
-        app.world.resource_mut::<LocaleAssets>().push("ui/hud.ftl");
+        app.world_mut().resource_mut::<LocaleAssets>().push("ui/hud.ftl");
 
         // Add materials.
         app.add_plugins(UiMaterialPlugin::<HealthBarMaterial>::default());

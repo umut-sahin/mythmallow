@@ -4,22 +4,21 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-bevy = { version = "0.13", features = ["serialize"] }
-bevy-persistent = { version = "0.5" }
-bevy_console = { version = "0.11" }
-bevy_easings = { version = "0.13" }
-bevy_editor_pls = { version = "0.8", optional = true }
-bevy_fluent = { git = "https://github.com/umut-sahin/bevy_fluent" }
-bevy_hanabi = { version = "0.11" }
-bevy_prng = { version = "0.6", features = ["rand_chacha"] }
-bevy_rand = { version = "0.6" }
-bevy_xpbd_2d = { version = "0.4" }
+avian2d = { version = "0.1" }
+bevy = { version = "0.14", features = ["serialize"] }
+bevy-persistent = { version = "0.6" }
+bevy_console = { git = "https://github.com/msklosak/bevy-console", branch = "bevy_014" }
+bevy_easings = { version = "0.14" }
+bevy_editor_pls = { git = "https://github.com/zhaop/bevy_editor_pls.git", branch = "bevy-0.14", optional = true }
+bevy_fluent = { git = "https://github.com/umut-sahin/bevy_fluent", branch = "bevy-v0.14" }
+bevy_prng = { version = "0.7", features = ["rand_chacha"] }
+bevy_rand = { version = "0.7" }
 clap = { version = "4.5", features = ["derive"] }
 dirs = { version = "5.0" }
 fluent = { version = "0.16" }
 fluent_content = { version = "0.0" }
-itertools = { version = "0.12" }
-leafwing-input-manager = { version = "0.13" }
+itertools = { version = "0.13" }
+leafwing-input-manager = { version = "0.14" }
 prettytable = { version = "0.10" }
 num-format = { version = "0.4" }
 rand = { version = "0.8" }
@@ -32,7 +31,7 @@ typed-builder = { version = "0.18" }
 unic-langid = { version = "0.9", features = ["serde"] }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
-bevy-persistent-windows = { version = "0.5" }
+bevy-persistent-windows = { version = "0.6" }
 sys-locale = { version = "0.3" }
 
 [target.'cfg(target_family = "wasm")'.dependencies]

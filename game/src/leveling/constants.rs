@@ -5,7 +5,7 @@ use crate::prelude::*;
 pub const DEFAULT_EXPERIENCE_POINT_SIZE: f32 = 5.00;
 
 /// Default color of experience points.
-pub const DEFAULT_EXPERIENCE_POINT_COLOR: Color = Color::PURPLE;
+pub const DEFAULT_EXPERIENCE_POINT_COLOR: Color = Color::srgb(0.50, 0.00, 0.50);
 
 
 /// Default minimum speed of experience points.

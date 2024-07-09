@@ -14,7 +14,7 @@ impl Plugin for PlayerSelectionScreenPlugin {
         app.register_type::<PlayerSelectionScreenBackButton>();
 
         // Setup localization.
-        app.world.resource_mut::<LocaleAssets>().push("ui/player_selection_screen.ftl");
+        app.world_mut().resource_mut::<LocaleAssets>().push("ui/player_selection_screen.ftl");
 
         // Add systems.
         app.add_systems(OnEnter(AppState::PlayerSelectionScreen), spawn_player_selection_screen);
@@ -36,7 +36,7 @@ impl Plugin for PlayerSelectionScreenPlugin {
         app.add_systems(OnExit(AppState::PlayerSelectionScreen), despawn_player_selection_screen);
 
         // Select the player when starting in game.
-        let args = app.world.resource::<Args>();
+        let args = app.world_mut().resource::<Args>();
         if args.start_in_game {
             app.add_systems(
                 OnEnter(AppState::PlayerSelectionScreen),

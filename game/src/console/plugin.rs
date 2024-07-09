@@ -16,8 +16,10 @@ impl Plugin for ConsolePlugin {
 
         // Set console position.
         {
-            let primary_window =
-                app.world.query_filtered::<&Window, With<PrimaryWindow>>().single(&app.world);
+            let primary_window = app
+                .world_mut()
+                .query_filtered::<&Window, With<PrimaryWindow>>()
+                .single(app.world());
 
             let window_width = primary_window.width();
             let left_margin = window_width * 0.1;

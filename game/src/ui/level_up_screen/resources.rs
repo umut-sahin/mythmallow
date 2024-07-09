@@ -12,7 +12,7 @@ impl RegisteredLevelUpScreenSystems {
     pub fn new(app: &mut App, systems: Entity) -> RegisteredLevelUpScreenSystems {
         use super::systems::*;
 
-        let reroll_perks = app.world.register_system(reroll_perks);
+        let reroll_perks = app.world_mut().register_system(reroll_perks);
         RegisteredSystems::attach(app, systems, reroll_perks, "reroll_perks");
 
         RegisteredLevelUpScreenSystems { reroll_perks }

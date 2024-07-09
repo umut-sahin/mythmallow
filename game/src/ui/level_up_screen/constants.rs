@@ -2,14 +2,14 @@ use crate::prelude::*;
 
 
 /// Background color of the level up screen.
-pub const BACKGROUND_COLOR: Color = Color::rgba(0.00, 0.00, 0.00, 0.50);
+pub const BACKGROUND_COLOR: Color = Color::srgba(0.00, 0.00, 0.00, 0.50);
 
 
 /// Border color of perk details in the level up screen.
-pub const PERK_DETAILS_BORDER_COLOR: Color = Color::rgb(1.00, 1.00, 1.00);
+pub const PERK_DETAILS_BORDER_COLOR: Color = Color::srgb(1.00, 1.00, 1.00);
 
 /// Background color of perk details in the level up screen.
-pub const PERK_DETAILS_BACKGROUND_COLOR: Color = Color::rgba(0.00, 0.00, 0.00, 0.95);
+pub const PERK_DETAILS_BACKGROUND_COLOR: Color = Color::srgba(0.00, 0.00, 0.00, 0.95);
 
 
 /// Font size of perk names in the level up screen in pt.

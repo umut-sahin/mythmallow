@@ -22,7 +22,7 @@ impl Plugin for EnemySelectionScreenPlugin {
         app.add_systems(OnExit(AppState::EnemySelectionScreen), despawn_enemy_selection_screen);
 
         // Select the enemies when starting in game.
-        let args = app.world.resource::<Args>();
+        let args = app.world_mut().resource::<Args>();
         if args.start_in_game {
             app.add_systems(
                 OnEnter(AppState::EnemySelectionScreen),
