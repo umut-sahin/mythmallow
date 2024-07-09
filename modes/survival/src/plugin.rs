@@ -9,7 +9,7 @@ pub struct SurvivalModePlugin;
 impl Plugin for SurvivalModePlugin {
     fn build(&self, app: &mut App) {
         // Register the game mode.
-        let mut game_mode_registry = app.world.resource_mut::<GameModeRegistry>();
+        let mut game_mode_registry = app.world_mut().resource_mut::<GameModeRegistry>();
         game_mode_registry.register(Survival);
 
         // Register components.
@@ -27,10 +27,10 @@ impl Plugin for SurvivalModePlugin {
         app.register_type::<WaveTimer>();
 
         // Setup localization.
-        app.world.resource_mut::<LocaleAssets>().push("content/modes/survival.ftl");
+        app.world_mut().resource_mut::<LocaleAssets>().push("content/modes/survival.ftl");
 
         // Insert resources.
-        let args = app.world.resource::<Args>();
+        let args = app.world().resource::<Args>();
         app.insert_resource(
             args.start_in_game_mode
                 .as_ref()

@@ -12,7 +12,7 @@ impl RegisteredLevelingSystems {
     pub fn new(app: &mut App, systems: Entity) -> RegisteredLevelingSystems {
         use super::systems::*;
 
-        let set_level = app.world.register_system(set_level);
+        let set_level = app.world_mut().register_system(set_level);
         RegisteredSystems::attach(app, systems, set_level, "set_level");
 
         RegisteredLevelingSystems { set_level }

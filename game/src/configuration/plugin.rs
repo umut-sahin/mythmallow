@@ -22,7 +22,7 @@ impl Plugin for ConfigurationPlugin {
 
         // Setup localization.
         {
-            let general_settings = app.world.resource::<Persistent<GeneralSettings>>();
+            let general_settings = app.world_mut().resource::<Persistent<GeneralSettings>>();
 
             let supported_locales = SupportedLocales::get();
             let locale_assets = LocaleAssets::default();
@@ -65,7 +65,7 @@ impl Plugin for ConfigurationPlugin {
                             locale_assets.iter().all(|handle| {
                                 matches!(
                                     asset_server.get_load_state(handle),
-                                    None | Some(LoadState::Loaded | LoadState::Failed),
+                                    None | Some(LoadState::Loaded | LoadState::Failed(_)),
                                 )
                             })
                         } else {

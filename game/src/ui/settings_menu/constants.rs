@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 
 /// Background color of the settings menu.
-pub const BACKGROUND_COLOR: Color = Color::rgba(0.00, 0.00, 0.00, 1.00);
+pub const BACKGROUND_COLOR: Color = Color::srgba(0.00, 0.00, 0.00, 1.00);
 
 
 /// Font size of the previous and next buttons in the settings menu in pt.
@@ -20,7 +20,7 @@ pub const LANGUAGE_SETTING_NAME_TEXT_COLOR: Color = Color::WHITE;
 pub const LANGUAGE_SETTING_VALUE_TEXT_FONT_SIZE: f32 = 40.0;
 
 /// Color of the language setting value text in the setting menu.
-pub const LANGUAGE_SETTING_VALUE_TEXT_COLOR: Color = Color::GRAY;
+pub const LANGUAGE_SETTING_VALUE_TEXT_COLOR: Color = Color::srgb(0.50, 0.50, 0.50);
 
 
 /// Font size of the back button in the settings menu in pt.

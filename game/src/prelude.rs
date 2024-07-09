@@ -10,22 +10,6 @@ pub use crate::{
         sets::*,
         states::*,
     },
-    effect::{
-        blood::{
-            BloodParticles,
-            BLOOD_EFFECT_SPREAD,
-        },
-        pop::{
-            PopParticles,
-            POP_EFFECT_SPREAD,
-        },
-        walking::{
-            LastWalkingParticlePosition,
-            WalkingParticles,
-            WALKING_EFFECT_GAP,
-            WALKING_EFFECT_SPREAD,
-        },
-    },
     enemy::{
         components::*,
         interfaces::*,
@@ -116,6 +100,11 @@ pub mod utils {
 
 #[doc(inline)]
 pub use {
+    avian2d::{
+        math::*,
+        prelude::*,
+        PhysicsPlugins as AvianPlugin,
+    },
     bevy::{
         app::AppExit,
         asset::{
@@ -182,43 +171,9 @@ pub use {
         prelude::*,
         ResourceAsset,
     },
-    bevy_hanabi::prelude::{
-        AccelModifier,
-        Attribute,
-        CloneModifier,
-        ColorOverLifetimeModifier,
-        CpuValue,
-        EffectAsset,
-        EffectSimulation,
-        EffectSimulationTime,
-        EffectSpawner,
-        ExprWriter,
-        Gradient,
-        HanabiPlugin,
-        LinearDragModifier,
-        ParticleEffect,
-        ParticleEffectBundle,
-        ParticleGroupSet,
-        RibbonModifier,
-        RoundModifier,
-        ScalarType,
-        SetAttributeModifier,
-        SetPositionCircleModifier,
-        SetPositionSphereModifier,
-        SetVelocityCircleModifier,
-        SetVelocitySphereModifier,
-        ShapeDimension,
-        SizeOverLifetimeModifier,
-        Spawner,
-    },
     bevy_persistent::prelude::*,
     bevy_prng::ChaCha8Rng,
     bevy_rand::prelude::*,
-    bevy_xpbd_2d::{
-        math::*,
-        plugins::PhysicsPlugins as XpbdPlugin,
-        prelude::*,
-    },
     clap::{
         self,
         CommandFactory,

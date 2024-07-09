@@ -625,7 +625,7 @@ pub fn update_offered_perks(
     let perk_name_size = PERK_NAME_FONT_SIZE;
 
     let perk_description_style = styles::perk_description_text();
-    let perk_description_colors = WidgetColors::container().text(Color::rgb(0.80, 0.80, 0.80));
+    let perk_description_colors = WidgetColors::container().text(Color::srgb(0.80, 0.80, 0.80));
     let perk_description_font = asset_server.load("fonts/FiraSans-Bold.ttf");
     let perk_description_size = PERK_DESCRIPTION_FONT_SIZE;
 

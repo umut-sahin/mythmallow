@@ -11,7 +11,7 @@ pub const VERTICES: [Vec2; 3] =
     [Vec2::new(15.00, 0.00), Vec2::new(-10.00, 5.00), Vec2::new(-10.00, -5.00)];
 
 /// Color of the item.
-pub const COLOR: Color = Color::ORANGE;
+pub const COLOR: Color = Color::srgb(1.00, 0.65, 0.00);
 
 /// Base damage of the item.
 pub const BASE_DAMAGE: Damage = Damage(5.00);
@@ -77,7 +77,7 @@ pub struct BidentOfHadesPlugin;
 impl Plugin for BidentOfHadesPlugin {
     fn build(&self, app: &mut App) {
         // Register the item.
-        let mut item_registry = app.world.resource_mut::<ItemRegistry>();
+        let mut item_registry = app.world_mut().resource_mut::<ItemRegistry>();
         item_registry.register(BidentOfHades).add_tag(MELEE_ITEM_TAG).add_tag(GREEK_ITEM_TAG);
 
         // Register components.

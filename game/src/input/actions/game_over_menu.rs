@@ -18,7 +18,7 @@ impl GameOverMenuAction {
         let mut input_map = InputMap::new([(GameOverMenuAction::Select, KeyCode::Enter)]);
 
         // Extend the input map from key bindings.
-        let key_bindings = app.world.resource::<Persistent<KeyBindings>>();
+        let key_bindings = app.world_mut().resource::<Persistent<KeyBindings>>();
         for key_code in key_bindings.up.iter().cloned() {
             input_map.insert(GameOverMenuAction::Up, key_code);
         }

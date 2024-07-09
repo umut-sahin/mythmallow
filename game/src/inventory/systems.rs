@@ -145,14 +145,14 @@ pub fn reposition_weapons(
     let max_distance = player_aabb.min.distance(player_aabb.max);
 
     let mut direction = Vec2::X;
-    let rotation = Rotation::from_degrees(360.00 / (weapon_query.iter().len() as f32));
+    let rotation = Rotation::degrees(360.00 / (weapon_query.iter().len() as f32));
 
     for (weapon_index, (weapon_entity, mut weapon_transform)) in weapon_query.iter_mut().enumerate()
     {
         let distance = spatial_query
             .cast_ray(
                 player_position.xy(),
-                Direction2d::new(direction).unwrap(),
+                Dir2::new(direction).unwrap(),
                 max_distance,
                 false,
                 SpatialQueryFilter::from_mask([Layer::Player]),
@@ -173,7 +173,7 @@ pub fn reposition_weapons(
             .remove::<EasingComponent<Transform>>()
             .remove::<EasingChainComponent<Transform>>();
 
-        direction = rotation.rotate(direction);
+        direction = rotation * direction;
     }
 }
 

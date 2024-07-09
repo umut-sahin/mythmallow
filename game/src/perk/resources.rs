@@ -13,10 +13,10 @@ impl RegisteredPerkSystems {
     pub fn new(app: &mut App, systems: Entity) -> RegisteredPerkSystems {
         use super::systems::*;
 
-        let obtain_perk = app.world.register_system(obtain_perk);
+        let obtain_perk = app.world_mut().register_system(obtain_perk);
         RegisteredSystems::attach(app, systems, obtain_perk, "obtain_perk");
 
-        let lose_perk = app.world.register_system(lose_perk);
+        let lose_perk = app.world_mut().register_system(lose_perk);
         RegisteredSystems::attach(app, systems, lose_perk, "lose_perk");
 
         RegisteredPerkSystems { obtain_perk, lose_perk }

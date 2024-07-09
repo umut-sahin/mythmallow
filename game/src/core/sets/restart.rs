@@ -13,7 +13,6 @@ pub enum RestartSystems {
     Inventory,
     Map,
     Player,
-    Effect,
     Leveling,
     Combat,
     Last,

@@ -12,10 +12,10 @@ impl Plugin for BasicPerksPlugin {
         app.register_type::<Regenerative>();
 
         // Setup localization.
-        app.world.resource_mut::<LocaleAssets>().push("content/perks/basic.ftl");
+        app.world_mut().resource_mut::<LocaleAssets>().push("content/perks/basic.ftl");
 
         // Get perk registry.
-        let mut perk_registry = app.world.resource_mut::<PerkRegistry>();
+        let mut perk_registry = app.world_mut().resource_mut::<PerkRegistry>();
 
         // Register perks.
         for rarity in Rarity::iter() {

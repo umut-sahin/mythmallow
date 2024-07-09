@@ -14,7 +14,7 @@ pub struct RegisteredSystems {
 impl RegisteredSystems {
     /// Creates the database.
     pub fn new(app: &mut App) -> RegisteredSystems {
-        let systems = app.world.spawn(Name::new("RegisteredSystems")).id();
+        let systems = app.world_mut().spawn(Name::new("RegisteredSystems")).id();
         RegisteredSystems {
             configuration: RegisteredConfigurationSystems::new(app, systems),
             level_up_screen: RegisteredLevelUpScreenSystems::new(app, systems),
@@ -35,9 +35,9 @@ impl RegisteredSystems {
             // This is safe as long as SystemId<I> is just an Entity in runtime.
             // And transmute wouldn't work if SystemId<I> and Entity don't have the same size.
             let system = std::mem::transmute::<SystemId<I>, Entity>(system);
-            if let Some(mut systems) = app.world.get_entity_mut(systems) {
+            if let Some(mut systems) = app.world_mut().get_entity_mut(systems) {
                 systems.add_child(system);
-                if let Some(mut system) = app.world.get_entity_mut(system) {
+                if let Some(mut system) = app.world_mut().get_entity_mut(system) {
                     system.insert(Name::new(name));
                 }
             }

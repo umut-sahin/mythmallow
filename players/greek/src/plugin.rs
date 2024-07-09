@@ -10,7 +10,7 @@ pub struct GreekPlayersPlugin;
 impl Plugin for GreekPlayersPlugin {
     fn build(&self, app: &mut App) {
         // Setup localization.
-        app.world.resource_mut::<LocaleAssets>().push("content/players/greek.ftl");
+        app.world_mut().resource_mut::<LocaleAssets>().push("content/players/greek.ftl");
 
         // Add sub-plugins.
         app.add_plugins(ArtemisPlugin);

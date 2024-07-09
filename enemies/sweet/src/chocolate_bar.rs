@@ -7,7 +7,7 @@ use {
 pub const SIZE: f32 = 15.00;
 
 /// Color of the enemy.
-pub const COLOR: Color = Color::Rgba { red: 0.329, green: 0.149, blue: 0.031, alpha: 1.000 };
+pub const COLOR: Color = Color::srgba(0.329, 0.149, 0.031, 1.000);
 
 /// Health of the enemy.
 pub const HEALTH: Health = Health(5.00);
@@ -25,8 +25,7 @@ pub const ATTACK_COOLDOWN: Duration = Duration::from_millis(1500);
 pub const PROJECTILE_SIZE: f32 = 7.50;
 
 /// Color of the projectiles of the enemy.
-pub const PROJECTILE_COLOR: Color =
-    Color::Rgba { red: 0.229, green: 0.099, blue: 0.031, alpha: 1.000 };
+pub const PROJECTILE_COLOR: Color = Color::srgba(0.229, 0.099, 0.031, 1.000);
 
 /// Speed of the projectiles of the enemy.
 pub const PROJECTILE_SPEED: f32 = 200.00;
@@ -79,7 +78,7 @@ pub struct ChocolateBarPlugin;
 impl Plugin for ChocolateBarPlugin {
     fn build(&self, app: &mut App) {
         // Register the enemy.
-        let mut enemy_registry = app.world.resource_mut::<EnemyRegistry>();
+        let mut enemy_registry = app.world_mut().resource_mut::<EnemyRegistry>();
         enemy_registry.register(SweetEnemyPack, ChocolateBar).add_tag(RANGED_ENEMY_TAG);
 
         // Register components.

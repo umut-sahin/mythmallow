@@ -41,7 +41,6 @@ pub fn spawn_hud(
                         material: health_bar_materials.add(HealthBarMaterial::default()),
                         ..default()
                     },
-                    BorderColor(Color::BLACK),
                 ))
                 .with_children(|parent| {
                     parent.spawn((
@@ -74,7 +73,6 @@ pub fn spawn_hud(
                         material: experience_bar_materials.add(ExperienceBarMaterial::default()),
                         ..default()
                     },
-                    BorderColor(Color::BLACK),
                 ))
                 .with_children(|parent| {
                     parent.spawn((

@@ -15,7 +15,7 @@ impl Plugin for MainMenuPlugin {
         app.register_type::<MainMenuQuitButton>();
 
         // Setup localization.
-        app.world.resource_mut::<LocaleAssets>().push("ui/main_menu.ftl");
+        app.world_mut().resource_mut::<LocaleAssets>().push("ui/main_menu.ftl");
 
         // Add systems.
         app.add_systems(OnEnter(AppState::MainMenu), spawn_main_menu);

@@ -10,7 +10,7 @@ pub struct SweetEnemiesPlugin;
 impl Plugin for SweetEnemiesPlugin {
     fn build(&self, app: &mut App) {
         // Setup localization.
-        app.world.resource_mut::<LocaleAssets>().push("content/enemies/sweet.ftl");
+        app.world_mut().resource_mut::<LocaleAssets>().push("content/enemies/sweet.ftl");
 
         // Add sub-plugins.
         app.add_plugins(ChocolateBarPlugin);

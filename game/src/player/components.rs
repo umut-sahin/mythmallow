@@ -93,8 +93,6 @@ impl<P: Component + IPlayer> PlayerBundle<P> {
             speed_multiplier,
             dodge_chance,
             hp_regeneration,
-            // Effects
-            LastWalkingParticlePosition::default(),
             // Combat
             RemainingHealth(*health),
             // Leveling

@@ -70,7 +70,7 @@ pub struct GummyBearPlugin;
 impl Plugin for GummyBearPlugin {
     fn build(&self, app: &mut App) {
         // Register the enemy.
-        let mut enemy_registry = app.world.resource_mut::<EnemyRegistry>();
+        let mut enemy_registry = app.world_mut().resource_mut::<EnemyRegistry>();
         enemy_registry.register(SweetEnemyPack, GummyBear).add_tag(MELEE_ENEMY_TAG);
 
         // Register components.
@@ -89,7 +89,7 @@ pub fn spawn(
 ) {
     let mesh = MaterialMesh2dBundle {
         mesh: meshes.add(Circle::new(SIZE)).into(),
-        material: materials.add(ColorMaterial::from(Color::RED)),
+        material: materials.add(ColorMaterial::from(Color::srgb(1.00, 0.00, 0.00))),
         transform: Transform::from_translation(position.extend(Depth::Enemy.z())),
         ..default()
     };

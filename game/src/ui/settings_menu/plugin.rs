@@ -19,7 +19,7 @@ impl Plugin for SettingsMenuPlugin {
         app.register_type::<SettingsMenuBackButton>();
 
         // Setup localization.
-        app.world.resource_mut::<LocaleAssets>().push("ui/settings_menu.ftl");
+        app.world_mut().resource_mut::<LocaleAssets>().push("ui/settings_menu.ftl");
 
         // Add systems.
         app.add_systems(OnEnter(AppState::SettingsMenu), spawn_settings_menu);

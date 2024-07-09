@@ -9,7 +9,7 @@ pub fn spawn_diagnostics_overlay(
 ) {
     let text_font = asset_server.load("fonts/FiraSans-Bold.ttf");
     let text_font_size = 20.00;
-    let text_color = Color::DARK_GRAY;
+    let text_color = Color::srgb(0.25, 0.25, 0.25);
 
     commands
         .spawn((

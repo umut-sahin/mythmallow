@@ -10,7 +10,7 @@ use {
 pub const SIZE: f32 = 5.00;
 
 /// Color of the item.
-pub const COLOR: Color = Color::BLUE;
+pub const COLOR: Color = Color::srgb(0.00, 0.00, 1.00);
 
 /// Base range of the item.
 pub const BASE_RANGE: Range = Range(250.00);
@@ -25,7 +25,7 @@ pub const BASE_ATTACK_COOLDOWN: Duration = Duration::from_millis(600);
 pub const PROJECTILE_SIZE: f32 = 3.00;
 
 /// Color of the projectiles of the item.
-pub const PROJECTILE_COLOR: Color = Color::DARK_GRAY;
+pub const PROJECTILE_COLOR: Color = Color::srgb(0.25, 0.25, 0.25);
 
 /// Base speed for the projectiles of the item.
 pub const BASE_PROJECTILE_SPEED: f32 = 200.00;
@@ -82,7 +82,7 @@ pub struct BowOfArtemisPlugin;
 impl Plugin for BowOfArtemisPlugin {
     fn build(&self, app: &mut App) {
         // Register the item.
-        let mut item_registry = app.world.resource_mut::<ItemRegistry>();
+        let mut item_registry = app.world_mut().resource_mut::<ItemRegistry>();
         item_registry.register(BowOfArtemis).add_tag(RANGED_ITEM_TAG).add_tag(GREEK_ITEM_TAG);
 
         // Register resources.

@@ -19,7 +19,7 @@ impl Plugin for PauseMenuPlugin {
         app.register_type::<PreviouslySelectedPauseMenuWidget>();
 
         // Setup localization.
-        app.world.resource_mut::<LocaleAssets>().push("ui/pause_menu.ftl");
+        app.world_mut().resource_mut::<LocaleAssets>().push("ui/pause_menu.ftl");
 
         // Add systems.
         app.add_systems(OnEnter(GameState::Paused), spawn_pause_menu);

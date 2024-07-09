@@ -13,13 +13,13 @@ impl Plugin for PhysicsPlugin {
 
         // Setup physics.
         app.insert_resource(Gravity::ZERO);
-        app.add_plugins(XpbdPlugin::default());
+        app.add_plugins(AvianPlugin::default());
 
         // Setup physics gizmos in development mode.
         #[cfg(feature = "development")]
         {
-            let general_settings = app.world.resource::<Persistent<GeneralSettings>>();
-            app.insert_gizmo_group(
+            let general_settings = app.world().resource::<Persistent<GeneralSettings>>();
+            app.insert_gizmo_config(
                 PhysicsGizmos::default(),
                 GizmoConfig { enabled: general_settings.enable_physics_gizmos, ..default() },
             );
@@ -28,7 +28,7 @@ impl Plugin for PhysicsPlugin {
         }
 
         // Pause physics in startup.
-        app.world.resource_mut::<Time<Physics>>().pause();
+        app.world_mut().resource_mut::<Time<Physics>>().pause();
 
         // Add systems.
         app.add_systems(OnEnter(GameState::Playing), resume_physics);
