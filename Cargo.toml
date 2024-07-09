@@ -59,11 +59,17 @@ opt-level = 1
 [profile.dev.package."*"]
 opt-level = 3
 
-[profile.release]
-lto = "fat"
-
 [profile.dev.build-override]
 opt-level = 3
 
+[profile.release]
+lto = "fat"
+codegen-units = 1
+
 [profile.release.build-override]
 opt-level = 3
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = "z"
+strip = "debuginfo"
