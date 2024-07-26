@@ -1,1 +1,0 @@
-# Claws of Sekhmet

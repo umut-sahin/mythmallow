@@ -1,6 +1,6 @@
 [package]
 name = "mythmallow"
-description = "A top-down arena shooter roguelite in which you're a mythical marshmallow fighting against peasant munchies such as chocolates, jellies, or candies!"
+description = "A top-down arena shooter roguelite in which you're a mythical marshmallow fighting against peasant munchies!"
 categories = ["games"]
 keywords = ["arena-shooter", "game", "mythical", "roguelite", "top-down"]
 repository = "https://github.com/umut-sahin/mythmallow/"
@@ -10,42 +10,25 @@ license = "MIT OR Apache-2.0"
 authors = [
     "Umut Şahin <umutsahin@protonmail.com>",
     "Emre Baba <emrebaba0@protonmail.com>",
+    "Onur Şahin <onordsahin@proton.me>",
+    "Arda Özger <mehmetardaozger@gmail.com>",
 ]
 
 [dependencies]
-level-adjusted-log = { package = "log", version = "0.4", features = ["max_level_info", "release_max_level_info"] }
-mythmallow-enemies-sweet = { path = "enemies/sweet" }
-mythmallow-game = { path = "game" }
-mythmallow-items-greek = { path = "items/greek" }
-mythmallow-mode-survival = { path = "modes/survival" }
-mythmallow-perks-basic = { path = "perks/basic" }
-mythmallow-players-greek = { path = "players/greek" }
-
-[target.'cfg(target_family = "wasm")'.dependencies]
-console_error_panic_hook = { version = "0.1" }
+mythmallow-core-dependencies = { path = "core/dependencies" }
+mythmallow-core-plugins = { path = "core/plugins" }
+mythmallow-core-resources = { path = "core/resources" }
 
 [features]
-# base
-default = ["native-development"]
-development = ["mythmallow-game/development"]
-# native
-native = ["mythmallow-game/native"]
-native-development = ["native", "development", "mythmallow-game/native-development"]
-native-release = ["native", "mythmallow-game/native-release"]
-# wasm
-wasm = ["mythmallow-game/wasm"]
-wasm-development = ["wasm", "development", "mythmallow-game/wasm-development"]
-wasm-release = ["wasm", "mythmallow-game/wasm-release"]
+default = ["development"]
+development = ["mythmallow-core-dependencies/development"]
 
 [workspace]
 resolver = "2"
 members = [
-    "enemies/sweet",
-    "game",
-    "items/greek",
-    "modes/survival",
-    "perks/basic",
-    "players/greek",
+    "core/dependencies",
+    "core/plugins",
+    "core/resources",
 ]
 
 [workspace.lints.clippy]
@@ -59,17 +42,22 @@ opt-level = 1
 [profile.dev.package."*"]
 opt-level = 3
 
+[profile.release]
+codegen-units = 1
+lto = "fat"
+
+[profile.web-release]
+inherits = "release"
+codegen-units = 1
+lto = "fat"
+opt-level = "z"
+strip = "debuginfo"
+
 [profile.dev.build-override]
 opt-level = 3
-
-[profile.release]
-lto = "fat"
-codegen-units = 1
 
 [profile.release.build-override]
 opt-level = 3
 
-[profile.wasm-release]
-inherits = "release"
-opt-level = "z"
-strip = "debuginfo"
+[profile.web-release.build-override]
+opt-level = 3

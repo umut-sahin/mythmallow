@@ -1,29 +1,25 @@
 #![doc = include_str!("../README.md")]
-pub use mythmallow_game::*;
+
+/// Core of the game.
+pub mod core {
+    #[doc(inline)]
+    pub use {
+        mythmallow_core_dependencies as dependencies,
+        mythmallow_core_plugins as plugins,
+        mythmallow_core_resources as resources,
+    };
+}
+
+/// Content of the game.
 pub mod content {
-    pub mod enemies {
-        pub mod sweet {
-            pub use mythmallow_enemies_sweet::*;
-        }
-    }
-    pub mod items {
-        pub mod greek {
-            pub use mythmallow_items_greek::*;
-        }
-    }
-    pub mod modes {
-        pub mod survival {
-            pub use mythmallow_mode_survival::*;
-        }
-    }
-    pub mod perks {
-        pub mod basic {
-            pub use mythmallow_perks_basic::*;
-        }
-    }
-    pub mod players {
-        pub mod greek {
-            pub use mythmallow_players_greek::*;
-        }
-    }
+    /// Enemies of the game.
+    pub mod enemies {}
+    /// Items of the game.
+    pub mod items {}
+    /// Modes of the game.
+    pub mod modes {}
+    /// Perks of the game.
+    pub mod perks {}
+    /// Players of the game.
+    pub mod players {}
 }

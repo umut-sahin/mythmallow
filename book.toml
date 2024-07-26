@@ -6,6 +6,8 @@ multilingual = false
 authors = [
     "Umut Şahin <umutsahin@protonmail.com>",
     "Emre Baba <emrebaba0@protonmail.com>",
+    "Onur Şahin <onordsahin@proton.me>",
+    "Arda Özger <mehmetardaozger@gmail.com>",
 ]
 
 [build]

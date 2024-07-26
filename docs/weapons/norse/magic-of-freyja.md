@@ -1,1 +1,0 @@
-# Magic of Freyja

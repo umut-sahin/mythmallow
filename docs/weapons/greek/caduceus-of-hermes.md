@@ -1,1 +1,0 @@
-# Caduceus of Hermes

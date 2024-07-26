@@ -1,0 +1,11 @@
+[package]
+name = "mythmallow-core-plugins"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+mythmallow-core-dependencies = { path = "../dependencies" }
+mythmallow-core-resources = { path = "../resources" }
+
+[lints]
+workspace = true

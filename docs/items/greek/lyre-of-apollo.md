@@ -1,1 +1,0 @@
-# Lyre of Apollo

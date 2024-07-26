@@ -1,1 +1,0 @@
-# Ankh of Ra
